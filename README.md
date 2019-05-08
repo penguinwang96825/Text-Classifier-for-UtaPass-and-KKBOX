@@ -213,6 +213,9 @@ df.head()
 ![GitHub Logo](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.19.52.png)
 
 2. Split the data into training data and testing data
+* Training set: a subset to train a model
+* Testing set: a subset to test the trained model
+
 ```
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
@@ -222,6 +225,7 @@ y = df['is_bad_review'].values
 
 sentences_train, sentences_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=1000)
 ```
+![Overfitting/Underfitting a Model](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%885.04.17.png)
 
 3. Import the packages we need
 ```
@@ -323,6 +327,7 @@ embedding_layer = Embedding(nb_words,
 ```
 
 6. Construct the five models.
+Reference: [amazon-sentiment-keras-experiment](https://github.com/asanilta/amazon-sentiment-keras-experiment), [img2txt(CNN+LSTM)](https://github.com/teratsyk/bokete-ai)
 * Simple RNN
 ```
 # Simple RNN
