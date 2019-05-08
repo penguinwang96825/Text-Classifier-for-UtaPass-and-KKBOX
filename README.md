@@ -196,3 +196,17 @@ df['Review Body'].replace('', np.nan, inplace=True)
 df.dropna(subset=['Review Body'], inplace=True)
 ```
 ![GitHub Logo](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%883.38.26.png)
+6. Finally, combine KKBOX reviews dataframe and UtaPass dataframe~ There would be 2250 reviews over two dataset.
+
+## Let the rob hit the road!
+1. We first start by loading the raw data. Each textual reviews is splitted into a positive part and a negative part. We group them together in order to start with only raw text data and no other information. If the reviewer rating is lower than 3 stars, we will divide it into the negative group. 
+```
+df = pd.read_csv("reviews_kkstream.csv")
+import numpy as np
+
+# create the label
+df["is_bad_review"] = df["Reviewer Ratings"].apply(lambda x: 0 if int(x) <= 3 else 1)
+# select only relevant columns
+df = df[["Review Body", "is_bad_review"]]
+df.head()
+```
