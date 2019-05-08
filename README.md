@@ -606,3 +606,8 @@ print('Recall: %f' % recall)
 f1 = f1_score(y_test, y_pred)
 print('F1 score: %f' % f1)
 ```
+
+## Future Roadmap
+It is completely possible to use only raw text as input for making predictions. The most important thing is to be able to extract the relevant features from this raw source of data. Although the accuracy of the models are really low and need more improvement, I have done a practice with a full harvest.
+
+Text binary classifier is a meat-and-potatoes issue for most sentiment analysis, and there are still many things can be done on this topic. Future works might construct the multi-class text classifier to divide consumer reviews by different issue types. (Function, UI, Crash, Truncate, Subscription, Server, Enhancement, Other)
