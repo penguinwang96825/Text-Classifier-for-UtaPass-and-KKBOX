@@ -195,3 +195,4 @@ df = pd.DataFrame(items, columns = ["review", "Author Name", "Review Date", "Rev
 df['Review Body'].replace('', np.nan, inplace=True)
 df.dropna(subset=['Review Body'], inplace=True)
 ```
+![GitHub Logo](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%883.38.26.png)
