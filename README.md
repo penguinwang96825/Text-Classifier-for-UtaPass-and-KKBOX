@@ -210,7 +210,8 @@ df["is_bad_review"] = df["Reviewer Ratings"].apply(lambda x: 0 if int(x) <= 3 el
 df = df[["Review Body", "is_bad_review"]]
 df.head()
 ```
-![GitHub Logo](~/Desktop/Text_Classification/image/螢幕快照 2019-05-08 下午4.19.52)
+![GitHub Logo](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.19.52.png)
+
 2. Split the data into training data and testing data
 ```
 from sklearn.feature_extraction.text import CountVectorizer
@@ -220,4 +221,383 @@ sentences = df['Review Body'].apply(str).values
 y = df['is_bad_review'].values
 
 sentences_train, sentences_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=1000)
+```
+
+3. Import the packages we need
+```
+import tensorflow as tf
+import numpy
+from keras.models import Sequential,Model
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Embedding
+from keras.layers import LSTM,Bidirectional
+from keras.layers import SimpleRNN
+from keras.layers import GRU
+from keras.layers import Convolution1D, MaxPooling1D
+from keras.engine import Input
+from keras.optimizers import SGD
+from keras.preprocessing import text,sequence
+import pandas
+import os
+from gensim.models.word2vec import Word2Vec
+```
+
+4. Set all the parameters
+```
+# Input parameters
+max_features = 5000
+max_len = 200
+embedding_size = 300
+
+# Convolution parameters
+filter_length = 3
+nb_filter = 150
+pool_length = 2
+cnn_activation = 'relu'
+border_mode = 'same'
+
+# RNN parameters
+output_size = 50
+rnn_activation = 'tanh'
+recurrent_activation = 'hard_sigmoid'
+
+# Compile parameters
+loss = 'binary_crossentropy'
+optimizer = 'rmsprop'
+
+# Training parameters
+batch_size = 128
+nb_epoch = 250
+validation_split = 0.25
+shuffle = True
+```
+
+5. Build the word2vec model to do word embedding. (Reference: https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)
+```
+# Build vocabulary & sequences
+tk = text.Tokenizer(nb_words=max_features, filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n', lower=True, split=" ")
+tk.fit_on_texts(sentences)
+x = tk.texts_to_sequences(sentences)
+word_index = tk.word_index
+x = sequence.pad_sequences(x,maxlen=max_len)
+
+# Build pre-trained embedding layer
+import gensim
+w2v = Word2Vec.load('ja-gensim.50d.data.model')
+
+from collections import Counter
+
+word_vectors = w2v.wv
+MAX_NB_WORDS = len(word_vectors.vocab)
+MAX_SEQUENCE_LENGTH = 200
+WV_DIM = 50
+nb_words = min(MAX_NB_WORDS, len(word_vectors.vocab))
+vocab = Counter()
+word_index = {t[0]: i+1 for i,t in enumerate(vocab.most_common(MAX_NB_WORDS))}
+
+# we initialize the matrix with random numbers
+import numpy as np
+wv_matrix = (np.random.rand(nb_words, WV_DIM) - 0.5) / 5.0
+for word, i in word_index.items():
+    if i >= MAX_NB_WORDS:
+        continue
+    try:
+        embedding_vector = word_vectors[word]
+        # words not found in embedding index will be all-zeros.
+        wv_matrix[i] = embedding_vector
+    except:
+        pass      
+
+import tensorflow as tf
+from keras.layers import Dense, Input, CuDNNLSTM, Embedding, Dropout,SpatialDropout1D, Bidirectional
+from keras.models import Model
+from keras.optimizers import Adam
+from keras.layers.normalization import BatchNormalization
+
+embedding_layer = Embedding(nb_words, 
+                     WV_DIM, 
+                     mask_zero = False, 
+                     weights = [wv_matrix], 
+                     input_length = MAX_SEQUENCE_LENGTH, 
+                     trainable = False)
+```
+
+6. Construct the five models.
+* Simple RNN
+```
+# Simple RNN
+
+model_RNN = Sequential()
+model_RNN.add(embedding_layer)
+model_RNN.add(SimpleRNN(output_dim=output_size, activation=rnn_activation))
+model_RNN.add(Dropout(0.25))
+model_RNN.add(Dense(1))
+model_RNN.add(Activation('sigmoid'))
+
+model_RNN.compile(loss=loss,
+                  optimizer=optimizer,
+                  metrics=['accuracy'])
+
+print('Simple RNN')
+
+from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
+
+path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
+model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
+early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
+
+history_RNN = model_RNN.fit(x, y, batch_size = batch_size, 
+                            epochs = nb_epoch, 
+                            validation_split = validation_split, 
+                            shuffle = shuffle, 
+                            verbose = 1, 
+                            callbacks = [model_checkpoint, early_stopping])
+```
+* GRU
+```
+# GRU
+
+model_GRU = Sequential()
+model_GRU.add(embedding_layer)
+model_GRU.add(GRU(units = output_size, activation = rnn_activation,recurrent_activation = recurrent_activation))
+model_GRU.add(Dropout(0.25))
+model_GRU.add(Dense(1))
+model_GRU.add(Activation('sigmoid'))
+
+model_GRU.compile(loss = loss,
+                  optimizer = optimizer,
+                  metrics = ['accuracy'])
+
+print('GRU')
+
+from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
+
+path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
+model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
+early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
+
+history_GRU = model_GRU.fit(x, y, batch_size = batch_size, 
+                          epochs = nb_epoch, 
+                          validation_split = validation_split, 
+                          shuffle = shuffle, 
+                          verbose = 1, 
+                          callbacks = [model_checkpoint, early_stopping])
+```
+* LSTM
+```
+# LSTM
+
+model_LSTM = Sequential()
+model_LSTM.add(embedding_layer)
+model_LSTM.add(Dropout(0.5))
+model_LSTM.add(LSTM(units = output_size, activation = rnn_activation, recurrent_activation = recurrent_activation))
+model_LSTM.add(Dropout(0.25))
+model_LSTM.add(Dense(1))
+model_LSTM.add(Activation('sigmoid'))
+
+model_LSTM.compile(loss=loss,
+                   optimizer=optimizer,
+                   metrics=['accuracy'])
+
+print('LSTM')
+
+from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
+
+path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
+model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
+early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
+
+history_LSTM = model_LSTM.fit(x, y, batch_size = batch_size, 
+                              epochs = nb_epoch, 
+                              validation_split = validation_split, 
+                              shuffle = shuffle, 
+                              verbose = 1, 
+                              callbacks = [model_checkpoint, early_stopping])
+```
+* BiLSTM
+```
+# Bidirectional LSTM
+
+model_BiLSTM = Sequential()
+model_BiLSTM.add(embedding_layer)
+model_BiLSTM.add(Bidirectional(LSTM(units=output_size,activation=rnn_activation,recurrent_activation=recurrent_activation)))
+model_BiLSTM.add(Dropout(0.25))
+model_BiLSTM.add(Dense(1))
+model_BiLSTM.add(Activation('sigmoid'))
+
+model_BiLSTM.compile(loss=loss,
+                     optimizer=optimizer,
+                     metrics=['accuracy'])
+
+print('Bidirectional LSTM')
+
+from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
+
+path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
+model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
+early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
+
+history_BiLSTM = model_BiLSTM.fit(x, y, batch_size = batch_size, 
+                                  epochs = nb_epoch, 
+                                  validation_split = validation_split, 
+                                  shuffle = shuffle, 
+                                  verbose = 1, 
+                                  callbacks = [model_checkpoint, early_stopping])
+```
+* CNN + LSTM (Based on "[Convolutional Neural Networks for Sentence Classification](http://arxiv.org/pdf/1408.5882v2.pdf)" by Yoon Kim)
+```
+# CNN + LSTM
+
+model_CNN_LSTM = Sequential()
+model_CNN_LSTM.add(embedding_layer)
+model_CNN_LSTM.add(Dropout(0.5))
+model_CNN_LSTM.add(Convolution1D(filters=nb_filter,
+                        kernel_size=filter_length,
+                        border_mode=border_mode,
+                        activation=cnn_activation,
+                        subsample_length=1))
+model_CNN_LSTM.add(MaxPooling1D(pool_size=pool_length))
+model_CNN_LSTM.add(LSTM(units=output_size,activation=rnn_activation,recurrent_activation=recurrent_activation))
+model_CNN_LSTM.add(Dropout(0.25))
+model_CNN_LSTM.add(Dense(1))
+model_CNN_LSTM.add(Activation('sigmoid'))
+model_CNN_LSTM.compile(loss=loss,
+                       optimizer=optimizer,
+                       metrics=['accuracy'])
+
+print('CNN + LSTM')
+
+from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
+
+path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
+model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
+early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
+
+history_CNN_LSTM = model_CNN_LSTM.fit(x, y, batch_size = batch_size, 
+                                      epochs = nb_epoch, 
+                                      validation_split = validation_split, 
+                                      shuffle = shuffle, 
+                                      verbose = 1, 
+                                      callbacks = [model_checkpoint, early_stopping])
+```
+
+7. Define two plot function to plot the history of accuracy and loss by using matplotlib.
+```
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+
+def plot_history_ggplot(history):
+    acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    x = range(1, len(acc) + 1)
+
+    plt.figure(figsize=(12, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(x, acc, 'b', label='Training acc')
+    plt.plot(x, val_acc, 'r', label='Validation acc')
+    plt.title('Training and validation accuracy')
+    plt.legend()
+    plt.subplot(1, 2, 2)
+    plt.plot(x, loss, 'b', label='Training loss')
+    plt.plot(x, val_loss, 'r', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.legend()
+    
+def plot_history(history):
+    # plot results
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+
+    acc = history.history['acc']
+    val_acc = history.history['val_acc']
+
+    plt.figure(figsize=(10,10))
+    plt.subplot(2,1,1)
+    plt.title('Loss')
+    epochs = len(loss)
+    plt.plot(range(epochs), loss, marker='.', label='loss')
+    plt.plot(range(epochs), val_loss, marker='.', label='val_loss')
+    plt.legend(loc='best')
+    ax = plt.gca()
+    ax.spines['bottom'].set_linewidth(5)
+    ax.spines['top'].set_linewidth(5)
+    ax.spines['right'].set_linewidth(5)
+    ax.spines['left'].set_linewidth(5)
+    ax.set_facecolor('snow')
+    plt.grid(color='lightgray', linestyle='-', linewidth=1)
+    plt.xlabel('epoch')
+    plt.ylabel('acc')
+
+    plt.subplot(2,1,2)
+    plt.title('Accuracy')
+    plt.plot(range(epochs), acc, marker='.', label='acc')
+    plt.plot(range(epochs), val_acc, marker='.', label='val_acc')
+    plt.legend(loc='best')
+    ax = plt.gca()
+    ax.spines['bottom'].set_linewidth(5)
+    ax.spines['top'].set_linewidth(5)
+    ax.spines['right'].set_linewidth(5)
+    ax.spines['left'].set_linewidth(5)
+    ax.set_facecolor('snow')
+    plt.grid(color='lightgray', linestyle='-', linewidth=1)
+    plt.xlabel('epoch')
+    plt.ylabel('acc')
+    plt.show()
+```
+
+8. Compare the performance among the five deep learning models.
+* Simple RNN
+![Simple RNN](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.47.22.png)
+
+* GRU
+![GRU](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.47.42.png)
+
+* LSTM
+![LSTM](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.48.14.png)
+
+* BiLSTM
+![BiLSTM](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.48.32.png)
+
+* CNN + LSTM
+![CNN + LSTM](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.48.45.png)
+
+9. In training a neural network, f1 score is an important metric to evaluate the performance of classification models, especially for unbalanced classes where the binary accuracy is useless.
+```
+tk = text.Tokenizer(nb_words=max_features, filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n', lower=True, split=" ")
+tk.fit_on_texts(sentences_test)
+sentences_test = tk.texts_to_sequences(sentences_test)
+word_index = tk.word_index
+sentences_test = sequence.pad_sequences(sentences_test,maxlen=max_len)
+
+y_pred_temp = model_CNN_LSTM.predict_classes(sentences_test).tolist()
+y_pred = []
+for i in y_pred_temp:
+    y_pred.append(str(i).strip('[]'))
+y_pred = [int(i) for i in y_pred]
+print("Size of label: ", len(y_pred))
+
+y_test_temp = y_test.tolist()
+y_test = []
+for i in y_test_temp:
+    y_test.append(str(i).strip('[]'))
+y_test = [int(i) for i in y_test]
+print("Size of label: ", len(y_test))
+```
+```
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+# accuracy: (tp + tn) / (p + n)
+accuracy = accuracy_score(y_test, y_pred)
+print('Accuracy: %f' % accuracy)
+# precision tp / (tp + fp)
+precision = precision_score(y_test, y_pred)
+print('Precision: %f' % precision)
+# recall: tp / (tp + fn)
+recall = recall_score(y_test, y_pred)
+print('Recall: %f' % recall)
+# f1: 2 tp / (2 tp + fp + fn)
+f1 = f1_score(y_test, y_pred)
+print('F1 score: %f' % f1)
 ```
