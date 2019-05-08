@@ -210,3 +210,5 @@ df["is_bad_review"] = df["Reviewer Ratings"].apply(lambda x: 0 if int(x) <= 3 el
 df = df[["Review Body", "is_bad_review"]]
 df.head()
 ```
+![GitHub Logo](螢幕快照 2019-05-08 下午4.19.52)
+2. 
