@@ -210,5 +210,14 @@ df["is_bad_review"] = df["Reviewer Ratings"].apply(lambda x: 0 if int(x) <= 3 el
 df = df[["Review Body", "is_bad_review"]]
 df.head()
 ```
-![GitHub Logo](螢幕快照 2019-05-08 下午4.19.52)
-2. 
+![GitHub Logo](~/Desktop/Text_Classification/image/螢幕快照 2019-05-08 下午4.19.52)
+2. Split the data into training data and testing data
+```
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+
+sentences = df['Review Body'].apply(str).values
+y = df['is_bad_review'].values
+
+sentences_train, sentences_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=1000)
+```
