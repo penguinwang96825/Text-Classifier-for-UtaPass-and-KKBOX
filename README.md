@@ -198,6 +198,24 @@ df.dropna(subset=['Review Body'], inplace=True)
 ![GitHub Logo](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%883.38.26.png)
 6. Finally, combine KKBOX reviews dataframe and UtaPass dataframe~ There would be 2250 reviews over two dataset.
 
+## What is Neural Network?
+### A simple concept for NN
+Artificial neural networks, invented in the 1940’s, are a way of calculating an output from an input (a classification) using weighted connections (“synapses”) that are calculated from repeated iterations through training data. Each pass through the training data alters the weights such that the neural network produces the output with greater “accuracy” (lower error rate).
+
+![NN](https://cdn-images-1.medium.com/max/1200/1*HULATc7wX7CtzybTIxgBvQ.png)
+
+Deep learning neural networks are trained using the stochastic gradient descent optimization algorithm. As part of the optimization algorithm, the error for the current state of the model must be estimated repeatedly. This requires the choice of an error function, conventionally called a loss function, that can be used to estimate the loss of the model so that the weights can be updated to reduce the loss on the next evaluation.
+
+![Overfitting/Underfitting a Model](https://cdn-images-1.medium.com/max/1000/1*6vPGzBNppqMHllg1o_se8Q.png)
+* Underfitting: a linear function is not sufficient to fit the training samples.
+* Overfitting: for higher degrees the model will overfit the training data, i.e. it learns the noise of the training data.
+
+### What can we do to cope with overfitting?
+1. Takahiro Ishihara addressed these issues by applying eigendecomposition to each slice matrix of a tensor to reduce the number of parameters. [Neural Tensor Networks with Diagonal Slice Matrices](https://www.aclweb.org/anthology/N18-1047)
+2. Another simple and powerful regularization technique for neural networks and deep learning models is adding Dropout layer proposed by Srivastava, et al. in their 2014 paper “[Dropout: A Simple Way to Prevent Neural Networks from Overfitting.](http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf)”
+3. Early stopping is a method that allows you to specify an arbitrary large number of training epochs and stop training once the model performance stops improving on a hold out validation dataset.
+[Early stopping](https://cdn-images-1.medium.com/max/1200/1*QckgibgJ74BhMaqinqwSDw.png)
+
 ## Let the rob hit the road!
 1. We first start by loading the raw data. Each textual reviews is splitted into a positive part and a negative part. We group them together in order to start with only raw text data and no other information. If the reviewer rating is lower than 3 stars, we will divide it into the negative group. 
 ```
@@ -225,7 +243,6 @@ y = df['is_bad_review'].values
 
 sentences_train, sentences_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=1000)
 ```
-![Overfitting/Underfitting a Model](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%885.04.17.png)
 
 3. Import the packages we need
 ```
