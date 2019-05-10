@@ -610,7 +610,7 @@ for i in y_test_temp:
 y_test = [int(i) for i in y_test]
 print("Size of label: ", len(y_test))
 ```
-```
+```python
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 # accuracy: (tp + tn) / (p + n)
