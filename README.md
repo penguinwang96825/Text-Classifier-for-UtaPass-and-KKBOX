@@ -1,4 +1,4 @@
-# Text_Classification
+# Text Classification and Polarity Detection
 Text classification for UtaPass and KKBOX total reviews using different machine learning models.
 
 ## Introduction
