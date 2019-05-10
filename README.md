@@ -18,7 +18,8 @@ Working Papers, 2011](https://www.hbs.edu/faculty/Publication%20Files/12-016_a7e
 
 ## Preparation
 1. Preparing [selenium](https://pypi.org/project/selenium/), [beautiful soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html).
-```import time
+```python
+import time
 from bs4 import BeautifulSoup
 import sys, io
 from selenium import webdriver
