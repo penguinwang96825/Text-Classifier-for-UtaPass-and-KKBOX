@@ -18,6 +18,7 @@ Working Papers, 2011](https://www.hbs.edu/faculty/Publication%20Files/12-016_a7e
 
 ## Preparation
 1. Preparing [selenium](https://pypi.org/project/selenium/), [beautiful soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html).
+<details>
 ```python
 import time
 from bs4 import BeautifulSoup
@@ -27,6 +28,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.proxy import *
 import pandas as pd
 ```
+ </details>
 2. Doing text pre-processing after installing [MeCab](https://pypi.org/project/mecab-python-windows/), [neologdn](https://pypi.org/project/neologdn/), [re](https://docs.python.org/3.6/library/re.html), and [emoji](https://pypi.org/project/emoji/)
 ```python
 import MeCab
