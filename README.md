@@ -28,7 +28,7 @@ from selenium.webdriver.common.proxy import *
 import pandas as pd
 ```
 2. Doing text pre-processing after installing [MeCab](https://pypi.org/project/mecab-python-windows/), [neologdn](https://pypi.org/project/neologdn/), [re](https://docs.python.org/3.6/library/re.html), and [emoji](https://pypi.org/project/emoji/)
-```
+```python
 import MeCab
 from os import path
 import neologdn
@@ -66,7 +66,7 @@ def clean_text(text):
     return text
 ```
 3. Since the page at Google Play has to scroll down and click the "see more" button to view the whole reviews, I have to set a function to cope with these problems.
-```
+```python
 no_of_reviews = 1000
 non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
 
@@ -88,7 +88,7 @@ def replace_value_with_definition(key_to_find, definition):
             temp[key] = definition
 ```
 4. Start crawling the web (Reference: https://github.com/ranjeet867/google-play-crawler)
-```
+```python
 driver = webdriver.Chrome(r"./chromedriver")
 wait = WebDriverWait(driver, 10)
 
@@ -189,7 +189,7 @@ for url in urls:
 driver.quit()
 ```
 5. Transforming the data into dataframe using pandas, and removing the rows which contain empty cell.
-```
+```python
 df = pd.DataFrame(items, columns = ["review", "Author Name", "Review Date", "Reviewer Ratings", 
                                     "Review Body", "Developer Reply"])
                                     import numpy as np
@@ -219,7 +219,7 @@ Deep learning neural networks are trained using the stochastic gradient descent 
 
 ## Let the rob hit the road!
 1. We first start by loading the raw data. Each textual reviews is splitted into a positive part and a negative part. We group them together in order to start with only raw text data and no other information. If the reviewer rating is lower than 3 stars, we will divide it into the negative group. 
-```
+```python
 df = pd.read_csv("reviews_kkstream.csv")
 import numpy as np
 
@@ -235,7 +235,7 @@ df.head()
 * Training set: a subset to train a model
 * Testing set: a subset to test the trained model
 
-```
+```python
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split
 
@@ -246,7 +246,7 @@ sentences_train, sentences_test, y_train, y_test = train_test_split(sentences, y
 ```
 
 3. Import the packages we need
-```
+```python
 import tensorflow as tf
 import numpy
 from keras.models import Sequential,Model
@@ -265,7 +265,7 @@ from gensim.models.word2vec import Word2Vec
 ```
 
 4. Set all the parameters
-```
+```python
 # Input parameters
 max_features = 5000
 max_len = 200
@@ -297,7 +297,7 @@ shuffle = True
 5. Build the word2vec model to do word embedding. (Reference: https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)
 
 Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab: https://textminingonline.com/training-a-japanese-wikipedia-word2vec-model-by-gensim-and-mecab
-```
+```python
 # Build vocabulary & sequences
 tk = text.Tokenizer(nb_words=max_features, filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n', lower=True, split=" ")
 tk.fit_on_texts(sentences)
@@ -349,7 +349,7 @@ embedding_layer = Embedding(nb_words,
 6. Construct the five models.
 Reference: [amazon-sentiment-keras-experiment](https://github.com/asanilta/amazon-sentiment-keras-experiment), [img2txt(CNN+LSTM)](https://github.com/teratsyk/bokete-ai)
 * Simple RNN
-```
+```python
 # Simple RNN
 
 model_RNN = Sequential()
@@ -379,7 +379,7 @@ history_RNN = model_RNN.fit(x, y, batch_size = batch_size,
                             callbacks = [model_checkpoint, early_stopping])
 ```
 * GRU
-```
+```python
 # GRU
 
 model_GRU = Sequential()
@@ -409,7 +409,7 @@ history_GRU = model_GRU.fit(x, y, batch_size = batch_size,
                           callbacks = [model_checkpoint, early_stopping])
 ```
 * LSTM
-```
+```python
 # LSTM
 
 model_LSTM = Sequential()
@@ -440,7 +440,7 @@ history_LSTM = model_LSTM.fit(x, y, batch_size = batch_size,
                               callbacks = [model_checkpoint, early_stopping])
 ```
 * BiLSTM
-```
+```python
 # Bidirectional LSTM
 
 model_BiLSTM = Sequential()
@@ -470,7 +470,7 @@ history_BiLSTM = model_BiLSTM.fit(x, y, batch_size = batch_size,
                                   callbacks = [model_checkpoint, early_stopping])
 ```
 * CNN + LSTM (Based on "[Convolutional Neural Networks for Sentence Classification](http://arxiv.org/pdf/1408.5882v2.pdf)" by Yoon Kim)
-```
+```python
 # CNN + LSTM
 
 model_CNN_LSTM = Sequential()
@@ -507,7 +507,7 @@ history_CNN_LSTM = model_CNN_LSTM.fit(x, y, batch_size = batch_size,
 ```
 
 7. Define two plot function to plot the history of accuracy and loss by using matplotlib.
-```
+```python
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
@@ -589,7 +589,7 @@ def plot_history(history):
 ![CNN + LSTM](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.48.45.png)
 
 9. In training a neural network, f1 score is an important metric to evaluate the performance of classification models, especially for unbalanced classes where the binary accuracy is useless.
-```
+```python
 tk = text.Tokenizer(nb_words=max_features, filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n', lower=True, split=" ")
 tk.fit_on_texts(sentences_test)
 sentences_test = tk.texts_to_sequences(sentences_test)
