@@ -16,6 +16,9 @@ This analysis is based on text data of UtaPass and KKBOX reviews on Google Play 
   > Luca shows that when a product or business has increased the +1 star rating, it increases revenue by 5-9%. Due to the financial benefits associated with online reviews, paid or prejudiced reviewers write fake reviews to mislead a product or business. [[M.Luca, “Reviews, reputation, and revenue: The case of yelp.com,” Harvard Business School
 Working Papers, 2011](https://www.hbs.edu/faculty/Publication%20Files/12-016_a7e4a5a2-03f9-490d-b093-8f951238dba2.pdf)]
 
+## Flow Chart of Text Classification
+![FlowChart](https://github.com/penguinwang96825/Text-Classifier-for-UtaPass-and-KKBOX/blob/master/image/flowChart.jpg)
+
 ## Preparation
 1. Preparing [selenium](https://pypi.org/project/selenium/), [beautiful soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html).
 ```python
