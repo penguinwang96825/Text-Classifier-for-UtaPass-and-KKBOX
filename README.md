@@ -27,10 +27,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.proxy import *
 import pandas as pd
 ```
-Note: 
-* If can not `pip install fasttext`, than take [Microsoft Visual C++ 14.0 is required (Unable to find vcvarsall.bat)
-](https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat) as a reference.
-* Installing MeCab on windows 10: [Windows で pip で mecab-python をいれる](https://qiita.com/yukinoi/items/990b6933d9f21ba0fb43)
+  Note: 
+  * If can not `pip install fasttext`, than take [Microsoft Visual C++ 14.0 is required (Unable to find vcvarsall.bat)](https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat) as a reference.
+  * Installing MeCab on windows 10: [Windows で pip で mecab-python をいれる](https://qiita.com/yukinoi/items/990b6933d9f21ba0fb43)
 
 2. Doing text pre-processing after installing [MeCab](https://pypi.org/project/mecab-python-windows/), [neologdn](https://pypi.org/project/neologdn/), [re](https://docs.python.org/3.6/library/re.html), and [emoji](https://pypi.org/project/emoji/)
 ```python
