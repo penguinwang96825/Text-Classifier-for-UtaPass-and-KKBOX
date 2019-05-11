@@ -104,36 +104,6 @@ urls = ["https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&
 
 for url in urls:
 
-    driver.get(url)
-
-    page = driver.page_source
-
-    soup_expatistan = BeautifulSoup(page, "html.parser")
-
-    expatistan_table = soup_expatistan.find("h1", class_="AHFaub")
-
-    print("App name: ", expatistan_table.string)
-
-    expatistan_table = soup_expatistan.findAll("span", class_="htlgb")[4]
-
-    print("Installs Range: ", expatistan_table.string)
-
-    expatistan_table = soup_expatistan.find("meta", itemprop="ratingValue")
-
-    print("Rating Value: ", expatistan_table['content'])
-
-    expatistan_table = soup_expatistan.find("meta", itemprop="reviewCount")
-
-    print("Reviews Count: ", expatistan_table['content'])
-
-    soup_histogram = soup_expatistan.find("div", class_="VEF2C")
-
-    rating_bars = soup_histogram.find_all('div', class_="mMF0fd")
-
-    for rating_bar in rating_bars:
-        print("Rating: ", rating_bar.find("span").text)
-        print("Rating count: ", rating_bar.find("span", class_="L2o20d").get('title'))
-
     # open all reviews
     url = url + '&showAllReviews=true'
     driver.get(url)
