@@ -194,6 +194,14 @@ Deep learning neural networks are trained using the stochastic gradient descent 
 3. Early stopping is a method that allows you to specify an arbitrary large number of training epochs and stop training once the model performance stops improving on a hold out validation dataset.
 ![Early stopping](https://cdn-images-1.medium.com/max/1200/1*QckgibgJ74BhMaqinqwSDw.png)
 
+## What is Sentiment Analysis?
+### Sentiment Analysis & Topic Categorization
+Sentiment analysis attempts to determine the sentiment of a text. You can formulate this problem in several ways, depending on your working definition of “sentiment” and “text.”
+
+Sentiment can be binary, categorical, ordinal, or continuous. When modeled as continuous, sentiment is often called “polarity,” an analogue for positive and negative charges. The graphic below illustrates these different options and provides an example of each.
+
+![Sentiment Analysis](https://cdn-images-1.medium.com/max/1400/1*P5mOEUJ_h4rahnvPQcgirA.jpeg)
+
 ## Let the rob hit the road!
 1. We first start by loading the raw data. Each textual reviews is splitted into a positive part and a negative part. We group them together in order to start with only raw text data and no other information. If the reviewer rating is lower than 3 stars, we will divide it into the negative group. 
 ```python
