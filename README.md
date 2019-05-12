@@ -19,6 +19,17 @@ Working Papers, 2011](https://www.hbs.edu/faculty/Publication%20Files/12-016_a7e
 ## Flow Chart of Text Classification
 ![FlowChart](https://github.com/penguinwang96825/Text-Classifier-for-UtaPass-and-KKBOX/blob/master/image/flowChart.jpg)
 
+## Information of my computer
+Full Specs: 
+* Processor: Intel Core i9-9900K
+* Motherboard: Gigabyte Z390 AORUS MASTER
+* GPU: MSI RTX2080Ti Gaming X Trio 11G
+* RAM: Kingston 16GB DDR4-3000 HyperX Predator
+* CPU Cooler: MasterLiquid ML240L
+* Storage: Samsung SSD 970 EVO 250G (M.2 PCIe 2280) + Crucial MX500 500GB
+* Power: Antec HCG750 Gold
+* Case: Fractal Design R6-BKO-TG
+
 ## Preparation
 1. Preparing [selenium](https://pypi.org/project/selenium/), [beautiful soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html).
 ```python
