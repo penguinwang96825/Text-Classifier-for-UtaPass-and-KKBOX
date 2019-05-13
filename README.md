@@ -2,7 +2,7 @@
 Text classification for UtaPass and KKBOX total reviews using different machine learning models.
 
 ## Introduction
-This analysis is based on text data of UtaPass and KKBOX reviews on Google Play platform. As a KKStreamer from KKBOX, I have always wanted to analyze and classifify the polarity on app reviews. Concretely, I crawled the data using web crawler technique, which is an Internet bot that systematically browses the World Wide Web, and further using different deep learning models (Simple RNN, LSTM, Bi-directional LSTM, GRU, and CNN_LSTM).
+This analysis is based on text data of UtaPass and KKBOX reviews on Google Play platform. As a KKStreamer from KKBOX, I have always wanted to analyze and classifify the polarity on app reviews. Concretely, I crawled the data using web crawler technique, which is an Internet bot that systematically browses the World Wide Web, and further using different deep learning models (Simple RNN, LSTM, Bi-directional LSTM, GRU, and CNN-LSTM).
 
 ## Data Source
 1. [UtaPass reviews on Google Play](https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja&showAllReviews=true)
@@ -32,6 +32,9 @@ Full Specs:
 
 ## Preparation
 1. Preparing [selenium](https://pypi.org/project/selenium/), [beautiful soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html).
+* Selenium: Selenium is an open source tool which is used for automating the tests carried out on web browsers (Web applications are tested using any web browser).
+* Beautiful Soup: Beautiful Soup is a Python library for pulling data out of HTML and XML files.
+* Pandas: Pandas is an open source, BSD-licensed library providing high-performance, easy-to-use data structures and data analysis tools for the Python programming language.
 ```python
 import time
 from bs4 import BeautifulSoup
@@ -46,6 +49,10 @@ import pandas as pd
   * Installing MeCab on windows 10: [Windows で pip で mecab-python をいれる](https://qiita.com/yukinoi/items/990b6933d9f21ba0fb43)
 
 2. Doing text pre-processing after installing [MeCab](https://pypi.org/project/mecab-python-windows/), [neologdn](https://pypi.org/project/neologdn/), [re](https://docs.python.org/3.6/library/re.html), and [emoji](https://pypi.org/project/emoji/)
+* MeCab: MeCab is an open-source text segmentation library for use with text written in the Japanese language originally developed by the Nara Institute of Science and Technology.
+* Neologdn: Neologdn is a Japanese text normalizer for mecab-neologd.
+* re: A regular expression (or RE) specifies a set of strings that matches it; the functions in this module let you check if a particular string matches a given regular expression (or if a given regular expression matches a particular string, which comes down to the same thing).
+* emoji: The entire set of Emoji codes as defined by the unicode consortium is supported in addition to a bunch of aliases.
 ```python
 import MeCab
 from os import path
