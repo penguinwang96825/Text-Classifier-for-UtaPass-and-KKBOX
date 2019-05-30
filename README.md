@@ -36,12 +36,12 @@ Full Specs:
 * Beautiful Soup: Beautiful Soup is a Python library for pulling data out of HTML and XML files.
 * Pandas: Pandas is an open source, BSD-licensed library providing high-performance, easy-to-use data structures and data analysis tools for the Python programming language.
 ```python
-import time
 from bs4 import BeautifulSoup
-import sys, io
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.proxy import *
+from selenium.webdriver.common.by import By
+import time, sys, io
 import pandas as pd
 ```
   Note: 
