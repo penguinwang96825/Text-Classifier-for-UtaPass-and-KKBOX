@@ -92,104 +92,106 @@ def clean_text(text):
 ```
 3. Since the page at Google Play has to scroll down and click the "see more" button to view the whole reviews, I have to set a function to cope with these problems.
 ```python
-no_of_reviews = 1000
-non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
-
-from selenium.common.exceptions import NoSuchElementException        
 def check_exists_by_xpath(xpath):
     try:
         driver.find_element_by_xpath(xpath)
     except NoSuchElementException:
         return False
     return True
-reviews = pd.DataFrame(columns = ["review", "Author Name", "Review Date", "Review Ratings", 
-                                  "Review Body", "Developer Reply"])
-temp = {"review": 0, "Author Name": "", "Review Date": "", "Review Ratings": 0, 
-        "Review Body": "", "Developer Reply": ""}
 
 def replace_value_with_definition(key_to_find, definition):
     for key in temp.keys():
         if key == key_to_find:
             temp[key] = definition
+            
+def scrollDownPage(pages):
+	for i in range(1,pages):
+	    try:
+	        # Scroll to load other reviews
+	        driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+	        time.sleep(1)
+	        if check_exists_by_xpath('.//span[@class = "RveJvd snByac"]'):
+	            driver.find_element_by_xpath('.//span[@class = "RveJvd snByac"]').click()
+	            time.sleep(2)
+	    except:
+	        pass
 ```
 4. Start crawling the web (Reference: https://github.com/ranjeet867/google-play-crawler)
 ```python
-driver = webdriver.Chrome(r"./chromedriver")
-wait = WebDriverWait(driver, 10)
+def openGooglePlayStore():
+	wait = WebDriverWait(driver, 10)
+	url = "https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja&showAllReviews=true"
+	driver.get(url)
+	time.sleep(5)
+  
+def getReviewerName():
+	app_user = []
+	user_name = driver.find_elements_by_css_selector("span.X43Kjb")
+	for n in user_name:
+		app_user.append(n.text)
+	return app_user
 
-# Append your app store urls here
-urls = ["https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja"]
+def getReviewerTime():
+	app_time = []
+	reviewer_time = driver.find_elements_by_css_selector("span.p2TkOb")
+	for t in reviewer_time:
+		app_time.append(t.text)
+	return app_time
 
-for url in urls:
+def getReviewerRating():
+	app_rating = []
+	reviewer_rating = driver.find_elements_by_css_selector("span.nt2C1d div.pf5lIe div[aria-label]")
+	for a in reviewer_rating:
+		app_rating.append(a.get_attribute( "aria-label" ))
+	return app_rating
 
-    # open all reviews
-    url = url + '&showAllReviews=true'
-    driver.get(url)
-    time.sleep(5) # wait dom ready
-    for i in range(1,25):
-        try:
-            driver.execute_script('window.scrollTo(0, document.body.scrollHeight);') # scroll to load other reviews
-            time.sleep(2)
-            if check_exists_by_xpath('//*[@id="fcxH9b"]/div[4]/c-wiz[2]/div/div[2]/div/div[1]/div/div/div[1]/div[2]/div[2]/div/content/span'):
-                driver.find_element_by_xpath('//*[@id="fcxH9b"]/div[4]/c-wiz[2]/div/div[2]/div/div[1]/div/div/div[1]/div[2]/div[2]/div/content/span').click()
-                time.sleep(2)
-        except:
-            pass
+def ReviewerRating2Digits( app_rating ):
+	# Transfer reviewer ratings into digits
+	rating = []
+	for element in app_rating:
+		temp = element.split('/')[0]
+		temp2 = temp.split('星 ')[1]
+		rating.append(int(temp2))
+	return rating
 
-    page = driver.page_source
+def getRatingResult():
+	ratings = ReviewerRating2Digits( getReviewerRating() )
+	return ratings
 
-    soup_expatistan = BeautifulSoup(page, "html.parser")
-    expand_pages = soup_expatistan.findAll("div", class_="d15Mdf")
-    counter = 1
-    items = []
-    
-    for expand_page in expand_pages:
-        try:
-            # print("\n===========\n")
-
-            review = str(counter)
-            
-            Author_Name = str(expand_page.find("span", class_="X43Kjb").text)
-            
-            Review_Date = str(expand_page.find("span", class_="p2TkOb").text)
-            
-            reviewer_ratings = expand_page.find("div", class_="pf5lIe").find_next()['aria-label'];
-            reviewer_ratings = reviewer_ratings.split('/')[0]
-            reviewer_ratings = ''.join(x for x in reviewer_ratings if x.isdigit())
-            Reviewer_Ratings = int(reviewer_ratings)
-
-            Review_Body = str(expand_page.find("div", class_="UD7Dzf").text)
-            Review_Body_cleaned = clean_text(Review_Body)
-            Review_Body_string = ''.join(Review_Body_cleaned)
-            
-            developer_reply = expand_page.find_parent().find("div", class_="LVQB0b")
-            if hasattr(developer_reply, "text"):
-                Developer_Reply = str(developer_reply.text)
-            else:
-                Developer_Reply = ""
-            
-            counter += 1           
-            item = {
-                    "review": counter - 1,
-                    "Author Name": Author_Name,
-                    "Reviewer Ratings": Reviewer_Ratings,
-                    "Review Date": Review_Date,
-                    "Review Body": Review_Body_string,
-                    "Developer Reply": Developer_Reply
-                    }
-            items.append(item)
-                
-        except:
-            pass
-driver.quit()
+def getReviewerComment():
+	app_comment = []
+	comment = driver.find_elements_by_xpath('.//span[@jsname = "bN97Pc"]')
+	for c in comment:
+		app_comment.append(c.text)
+	return app_comment
 ```
 5. Transforming the data into dataframe using pandas, and removing the rows which contain empty cell.
 ```python
-df = pd.DataFrame(items, columns = ["review", "Author Name", "Review Date", "Reviewer Ratings", 
-                                    "Review Body", "Developer Reply"])
-                                    import numpy as np
-df['Review Body'].replace('', np.nan, inplace=True)
-df.dropna(subset=['Review Body'], inplace=True)
+def produceReviewsDictionary():
+	concat_reviews_detail_dictionary = {
+	    "Reviewer": getReviewerName(),
+	    "Review Date": getReviewerTime(),
+	    "Reviewer Rating": getRatingResult(),
+	    "Comment": getReviewerComment()
+	}
+	return concat_reviews_detail_dictionary
+
+def pandas2csv(concat_reviews_detail_dictionary):
+	reviews_detail = pd.DataFrame(concat_reviews_detail_dictionary)
+	reviews_detail.to_csv("UtaPass_Reviews.csv")
+
+if __name__ == '__main__':
+	driver = webdriver.Chrome(r"./chromedriver")
+	openGooglePlayStore()
+	scrollDownPage(25)
+
+	app_user = getReviewerName()
+	app_time = getReviewerTime()
+	ratings = getRatingResult()
+	app_comment = getReviewerComment()
+
+	driver.quit()
+	pandas2csv(produceReviewsDictionary())
 ```
 ![GitHub Logo](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%883.38.26.png)
 6. Finally, combine KKBOX reviews dataframe and UtaPass dataframe~ There would be 2250 reviews over two dataset.
