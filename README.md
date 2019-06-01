@@ -304,7 +304,10 @@ shuffle = True
 
 5. Build the word2vec model to do word embedding. (Reference: https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)
 
-Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab: https://textminingonline.com/training-a-japanese-wikipedia-word2vec-model-by-gensim-and-mecab
+Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab: 
+https://github.com/Kyubyong/wordvectors
+https://qiita.com/omuram/items/6570973c090c6f0cb060
+https://textminingonline.com/training-a-japanese-wikipedia-word2vec-model-by-gensim-and-mecab
 ```python
 # Build vocabulary & sequences
 tk = text.Tokenizer(nb_words=max_features, filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n', lower=True, split=" ")
