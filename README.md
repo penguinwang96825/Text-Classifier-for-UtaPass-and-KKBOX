@@ -56,6 +56,47 @@ SET PATH=C:\tools\cuda\bin;%PATH%
 ```
 * Add the absolute path to the TensorRTlib directory to the environment variable LD_LIBRARY_PATH
 
+## Check whether GPU is working
+1. Choose which GPU you want to use
+```python
+import os
+os.environ['CUDA_VISIBLE_DEVICES'] = "0"
+```
+2. Check what all devices are used by tensorflow
+```python
+from tensorflow.python.client import device_lib
+print(device_lib.list_local_devices())
+```
+3. Check using Keras backend function
+```python
+from keras import backend as K
+K.tensorflow_backend._get_available_gpus()
+```
+4. How to get the nvidia driver version from the command line?
+* Open the terminal and type in `cd C:\Program Files\NVIDIA Corporation\NVSMI` and input `nvidia-smi`
+```console
+C:\Users\YangWang>cd C:\Program Files\NVIDIA Corporation\NVSMI
+
+C:\Program Files\NVIDIA Corporation\NVSMI>nvidia-smi
+Sun Jun 16 03:32:53 2019
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 430.86       Driver Version: 430.86       CUDA Version: 10.2     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name            TCC/WDDM | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 1060   WDDM  | 00000000:01:00.0 Off |                  N/A |
+| N/A   54C    P8     6W /  N/A |     85MiB /  3072MiB |      2%      Default |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+```
+
 ## Preparation
 1. Preparing [selenium](https://pypi.org/project/selenium/), [beautiful soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html).
 * Selenium: Selenium is an open source tool which is used for automating the tests carried out on web browsers (Web applications are tested using any web browser).
