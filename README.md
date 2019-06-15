@@ -30,6 +30,32 @@ Full Specs:
 * Power: Antec HCG750 Gold
 * Case: Fractal Design R6-BKO-TG
 
+## Using GPU instead of CPU
+
+### Create a conda environment
+1. Install python version 3.7.3: https://www.python.org/downloads/release/python-373/
+2. Install Anaconda 3 for win10: https://www.anaconda.com/distribution/#download-section
+3. Create a virtual environment and change the PYTHONPATH of an ipython kernel: 
+* `conda update conda`
+* `conda create --name my_env python=3.7.3`
+* `conda activate my_env`
+* `conda install ipykernel -y`
+* `python -m ipykernel install --user --name my_env --display-name "My Env"`
+4. GPU support software requirements:
+* NVIDIA® GPU drivers: https://www.nvidia.com/Download/index.aspx?lang=en-us
+* CUDA® Toolkit: https://developer.nvidia.com/cuda-toolkit-archive
+* cuDNN SDK: https://developer.nvidia.com/cudnn
+* (Optional) TensorRT 5.0: https://developer.nvidia.com/tensorrt
+5. Windows setup
+* Add the CUDA, CUPTI, and cuDNN installation directories to the %PATH% environmental variable. For example, if the CUDA Toolkit is installed to C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0 and cuDNN to C:\tools\cuda, update your %PATH% to match:
+```
+SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin;%PATH%
+SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\extras\CUPTI\libx64;%PATH%
+SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\include;%PATH%
+SET PATH=C:\tools\cuda\bin;%PATH%
+```
+* Add the absolute path to the TensorRTlib directory to the environment variable LD_LIBRARY_PATH
+
 ## Preparation
 1. Preparing [selenium](https://pypi.org/project/selenium/), [beautiful soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html).
 * Selenium: Selenium is an open source tool which is used for automating the tests carried out on web browsers (Web applications are tested using any web browser).
