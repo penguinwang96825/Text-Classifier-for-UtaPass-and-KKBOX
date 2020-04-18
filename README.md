@@ -242,6 +242,8 @@ def get_reviewer_comment():
 ```
 
 ### Data Storage
+There are 2250 reviews over two datasets (UtaPass and KKBOX). 
+
 ```python
 def produce_reviews_dictionary():
     concat_dictionary = {
@@ -256,11 +258,18 @@ def pandas2csv(concat_dictionary):
     reviews_detail = pd.DataFrame(concat_dictionary)
     reviews_detail.to_csv("UtaPass_Reviews.csv")
 ```
-![GitHub Logo](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%883.38.26.png)
-6. Finally, combine KKBOX reviews dataframe and UtaPass dataframe~ There would be 2250 reviews over two dataset.
 
-## What is Neural Network?
-### A simple concept for NN
+Take a look at the dataframe.
+||Author Name|Review Date|Reviewer Ratings|Review Content|Developer Reply|
+|---|---|---|---|---|---|
+|195|眞也大平|2018年12月4日|1|聴い途中止まる強制終了する止まる辞め||
+|13|狼音牙|2019年4月22日|1|LISMO使えなっ早くもどせうたパスLISMO使い||
+|47|美能孝行|2019年3月12日|3|アルバム曲名読み方登録それ名前反映不具合かなり継続技術改善でき諦め使いあり||
+|142|梅川洋子|2019年2月14日|4|いつ聴けるいい||
+|45|わんたった|2019年4月27日|1|アンストアプリ残っ||
+
+## Data Modelling
+### Neural Network
 Artificial neural networks, invented in the 1940’s, are a way of calculating an output from an input (a classification) using weighted connections (“synapses”) that are calculated from repeated iterations through training data. Each pass through the training data alters the weights such that the neural network produces the output with greater “accuracy” (lower error rate).
 
 ![NN](https://storage.googleapis.com/static.leapmind.io/blog/2017/06/bdc93d33df3826ed40e029cd8893466f.png)
