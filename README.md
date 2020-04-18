@@ -191,7 +191,8 @@ def scrollDownPage(pages):
             pass
 ```
 
-### Start Crawling (Reference: https://github.com/ranjeet867/google-play-crawler)
+### Start Crawling
+Reference from [Ranjeet Singh](https://github.com/ranjeet867/google-play-crawler).
 ```python
 def open_google_play_store():
     wait = WebDriverWait(driver, 10)
@@ -269,10 +270,12 @@ Take a look at the dataframe.
 |45|わんたった|2019年4月27日|1|アンストアプリ残っ||
 
 ## Data Modelling
-### Neural Network
-Artificial neural networks, invented in the 1940’s, are a way of calculating an output from an input (a classification) using weighted connections (“synapses”) that are calculated from repeated iterations through training data. Each pass through the training data alters the weights such that the neural network produces the output with greater “accuracy” (lower error rate).
 
+### Neural Network
+Feedforward network is an artificial neural network wherein connections between the nodes do not form a cycle.
 ![NN](https://storage.googleapis.com/static.leapmind.io/blog/2017/06/bdc93d33df3826ed40e029cd8893466f.png)
+
+Recurrent network is a class of artificial neural networks where connections between nodes form a directed graph along a temporal sequence.
 
 Deep learning neural networks are trained using the stochastic gradient descent optimization algorithm. As part of the optimization algorithm, the error for the current state of the model must be estimated repeatedly. This requires the choice of an error function, conventionally called a loss function, that can be used to estimate the loss of the model so that the weights can be updated to reduce the loss on the next evaluation.
 
