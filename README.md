@@ -5,8 +5,8 @@ Text classification for UtaPass and KKBOX total reviews using different machine 
 This sentiment analysis is based on reviews data of UtaPass and KKBOX from Google Play platform. As a KKStreamer at KKBOX, I become more interested in Natural Language Processing, especially text classification. First, I start crawling the text data using web crawler technique, namely BeautifulSoup and Selenium. Second, I develop several different neural network architectures, including simple RNN, LSTM, GRU, and CNN, to detect the polarity of reviews from customers.
 
 ## Data Source
-1. [UtaPass reviews on Google Play](https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja&showAllReviews=true)
-2. [KKBOX reviews on Google Play](https://play.google.com/store/apps/details?id=com.skysoft.kkbox.android&hl=ja&showAllReviews=true)
+1. [UtaPass](https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja&showAllReviews=true) reviews on Google Play
+2. [KKBOX](https://play.google.com/store/apps/details?id=com.skysoft.kkbox.android&hl=ja&showAllReviews=true) reviews on Google Play
 
 ## Bottleneck
 * Is text pre-processing (e.g. remove stop words, remove punctuation, remove bad characters) neccessary? 
@@ -18,13 +18,12 @@ This sentiment analysis is based on reviews data of UtaPass and KKBOX from Googl
 ![FlowChart](https://github.com/penguinwang96825/Text-Classifier-for-UtaPass-and-KKBOX/blob/master/image/flowChart.jpg)
 
 ## Workstation
-Full Specs: 
 * Processor: Intel Core i9-9900K
 * Motherboard: Gigabyte Z390 AORUS MASTER
 * GPU: MSI RTX2080Ti Gaming X Trio 11G
 * RAM: Kingston 64GB DDR4-3000 HyperX Predator
 * CPU Cooler: MasterLiquid ML240L
-* Storage: PLEXTOR M9PeGN 1TB M.2 2280 PCIe SSD + Samsung SSD 970 EVO 250G + Crucial MX500 500GB
+* Storage: PLEXTOR M9PeGN 1TB M.2 2280 PCIe SSD
 * Power: Antec HCG750 Gold
 * Case: Fractal Design R6-BKO-TG
 
@@ -74,7 +73,8 @@ K.tensorflow_backend._get_available_gpus()
 * Open the terminal and type in `cd C:\Program Files\NVIDIA Corporation\NVSMI` and input `nvidia-smi`
 ```shell
 $ C:\Users\YangWang>cd C:\Program Files\NVIDIA Corporation\NVSMI
-
+```
+```console
 C:\Program Files\NVIDIA Corporation\NVSMI>nvidia-smi
 Sun Jun 16 03:32:53 2019
 +-----------------------------------------------------------------------------+
@@ -96,34 +96,39 @@ Sun Jun 16 03:32:53 2019
 ```
 
 ## Preparation
-1. Preparing [selenium](https://pypi.org/project/selenium/), [beautiful soup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and [pandas](https://pandas.pydata.org/pandas-docs/stable/install.html).
-* Selenium: Selenium is an open source tool which is used for automating the tests carried out on web browsers (Web applications are tested using any web browser).
-* Beautiful Soup: Beautiful Soup is a Python library for pulling data out of HTML and XML files.
-* Pandas: Pandas is an open source, BSD-licensed library providing high-performance, easy-to-use data structures and data analysis tools for the Python programming language.
+1. Preparing [Selenium](https://pypi.org/project/selenium/), [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/), and [Pandas](https://pandas.pydata.org/pandas-docs/stable/install.html).
+* Selenium: Selenium is an open source tool used for automating.
+* Beautiful Soup: BeautifulSoup is a Python library for parsing data out of HTML and XML files.
+* Pandas: Pandas is an open source data analysis tools for the Python programming language.
 ```python
+import time
+import sys
+import io
+import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.proxy import *
 from selenium.webdriver.common.by import By
-import time, sys, io
-import pandas as pd
 ```
   Note: 
-  * If can not `pip install fasttext`, than take [Microsoft Visual C++ 14.0 is required (Unable to find vcvarsall.bat)](https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat) as a reference.
-  ![Build Tools for Visual Studio](https://i.stack.imgur.com/7rK61.jpg)
-  ![Build Tools for Visual Studio](https://developercommunity.visualstudio.com/storage/temp/52606-buildtools.png)
-  
-  * Installing MeCab on windows 10: [Windows で pip で mecab-python をいれる](https://qiita.com/yukinoi/items/990b6933d9f21ba0fb43)
+1. If `pip install fasttext` doesn't work, look at this [solution](https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat).
+![Build Tools for Visual Studio](https://i.stack.imgur.com/7rK61.jpg)
+![Build Tools for Visual Studio](https://developercommunity.visualstudio.com/storage/temp/52606-buildtools.png)
+2. Install [MeCab](https://qiita.com/yukinoi/items/990b6933d9f21ba0fb43) on win10.
+3. Text pre-processing after installing [MeCab](https://pypi.org/project/mecab-python-windows/), [neologdn](https://pypi.org/project/neologdn/), [re](https://docs.python.org/3.6/library/re.html), and [emoji](https://pypi.org/project/emoji/)
 
-2. Doing text pre-processing after installing [MeCab](https://pypi.org/project/mecab-python-windows/), [neologdn](https://pypi.org/project/neologdn/), [re](https://docs.python.org/3.6/library/re.html), and [emoji](https://pypi.org/project/emoji/)
-* MeCab: MeCab is an open-source text segmentation library for use with text written in the Japanese language originally developed by the Nara Institute of Science and Technology.
-* Neologdn: Neologdn is a Japanese text normalizer for mecab-neologd.
-* re: A regular expression (or RE) specifies a set of strings that matches it; the functions in this module let you check if a particular string matches a given regular expression (or if a given regular expression matches a particular string, which comes down to the same thing).
-* emoji: The entire set of Emoji codes as defined by the unicode consortium is supported in addition to a bunch of aliases.
+* *MeCab* is an open-source tokenizer written in the Japanese developed by Nara Institute of Science and Technology.
+* *Neologdn* is a Japanese text normalizer for mecab-neologd.
+* *re* specifies a set of strings that matches it.
+* *emoji* is listed on this [cheatsheet](https://www.webfx.com/tools/emoji-cheat-sheet/).
+
+## Main Code for Crawling
+
+### Data Preprocessing
 ```python
+import os
 import MeCab
-from os import path
 import neologdn
 import re
 import emoji
@@ -158,7 +163,8 @@ def clean_text(text):
     text = create_mecab_list(text)    
     return text
 ```
-3. Since the page at Google Play has to scroll down and click the "see more" button to view the whole reviews, I have to set a function to cope with these problems.
+
+### Scroll-down Feature and Click-button Feature
 ```python
 def check_exists_by_xpath(xpath):
     try:
@@ -173,93 +179,82 @@ def replace_value_with_definition(key_to_find, definition):
             temp[key] = definition
             
 def scrollDownPage(pages):
-	for i in range(1,pages):
-	    try:
-	        # Scroll to load other reviews
-	        driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
-	        time.sleep(1)
-	        if check_exists_by_xpath('.//span[@class = "RveJvd snByac"]'):
-	            driver.find_element_by_xpath('.//span[@class = "RveJvd snByac"]').click()
-	            time.sleep(2)
-	    except:
-	        pass
+    for i in range(1,pages):
+        try:
+            # Scroll to load other reviews
+            driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+            time.sleep(1)
+            if check_exists_by_xpath('.//span[@class = "RveJvd snByac"]'):
+                driver.find_element_by_xpath('.//span[@class = "RveJvd snByac"]').click()
+                time.sleep(2)
+        except:
+            pass
 ```
-4. Start crawling the web (Reference: https://github.com/ranjeet867/google-play-crawler)
+
+### Start Crawling (Reference: https://github.com/ranjeet867/google-play-crawler)
 ```python
-def openGooglePlayStore():
-	wait = WebDriverWait(driver, 10)
-	url = "https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja&showAllReviews=true"
-	driver.get(url)
-	time.sleep(5)
+def open_google_play_store():
+    wait = WebDriverWait(driver, 10)
+    url = "https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja&showAllReviews=true"
+    driver.get(url)
+    time.sleep(5)
   
-def getReviewerName():
-	app_user = []
-	user_name = driver.find_elements_by_css_selector("span.X43Kjb")
-	for n in user_name:
-		app_user.append(n.text)
-	return app_user
+def get_reviewer_name():
+    app_user = []
+    user_name = driver.find_elements_by_css_selector("span.X43Kjb")
+    for n in user_name:
+        app_user.append(n.text)
+    return app_user
 
-def getReviewerTime():
-	app_time = []
-	reviewer_time = driver.find_elements_by_css_selector("span.p2TkOb")
-	for t in reviewer_time:
-		app_time.append(t.text)
-	return app_time
+def get_reviewer_time():
+    app_time = []
+    reviewer_time = driver.find_elements_by_css_selector("span.p2TkOb")
+    for t in reviewer_time:
+        app_time.append(t.text)
+    return app_time
 
-def getReviewerRating():
-	app_rating = []
-	reviewer_rating = driver.find_elements_by_css_selector("span.nt2C1d div.pf5lIe div[aria-label]")
-	for a in reviewer_rating:
-		app_rating.append(a.get_attribute( "aria-label" ))
-	return app_rating
+def get_reviewer_rating():
+    app_rating = []
+    reviewer_rating = driver.find_elements_by_css_selector("span.nt2C1d div.pf5lIe div[aria-label]")
+    for a in reviewer_rating:
+        app_rating.append(a.get_attribute( "aria-label" ))
+    return app_rating
 
-def ReviewerRating2Digits( app_rating ):
-	# Transfer reviewer ratings into digits
-	rating = []
-	for element in app_rating:
-		temp = element.split('/')[0]
-		temp2 = temp.split('星 ')[1]
-		rating.append(int(temp2))
-	return rating
+def reviewer_rating_to_digits(app_rating):
+    # Transfer reviewer ratings into digits
+    rating = []
+    for element in app_rating:
+        temp = element.split('/')[0]
+        temp2 = temp.split('星 ')[1]
+        rating.append(int(temp2))
+    return rating
 
-def getRatingResult():
-	ratings = ReviewerRating2Digits( getReviewerRating() )
-	return ratings
+def get_rating_result():
+    ratings = ReviewerRating2Digits(getReviewerRating())
+    return ratings
 
-def getReviewerComment():
-	app_comment = []
-	comment = driver.find_elements_by_xpath('.//span[@jsname = "bN97Pc"]')
-	for c in comment:
-		app_comment.append(c.text)
-	return app_comment
+def get_reviewer_comment():
+    app_comment = []
+    comment = driver.find_elements_by_xpath('.//span[@jsname = "bN97Pc"]')
+    for c in comment:
+        app_comment.append(c.text)
+    return app_comment
 ```
-5. Transforming the data into dataframe using pandas, and removing the rows which contain empty cell.
+
+### Data Storage
 ```python
-def produceReviewsDictionary():
-	concat_reviews_detail_dictionary = {
-	    "Reviewer": getReviewerName(),
-	    "Review Date": getReviewerTime(),
-	    "Reviewer Rating": getRatingResult(),
-	    "Comment": getReviewerComment()
-	}
-	return concat_reviews_detail_dictionary
+def produce_reviews_dictionary():
+    concat_dictionary = {
+        "Reviewer": get_reviewer_name(),
+        "Review Date": get_reviewer_time(),
+        "Reviewer Rating": get_rating_result(),
+        "Comment": get_reviewer_comment()
+    }
+    return concat_dictionary
 
-def pandas2csv(concat_reviews_detail_dictionary):
-	reviews_detail = pd.DataFrame(concat_reviews_detail_dictionary)
-	reviews_detail.to_csv("UtaPass_Reviews.csv")
-
-if __name__ == '__main__':
-	driver = webdriver.Chrome(r"./chromedriver")
-	openGooglePlayStore()
-	scrollDownPage(25)
-
-	app_user = getReviewerName()
-	app_time = getReviewerTime()
-	ratings = getRatingResult()
-	app_comment = getReviewerComment()
-
-	driver.quit()
-	pandas2csv(produceReviewsDictionary())
+def pandas2csv(concat_dictionary):
+    reviews_detail = pd.DataFrame(concat_dictionary)
+    reviews_detail.to_csv("UtaPass_Reviews.csv")
 ```
 ![GitHub Logo](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%883.38.26.png)
 6. Finally, combine KKBOX reviews dataframe and UtaPass dataframe~ There would be 2250 reviews over two dataset.
