@@ -2,59 +2,59 @@
 Text classification for UtaPass and KKBOX total reviews using different machine learning models.
 
 ## Introduction
-This text analysis is based on reviews data of UtaPass and KKBOX from Google Play platform. As a KKStreamer at KKBOX, I become more interested in Natural Language Processing, especially text classification. First, I start crawling the text data using web crawler technique, namely BeautifulSoup and Selenium. Second, I develop several different neural network architectures, including simple RNN, LSTM, GRU, and CNN, to detect the polarity of reviews from customers.
+This sentiment analysis is based on reviews data of UtaPass and KKBOX from Google Play platform. As a KKStreamer at KKBOX, I become more interested in Natural Language Processing, especially text classification. First, I start crawling the text data using web crawler technique, namely BeautifulSoup and Selenium. Second, I develop several different neural network architectures, including simple RNN, LSTM, GRU, and CNN, to detect the polarity of reviews from customers.
 
 ## Data Source
 1. [UtaPass reviews on Google Play](https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja&showAllReviews=true)
 2. [KKBOX reviews on Google Play](https://play.google.com/store/apps/details?id=com.skysoft.kkbox.android&hl=ja&showAllReviews=true)
 
 ## Bottleneck
-* Do every reviews have sentiment words or charateristic of polarity?
 * Is text pre-processing (e.g. remove stop words, remove punctuation, remove bad characters) neccessary? 
 * Is there any useless , redundant or invalid information about the reviews? 
+* Do every reviews have sentiment words or charateristic of polarity?
 * Does this dataset exist a imbalance problem?
 
 ## Flow Chart of Text Classification
 ![FlowChart](https://github.com/penguinwang96825/Text-Classifier-for-UtaPass-and-KKBOX/blob/master/image/flowChart.jpg)
 
-## Information of my computer
+## Workstation
 Full Specs: 
 * Processor: Intel Core i9-9900K
 * Motherboard: Gigabyte Z390 AORUS MASTER
 * GPU: MSI RTX2080Ti Gaming X Trio 11G
-* RAM: Kingston 16GB DDR4-3000 HyperX Predator
+* RAM: Kingston 64GB DDR4-3000 HyperX Predator
 * CPU Cooler: MasterLiquid ML240L
-* Storage: Samsung SSD 970 EVO 250G (M.2 PCIe 2280) + Crucial MX500 500GB
+* Storage: PLEXTOR M9PeGN 1TB M.2 2280 PCIe SSD + Samsung SSD 970 EVO 250G + Crucial MX500 500GB
 * Power: Antec HCG750 Gold
 * Case: Fractal Design R6-BKO-TG
 
-## Using GPU instead of CPU
-
-### Create a conda environment
+## Create Conda Environment
 1. Install python version 3.7.3: https://www.python.org/downloads/release/python-373/
 2. Install Anaconda 3 for win10: https://www.anaconda.com/distribution/#download-section
 3. Create a virtual environment and change the PYTHONPATH of an ipython kernel: 
-* `conda update conda`
-* `conda create --name my_env python=3.7.3`
-* `conda activate my_env`
-* `conda install ipykernel -y`
-* `python -m ipykernel install --user --name my_env --display-name "My Env"`
-4. GPU support software requirements:
-* NVIDIA® GPU drivers: https://www.nvidia.com/Download/index.aspx?lang=en-us
-* CUDA® Toolkit: https://developer.nvidia.com/cuda-toolkit-archive
-* cuDNN SDK: https://developer.nvidia.com/cudnn
-* (Optional) TensorRT 5.0: https://developer.nvidia.com/tensorrt
-5. Windows setup
-* Add the CUDA, CUPTI, and cuDNN installation directories to the `%PATH%` environmental variable. For example, if the CUDA Toolkit is installed to `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0` and cuDNN to `C:\tools\cuda`, update your `%PATH%` to match:
+```shell
+conda update conda
+conda create --name my_env python=3.7.3
+conda activate my_env
+conda install ipykernel -y
+python -m ipykernel install --user --name my_env --display-name "My Env"
 ```
-SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin;%PATH%
-SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\extras\CUPTI\libx64;%PATH%
-SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\include;%PATH%
-SET PATH=C:\tools\cuda\bin;%PATH%
+4. GPU support software requirements:
+    * NVIDIA® GPU drivers: https://www.nvidia.com/Download/index.aspx?lang=en-us
+    * CUDA® Toolkit: https://developer.nvidia.com/cuda-toolkit-archive
+    * cuDNN SDK: https://developer.nvidia.com/cudnn
+    * (Optional) TensorRT 5.0: https://developer.nvidia.com/tensorrt
+5. Windows setup
+    * Add the CUDA, CUPTI, and cuDNN installation directories to the `%PATH%` environmental variable. For example, if the CUDA Toolkit is installed to `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0` and cuDNN to `C:\tools\cuda`, update your `%PATH%` to match:
+```shell
+$ SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\bin;%PATH%
+$ SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\extras\CUPTI\libx64;%PATH%
+$ SET PATH=C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\include;%PATH%
+$ SET PATH=C:\tools\cuda\bin;%PATH%
 ```
 * Add the absolute path to the TensorRTlib directory to the environment variable LD_LIBRARY_PATH
 
-## Check whether GPU is working
+### Check whether GPU is working
 1. Choose which GPU you want to use
 ```python
 import os
@@ -72,8 +72,8 @@ K.tensorflow_backend._get_available_gpus()
 ```
 4. How to get the nvidia driver version from the command line?
 * Open the terminal and type in `cd C:\Program Files\NVIDIA Corporation\NVSMI` and input `nvidia-smi`
-```console
-C:\Users\YangWang>cd C:\Program Files\NVIDIA Corporation\NVSMI
+```shell
+$ C:\Users\YangWang>cd C:\Program Files\NVIDIA Corporation\NVSMI
 
 C:\Program Files\NVIDIA Corporation\NVSMI>nvidia-smi
 Sun Jun 16 03:32:53 2019
