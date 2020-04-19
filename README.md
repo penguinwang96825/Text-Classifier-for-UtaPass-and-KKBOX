@@ -308,7 +308,10 @@ Sentiment can be various. The image below illustrates these different types of s
 ## Main Code for Modelling
 
 ### Let the rob hit the road!
-1. First, split dataframe into two categories: positive and negative. Second, do some text preprocessing. For instance, if rating is lower than 3 stars, label it as negative.
+
+#### Numerise Data
+First, split dataframe into two categories: positive and negative. Second, do some text preprocessing. For instance, if rating is lower than 3 stars, label it as negative.
+
 ```python
 df = pd.read_csv("reviews_kkstream.csv")
 df["label"] = df["Reviewer Ratings"].apply(lambda x: 0 if int(x) <= 3 else 1)
@@ -316,6 +319,7 @@ df = df[["Review Body", "label"]]
 df.columns = ["content", "label"]
 df.head()
 ```
+
 ||content|label|
 |---|---|---|
 |0|歌詞見れるいいずれ誤字あるあとお気に入りプレイリスト開くライブラリ更新リセットれるマジ入れラ...|0|
@@ -324,7 +328,7 @@ df.head()
 |3|以前購入機種だぶっダウンロードれる消す出来機種するダウンロード出来有るガラケー購入スマ出来有り|0|
 |4|LISMOライブラリ開けなっ愛着あっLISMO使っ消し下らないうたパスLISMOいらついて最...|0|
 
-2. Cummulative percentage
+#### Cummulative percentage
 ```python
 df["length"] = df["content"].map(len)
 df["length"].plot.hist(bins=300, density=True, cumulative=True, histtype='step', range=(0, 110))
@@ -369,7 +373,8 @@ Cumulative %   # Words  # Comments
  95.21073         83        3
 ```
 
-3. Split the data into training data (80%) and testing data (20%).
+#### Split Data
+Split the data into training data (80%) and testing data (20%).
 * Training set: a subset to train a model
 * Testing set: a subset to test the trained model
 
@@ -380,7 +385,7 @@ y = df['label'].values
 x_train, x_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=17)
 ```
 
-4. Import the packages for modelling.
+#### Import Packages
 ```python
 import tensorflow as tf
 import numpy as np
@@ -416,7 +421,7 @@ from gensim.models.word2vec import Word2Vec
 from collections import Counter
 ```
 
-4. Set all the parameters
+#### Set Parameters
 ```python
 # Input parameters
 config = {
@@ -454,7 +459,8 @@ config = {
 }
 ```
 
-5. Build the word2vec model to do word embedding. [Reference](https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)
+#### Word Embedding
+Build the word2vec model to do word embedding. [Reference](https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)
 
 Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab: 
  * Kyubyong Park's [GitHub](https://github.com/Kyubyong/wordvectors)
@@ -504,172 +510,207 @@ def get_embedding_matrix(w2v):
     print("Vocabulary size: {}\nEmbedding size: {}".format(wv_matrix.shape[0], wv_matrix.shape[1]))
     
     return wv_matrix
+
+wv_matrix = get_embedding_matrix(w2v)
 ```
 
-6. Construct neural network architectures.
+#### Build Model
+Construct neural network architectures.
 
 Reference: 
 * Asanilta Fahda's [GitHub](https://github.com/asanilta/amazon-sentiment-keras-experiment)
 * teratsyk's [GitHub](https://github.com/teratsyk/bokete-ai)
-* Simple RNN
+
+##### Simple RNN
 ```python
-# Simple RNN
+def train_simple_rnn(x, y, wv_matrix):
+    # Bidirectional LSTM
+    tf.keras.backend.clear_session()
+    
+    model = Sequential()
+    model.add(Embedding(wv_matrix.shape[0], wv_matrix.shape[1], mask_zero=False, 
+                        weights=[wv_matrix], input_length=config["MAX_LEN"], trainable=False))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(SimpleRNN(units=config["output_size"], activation=config["rnn_activation"]))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
 
-model_RNN = Sequential()
-model_RNN.add(embedding_layer)
-model_RNN.add(SimpleRNN(output_dim=output_size, activation=rnn_activation))
-model_RNN.add(Dropout(0.25))
-model_RNN.add(Dense(1))
-model_RNN.add(Activation('sigmoid'))
+    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=['acc'])
 
-model_RNN.compile(loss=loss,
-                  optimizer=optimizer,
-                  metrics=['accuracy'])
+    print("Simple RNN: \n")
+    print("="*20, "Start Training", "="*20)
 
-print('Simple RNN')
+    path = 'weights\{}_weights.hdf5'.format("rnn")
+    model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
+    early_stopping = EarlyStopping(monitor = 'loss', patience=3, verbose=1, mode='auto')
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001)
 
-from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
-
-path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
-model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
-early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
-
-history_RNN = model_RNN.fit(x, y, batch_size = batch_size, 
-                            epochs = nb_epoch, 
-                            validation_split = validation_split, 
-                            shuffle = shuffle, 
-                            verbose = 1, 
-                            callbacks = [model_checkpoint, early_stopping])
+    history = model.fit(
+        x, y, 
+        batch_size=config['batch_size'], 
+        epochs=config['nb_epoch'], 
+        validation_split=config['validation_split'], 
+        shuffle=config['shuffle'], 
+        verbose = 1, 
+        callbacks = [model_checkpoint, early_stopping, reduce_lr])
+    
+    return history, model
 ```
-* GRU
+##### GRU
 ```python
-# GRU
+def train_gru(x, y, wv_matrix):
+    # Bidirectional LSTM
+    tf.keras.backend.clear_session()
+    
+    model = Sequential()
+    model.add(Embedding(wv_matrix.shape[0], wv_matrix.shape[1], mask_zero=False, 
+                        weights=[wv_matrix], input_length=config["MAX_LEN"], trainable=False))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(GRU(units=config["output_size"], return_sequences=False))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
 
-model_GRU = Sequential()
-model_GRU.add(embedding_layer)
-model_GRU.add(GRU(units = output_size, activation = rnn_activation,recurrent_activation = recurrent_activation))
-model_GRU.add(Dropout(0.25))
-model_GRU.add(Dense(1))
-model_GRU.add(Activation('sigmoid'))
+    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=['acc'])
 
-model_GRU.compile(loss = loss,
-                  optimizer = optimizer,
-                  metrics = ['accuracy'])
+    print("GRU: \n")
+    print("="*20, "Start Training", "="*20)
 
-print('GRU')
+    path = 'weights\{}_weights.hdf5'.format("gru")
+    model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
+    early_stopping = EarlyStopping(monitor = 'loss', patience=3, verbose=1, mode='auto')
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001)
 
-from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
-
-path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
-model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
-early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
-
-history_GRU = model_GRU.fit(x, y, batch_size = batch_size, 
-                          epochs = nb_epoch, 
-                          validation_split = validation_split, 
-                          shuffle = shuffle, 
-                          verbose = 1, 
-                          callbacks = [model_checkpoint, early_stopping])
+    history = model.fit(
+        x, y, 
+        batch_size=config['batch_size'], 
+        epochs=config['nb_epoch'], 
+        validation_split=config['validation_split'], 
+        shuffle=config['shuffle'], 
+        verbose = 1, 
+        callbacks = [model_checkpoint, early_stopping, reduce_lr])
+    
+    return history, model
 ```
-* LSTM
+##### LSTM
 ```python
-# LSTM
+def train_lstm(x, y, wv_matrix):
+    # Bidirectional LSTM
+    tf.keras.backend.clear_session()
+    
+    model = Sequential()
+    model.add(Embedding(wv_matrix.shape[0], wv_matrix.shape[1], mask_zero=False, 
+                        weights=[wv_matrix], input_length=config["MAX_LEN"], trainable=False))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(CuDNNLSTM(units=config['lstm_cell'], return_sequences=False))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
 
-model_LSTM = Sequential()
-model_LSTM.add(embedding_layer)
-model_LSTM.add(Dropout(0.5))
-model_LSTM.add(LSTM(units = output_size, activation = rnn_activation, recurrent_activation = recurrent_activation))
-model_LSTM.add(Dropout(0.25))
-model_LSTM.add(Dense(1))
-model_LSTM.add(Activation('sigmoid'))
+    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=['acc'])
 
-model_LSTM.compile(loss=loss,
-                   optimizer=optimizer,
-                   metrics=['accuracy'])
+    print("LSTM: \n")
+    print("="*20, "Start Training", "="*20)
 
-print('LSTM')
+    path = 'weights\{}_weights.hdf5'.format("lstm")
+    model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
+    early_stopping = EarlyStopping(monitor = 'loss', patience=3, verbose=1, mode='auto')
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001)
 
-from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
-
-path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
-model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
-early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
-
-history_LSTM = model_LSTM.fit(x, y, batch_size = batch_size, 
-                              epochs = nb_epoch, 
-                              validation_split = validation_split, 
-                              shuffle = shuffle, 
-                              verbose = 1, 
-                              callbacks = [model_checkpoint, early_stopping])
+    history = model.fit(
+        x, y, 
+        batch_size=config['batch_size'], 
+        epochs=config['nb_epoch'], 
+        validation_split=config['validation_split'], 
+        shuffle=config['shuffle'], 
+        verbose = 1, 
+        callbacks = [model_checkpoint, early_stopping, reduce_lr])
+    
+    return history, model
 ```
-* BiLSTM
+##### BiLSTM
 ```python
-# Bidirectional LSTM
+def train_bilstm(x, y, wv_matrix):
+    # Bidirectional LSTM
+    tf.keras.backend.clear_session()
+    
+    model = Sequential()
+    model.add(Embedding(wv_matrix.shape[0], wv_matrix.shape[1], mask_zero=False, 
+                        weights=[wv_matrix], input_length=config["MAX_LEN"], trainable=False))
+    model.add(Bidirectional(CuDNNLSTM(units=config['lstm_cell'], return_sequences=False)))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(Dense(config['fc_cell']))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
 
-model_BiLSTM = Sequential()
-model_BiLSTM.add(embedding_layer)
-model_BiLSTM.add(Bidirectional(LSTM(units=output_size,activation=rnn_activation,recurrent_activation=recurrent_activation)))
-model_BiLSTM.add(Dropout(0.25))
-model_BiLSTM.add(Dense(1))
-model_BiLSTM.add(Activation('sigmoid'))
+    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=['acc'])
 
-model_BiLSTM.compile(loss=loss,
-                     optimizer=optimizer,
-                     metrics=['accuracy'])
+    print("Bidirectional LSTM: \n")
+    print("="*20, "Start Training", "="*20)
 
-print('Bidirectional LSTM')
+    path = 'weights\{}_weights.hdf5'.format("bilstm")
+    model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
+    early_stopping = EarlyStopping(monitor = 'loss', patience=3, verbose=1, mode='auto')
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001)
 
-from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
-
-path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
-model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
-early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
-
-history_BiLSTM = model_BiLSTM.fit(x, y, batch_size = batch_size, 
-                                  epochs = nb_epoch, 
-                                  validation_split = validation_split, 
-                                  shuffle = shuffle, 
-                                  verbose = 1, 
-                                  callbacks = [model_checkpoint, early_stopping])
+    history = model.fit(
+        x, y, 
+        batch_size=config['batch_size'], 
+        epochs=config['nb_epoch'], 
+        validation_split=config['validation_split'], 
+        shuffle=config['shuffle'], 
+        verbose = 1, 
+        callbacks = [model_checkpoint, early_stopping, reduce_lr])
+    
+    return history, model
 ```
-* CNN + LSTM (Based on "[Convolutional Neural Networks for Sentence Classification](http://arxiv.org/pdf/1408.5882v2.pdf)" by Yoon Kim)
+##### CNN + LSTM 
+Based on "Convolutional Neural Networks for Sentence Classification" written by Yoon Kim [[paper link](http://arxiv.org/pdf/1408.5882v2.pdf)]
 ```python
-# CNN + LSTM
+def train_cnn_lstm(x, y, wv_matrix):
+    tf.keras.backend.clear_session()
+    
+    model = Sequential()
+    model.add(Embedding(wv_matrix.shape[0], wv_matrix.shape[1], mask_zero=False, 
+                        weights=[wv_matrix], input_length=config["MAX_LEN"], trainable=False))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(Conv1D(filters=config['nb_filter'], kernel_size=config['filter_length'], padding=config['border_mode']))
+    model.add(BatchNormalization())
+    model.add(Activation("relu"))
+    model.add(MaxPooling1D(pool_size=config['pool_length']))
+    model.add(LSTM(units=config['lstm_cell'], return_sequences=False))
+    model.add(Dense(config['fc_cell']*2))
+    model.add(Dropout(config['dropout_rate']))
+    model.add(Dense(1))
+    model.add(Activation('sigmoid'))
 
-model_CNN_LSTM = Sequential()
-model_CNN_LSTM.add(embedding_layer)
-model_CNN_LSTM.add(Dropout(0.5))
-model_CNN_LSTM.add(Convolution1D(filters=nb_filter,
-                        kernel_size=filter_length,
-                        border_mode=border_mode,
-                        activation=cnn_activation,
-                        subsample_length=1))
-model_CNN_LSTM.add(MaxPooling1D(pool_size=pool_length))
-model_CNN_LSTM.add(LSTM(units=output_size,activation=rnn_activation,recurrent_activation=recurrent_activation))
-model_CNN_LSTM.add(Dropout(0.25))
-model_CNN_LSTM.add(Dense(1))
-model_CNN_LSTM.add(Activation('sigmoid'))
-model_CNN_LSTM.compile(loss=loss,
-                       optimizer=optimizer,
-                       metrics=['accuracy'])
+    model.compile(loss=config['loss'], optimizer=config['optimizer'], metrics=['acc'])
 
-print('CNN + LSTM')
+    print("CNN + LSTM: \n")
+    print("="*20, "Start Training", "="*20)
 
-from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
+    path = 'weights\{}_weights.hdf5'.format("cnn_lstm")
+    model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
+    early_stopping = EarlyStopping(monitor = 'loss', patience=3, verbose=1, mode='auto')
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001)
 
-path = 'weights.{epoch:02d}-{loss:.2f}-{acc:.2f}.hdf5'
-model_checkpoint = ModelCheckpoint(path, monitor = 'loss', verbose = 1, save_best_only = True, mode = 'auto')
-early_stopping = EarlyStopping(monitor='loss', patience = 8, verbose = 1, mode = 'auto')
-
-history_CNN_LSTM = model_CNN_LSTM.fit(x, y, batch_size = batch_size, 
-                                      epochs = nb_epoch, 
-                                      validation_split = validation_split, 
-                                      shuffle = shuffle, 
-                                      verbose = 1, 
-                                      callbacks = [model_checkpoint, early_stopping])
+    history = model.fit(
+        x, y, 
+        batch_size=config['batch_size'], 
+        epochs=config['nb_epoch'], 
+        validation_split=config['validation_split'], 
+        shuffle=config['shuffle'], 
+        verbose=1, 
+        callbacks=[model_checkpoint, early_stopping, reduce_lr])
+    
+    return history, model
 ```
 
-7. Define two plot function to plot the history of accuracy and loss by using matplotlib.
+#### Visualisation
+Define two ploting functions to visualise the history of accuracy and loss.
+
 ```python
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
@@ -735,57 +776,67 @@ def plot_history(history):
     plt.show()
 ```
 
-8. Compare the performance among the five deep learning models.
+### Performance
+Compare the performance among five deep learning models.
 * Simple RNN
-![Simple RNN](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.47.22.png)
+```shell
+Accuracy: 0.6124
+F1 Score: 0.129
+```
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple_rnn.png)
 
 * GRU
-![GRU](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.47.42.png)
+```shell
+Accuracy: 0.5933
+F1 Score: 0.023
+```
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru.png)
 
 * LSTM
-![LSTM](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.48.14.png)
+```shell
+Accuracy: 0.6172
+F1 Score: 0.2157
+```
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm.png)
 
 * BiLSTM
-![BiLSTM](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.48.32.png)
+```shell
+Accuracy: 0.5981
+F1 Score: 0.1064
+```
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm.png)
 
 * CNN + LSTM
-![CNN + LSTM](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.48.45.png)
-
-9. In training a neural network, f1 score is an important metric to evaluate the performance of classification models, especially for unbalanced classes where the binary accuracy is useless.
-```python
-tk = text.Tokenizer(nb_words=max_features, filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n', lower=True, split=" ")
-tk.fit_on_texts(sentences_test)
-sentences_test = tk.texts_to_sequences(sentences_test)
-word_index = tk.word_index
-sentences_test = sequence.pad_sequences(sentences_test,maxlen=max_len)
-
-y_pred_temp = model_CNN_LSTM.predict_classes(sentences_test).tolist()
-y_pred = []
-for i in y_pred_temp:
-    y_pred.append(str(i).strip('[]'))
-y_pred = [int(i) for i in y_pred]
-print("Size of label: ", len(y_pred))
-
-y_test_temp = y_test.tolist()
-y_test = []
-for i in y_test_temp:
-    y_test.append(str(i).strip('[]'))
-y_test = [int(i) for i in y_test]
-print("Size of label: ", len(y_test))
+```shell
+Accuracy: 0.5455
+F1 Score: 0.2963
 ```
-```python
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+![CNN + LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn_lstm.png)
 
-# accuracy: (tp + tn) / (p + n)
+### Evaluation
+In training a neural network, f1 score is an important metric to evaluate the performance of classification models, especially for unbalanced classes where the binary accuracy is useless.
+
+```python
+def predict(sentences, model):
+    x_test = tokenizer.texts_to_sequences(sentences)
+    x_test = sequence.pad_sequences(x_test, maxlen=MAX_LEN)
+    y_prob = model.predict_classes(x_test)
+    y_pred = y_prob.squeeze()   
+    return y_pred
+```
+
+
+```python
+# Accuracy: (tp + tn) / (p + n)
 accuracy = accuracy_score(y_test, y_pred)
 print('Accuracy: %f' % accuracy)
-# precision tp / (tp + fp)
+# Precision tp / (tp + fp)
 precision = precision_score(y_test, y_pred)
 print('Precision: %f' % precision)
-# recall: tp / (tp + fn)
+# Recall: tp / (tp + fn)
 recall = recall_score(y_test, y_pred)
 print('Recall: %f' % recall)
-# f1: 2 tp / (2 tp + fp + fn)
+# F1: 2 tp / (2 tp + fp + fn)
 f1 = f1_score(y_test, y_pred)
 print('F1 score: %f' % f1)
 ```
