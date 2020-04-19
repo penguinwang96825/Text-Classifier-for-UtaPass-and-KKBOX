@@ -787,53 +787,18 @@ def plot_history(history):
 ### Performance
 Compare the performance among five deep learning models.
 * Simple RNN
-```shell
-Accuracy: 0.622
-F1 Score: 0.2178
-Confusion Matrix: 
- [[119  75]
- [  4  11]]
-```
 ![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple_rnn.png)
 
 * GRU
-```shell
-Accuracy: 0.5742
-F1 Score: 0.3308
-Confusion Matrix: 
- [[98 64]
- [25 22]]
-```
 ![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru.png)
 
 * LSTM
-```shell
-Accuracy: 0.6077
-F1 Score: 0.2807
-Confusion Matrix: 
- [[111  70]
- [ 12  16]]
-```
 ![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm.png)
 
 * BiLSTM
-```shell
-Accuracy: 0.5981
-F1 Score: 0.1064
-Confusion Matrix: 
- [[120  81]
- [  3   5]]
-```
 ![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm.png)
 
 * CNN + LSTM
-```shell
-Accuracy: 0.4928
-F1 Score: 0.4362
-Confusion Matrix: 
- [[62 45]
- [61 41]]
-```
 ![CNN + LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn_lstm.png)
 
 ### Evaluation
@@ -868,6 +833,29 @@ print('F1 score: %f' % f1)
 |---|---|---|---|---|---|
 |Accuracy|0.622|0.5742|0.6077|0.5981|0.4928|
 |F1 Score|0.2178|0.3308|0.2807|0.1064|0.4362|
+
+#### Confusion Matrix
+```shell
+Simple RNN: 
+     [[119  75]
+     [  4  11]]
+
+GRU: 
+     [[98 64]
+     [25 22]]
+
+LSTM:
+     [[111  70]
+     [ 12  16]]
+
+BiLSTM: 
+     [[120  81]
+     [  3   5]]
+
+Cnn + LSTM:
+     [[62 45]
+     [61 41]]
+```
 
 ## Future Roadmap
 It is completely possible to use only raw text as input for making predictions. The most important thing is to extract the relevant features from this raw source of data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
