@@ -269,49 +269,58 @@ Take a look at the dataframe.
 |142|梅川洋子|2019年2月14日|4|いつ聴けるいい||
 |45|わんたった|2019年4月27日|1|アンストアプリ残っ||
 
-## Data Modelling
+## Deep Learning Application
 
 ### Neural Network
-Feedforward network is an artificial neural network wherein connections between the nodes do not form a cycle.
-![NN](https://storage.googleapis.com/static.leapmind.io/blog/2017/06/bdc93d33df3826ed40e029cd8893466f.png)
+Feedforward neural network is an artificial neural network wherein connections between the nodes do not form a cycle.
+![ANN](https://storage.googleapis.com/static.leapmind.io/blog/2017/06/bdc93d33df3826ed40e029cd8893466f.png)
 
-Recurrent network is a class of artificial neural networks where connections between nodes form a directed graph along a temporal sequence.
+Convolutional neura network have multiple layers; including convolutional layer, non-linearity layer, pooling layer and fully-connected layer. The convolutional and fully-connected layers have parameters but pooling and non-linearity layers don't have. CNN has an excellent performance in machine learning problems. Specially the applications that deal with image data.
+![CNN](https://pic4.zhimg.com/80/v2-e7cacdcb87423e5662f8901c9da6dcbb_1440w.jpg)
 
-Deep learning neural networks are trained using the stochastic gradient descent optimization algorithm. As part of the optimization algorithm, the error for the current state of the model must be estimated repeatedly. This requires the choice of an error function, conventionally called a loss function, that can be used to estimate the loss of the model so that the weights can be updated to reduce the loss on the next evaluation.
+Recurrent neura network is a class of artificial neural networks where connections between nodes form a directed graph along a temporal sequence.
+![RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/RNN.png)
 
-![Overfitting/Underfitting a Model](https://cdn-images-1.medium.com/max/1000/1*6vPGzBNppqMHllg1o_se8Q.png)
+### Overfitting? Underfitting?
+
+#### Definition
 * Underfitting: a linear function is not sufficient to fit the training samples.
 * Overfitting: for higher degrees the model will overfit the training data, i.e. it learns the noise of the training data.
+![Overfitting/Underfitting](https://builtin.com/sites/default/files/styles/ckeditor_optimize/public/inline-images/Curse%20of%20Dimensionality%20overfit%20vs%20underfit.png)
 
-### What can we do to cope with overfitting?
-1. Takahiro Ishihara addressed these issues by applying eigendecomposition to each slice matrix of a tensor to reduce the number of parameters. [Neural Tensor Networks with Diagonal Slice Matrices](https://www.aclweb.org/anthology/N18-1047)
-2. Another simple and powerful regularization technique for neural networks and deep learning models is adding Dropout layer proposed by Srivastava, et al. in their 2014 paper “[Dropout: A Simple Way to Prevent Neural Networks from Overfitting.](http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf)”
-3. Early stopping is a method that allows you to specify an arbitrary large number of training epochs and stop training once the model performance stops improving on a hold out validation dataset.
+#### Solution
+1. Dropout layer: Srivastava, et al. proposed in their 2014 paper “[Dropout: A Simple Way to Prevent Neural Networks from Overfitting.](http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf)”
+2. Early Stopping: It is a a form of regularization used to avoid overfitting when training a learner with an iterative method, such as gradient descent.
 ![Early stopping](https://cdn-images-1.medium.com/max/1200/1*QckgibgJ74BhMaqinqwSDw.png)
+3. Eigendecomposition: Takahiro Ishihara applys eigendecomposition to each slice matrix of a tensor to reduce the number of parameters. [Neural Tensor Networks with Diagonal Slice Matrices](https://www.aclweb.org/anthology/N18-1047)
 
-## What is Sentiment Analysis?
-### Sentiment Analysis & Topic Categorization
-Sentiment analysis attempts to determine the sentiment of a text. You can formulate this problem in several ways, depending on your working definition of “sentiment” and “text.”
 
-Sentiment can be binary, categorical, ordinal, or continuous. When modeled as continuous, sentiment is often called “polarity,” an analogue for positive and negative charges. The graphic below illustrates these different options and provides an example of each.
+### Sentiment Analysis
+Sentiment analysis is contextual mining of text which identifies and extracts subjective information in source material, and helping a business to understand the social sentiment of their brand, product or service while monitoring online conversations.
 
+Sentiment can be various. The image below illustrates these different types of sentiment and provides examples.
 ![Sentiment Analysis](https://cdn-images-1.medium.com/max/1400/1*P5mOEUJ_h4rahnvPQcgirA.jpeg)
 
-## Let the rob hit the road!
-1. We first start by loading the raw data. Each textual reviews is splitted into a positive part and a negative part. We group them together in order to start with only raw text data and no other information. If the reviewer rating is lower than 3 stars, we will divide it into the negative group. 
+## Main Code for Modelling
+
+### Let the rob hit the road!
+1. First, split dataframe into two categories: positive and negative. Second, do some text preprocessing. For instance, if rating is lower than 3 stars, label it as negative.
 ```python
 df = pd.read_csv("reviews_kkstream.csv")
-import numpy as np
-
-# create the label
-df["is_bad_review"] = df["Reviewer Ratings"].apply(lambda x: 0 if int(x) <= 3 else 1)
-# select only relevant columns
-df = df[["Review Body", "is_bad_review"]]
+df["label"] = df["Reviewer Ratings"].apply(lambda x: 0 if int(x) <= 3 else 1)
+df = df[["Review Body", "label"]]
+df.columns = ["content", "label"]
 df.head()
 ```
-![GitHub Logo](https://github.com/penguinwang96825/Text_Classification/blob/master/image/%E8%9E%A2%E5%B9%95%E5%BF%AB%E7%85%A7%202019-05-08%20%E4%B8%8B%E5%8D%884.19.52.png)
+||content|label|
+|---|---|---|
+|0|歌詞見れるいいずれ誤字あるあとお気に入りプレイリスト開くライブラリ更新リセットれるマジ入れラ...|0|
+|1|通知切る方法分かりすぎる見る新たアプリ入れ通知切れ判明アプリ開発若者毎日アクティブ新曲買っ聴...|0|
+|2|どうしてもLISMO比べダウンロード反映LISMO動画一覧表示パス分離とにかく使いLISMO...|0|
+|3|以前購入機種だぶっダウンロードれる消す出来機種するダウンロード出来有るガラケー購入スマ出来有り|0|
+|4|LISMOライブラリ開けなっ愛着あっLISMO使っ消し下らないうたパスLISMOいらついて最...|0|
 
-2. Split the data into training data and testing data
+2. Split the data into training data (80%) and testing data (20%).
 * Training set: a subset to train a model
 * Testing set: a subset to test the trained model
 
@@ -322,26 +331,44 @@ from sklearn.model_selection import train_test_split
 sentences = df['Review Body'].apply(str).values
 y = df['is_bad_review'].values
 
-sentences_train, sentences_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=1000)
+sentences_train, sentences_test, y_train, y_test = \
+    train_test_split(sentences, y, test_size=0.20, random_state=1000)
 ```
 
 3. Import the packages we need
 ```python
 import tensorflow as tf
-import numpy
+import numpy as np
+import keras
+from keras_self_attention import SeqSelfAttention
+from keras_self_attention SeqWeightedAttention
 from keras.models import Sequential,Model
-from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Activation
+from keras.layers import Flatten
 from keras.layers import Embedding
-from keras.layers import LSTM,Bidirectional
+from keras.layers import LSTM
 from keras.layers import SimpleRNN
 from keras.layers import GRU
-from keras.layers import Convolution1D, MaxPooling1D
+from keras.layers import Conv1D
+from keras.layers import MaxPooling1D
 from keras.engine import Input
+from keras.layers import CuDNNLSTM
+from keras.layers import Embedding
+from keras.layers import SpatialDropout1D
+from keras.layers import Bidirectional
+from keras.optimizers import Adam
 from keras.optimizers import SGD
-from keras.preprocessing import text,sequence
+from keras.layers.normalization import BatchNormalization
+from keras.preprocessing import text
+from keras.preprocessing import sequence
+from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
+from keras.callbacks import ReduceLROnPlateau
 import pandas
 import os
 from gensim.models.word2vec import Word2Vec
+from collections import Counter
 ```
 
 4. Set all the parameters
