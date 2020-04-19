@@ -272,13 +272,16 @@ Take a look at the dataframe.
 ## Deep Learning Application
 
 ### Neural Network
-Feedforward neural network is an artificial neural network wherein connections between the nodes do not form a cycle.
+* Feedforward neural network is an artificial neural network wherein connections between the nodes do not form a cycle.
+
 ![ANN](https://storage.googleapis.com/static.leapmind.io/blog/2017/06/bdc93d33df3826ed40e029cd8893466f.png)
 
-Convolutional neura network have multiple layers; including convolutional layer, non-linearity layer, pooling layer and fully-connected layer. The convolutional and fully-connected layers have parameters but pooling and non-linearity layers don't have. CNN has an excellent performance in machine learning problems. Specially the applications that deal with image data.
-![CNN](https://pic4.zhimg.com/80/v2-e7cacdcb87423e5662f8901c9da6dcbb_1440w.jpg)
+* Convolutional neura network have multiple layers; including convolutional layer, non-linearity layer, pooling layer and fully-connected layer. The convolutional and fully-connected layers have parameters but pooling and non-linearity layers don't have. CNN has an excellent performance in machine learning problems. Specially the applications that deal with image data.
 
-Recurrent neura network is a class of artificial neural networks where connections between nodes form a directed graph along a temporal sequence.
+![CNN](https://www.mathworks.com/solutions/deep-learning/convolutional-neural-network/_jcr_content/mainParsys/band_copy_copy_14735_1026954091/mainParsys/columns_1606542234_c/2/image.adapt.full.high.jpg/1586420862596.jpg)
+
+* Recurrent neura network is a class of artificial neural networks where connections between nodes form a directed graph along a temporal sequence.
+
 ![RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/RNN.png)
 
 ### Overfitting? Underfitting?
@@ -289,16 +292,17 @@ Recurrent neura network is a class of artificial neural networks where connectio
 ![Overfitting/Underfitting](https://builtin.com/sites/default/files/styles/ckeditor_optimize/public/inline-images/Curse%20of%20Dimensionality%20overfit%20vs%20underfit.png)
 
 #### Solution
-1. Dropout layer: Srivastava, et al. proposed in their 2014 paper “[Dropout: A Simple Way to Prevent Neural Networks from Overfitting.](http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf)”
-2. Early Stopping: It is a a form of regularization used to avoid overfitting when training a learner with an iterative method, such as gradient descent.
+1. Dropout layer: Srivastava, et al. proposed in their 2014 paper "Dropout: A Simple Way to Prevent Neural Networks from Overfitting." [paper link](http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf)
+2. Early Stopping: It is a form of regularization used to avoid overfitting when training a learner with an iterative method, such as gradient descent.
 ![Early stopping](https://cdn-images-1.medium.com/max/1200/1*QckgibgJ74BhMaqinqwSDw.png)
-3. Eigendecomposition: Takahiro Ishihara applys eigendecomposition to each slice matrix of a tensor to reduce the number of parameters. [Neural Tensor Networks with Diagonal Slice Matrices](https://www.aclweb.org/anthology/N18-1047)
+3. Eigendecomposition: Takahiro Ishihara applys eigendecomposition to each slice matrix of a tensor to reduce the number of parameters. [paper link](https://www.aclweb.org/anthology/N18-1047)
 
 
 ### Sentiment Analysis
 Sentiment analysis is contextual mining of text which identifies and extracts subjective information in source material, and helping a business to understand the social sentiment of their brand, product or service while monitoring online conversations.
 
 Sentiment can be various. The image below illustrates these different types of sentiment and provides examples.
+
 ![Sentiment Analysis](https://cdn-images-1.medium.com/max/1400/1*P5mOEUJ_h4rahnvPQcgirA.jpeg)
 
 ## Main Code for Modelling
@@ -320,22 +324,63 @@ df.head()
 |3|以前購入機種だぶっダウンロードれる消す出来機種するダウンロード出来有るガラケー購入スマ出来有り|0|
 |4|LISMOライブラリ開けなっ愛着あっLISMO使っ消し下らないうたパスLISMOいらついて最...|0|
 
-2. Split the data into training data (80%) and testing data (20%).
+2. Cummulative percentage
+```python
+df["length"] = df["content"].map(len)
+df["length"].plot.hist(bins=300, density=True, cumulative=True, histtype='step', range=(0, 110))
+```
+
+![cum](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cum.png)
+
+```python
+text_len = df["length"].values
+max_len = text_len.max()
+
+len_sum = [0] * max_len
+for i in text_len:
+    len_sum[i-1] += 1
+    
+len_cum = [len_sum[0]] + [0] * (max_len-1)
+for i in range(1, max_len):
+    len_cum[i] += len_sum[i] + len_cum[i-1]
+
+print('Cumulative %   # Words  # Comments')
+for i in range(max_len):
+    len_cum[i] /= len(text_len)
+    if len_sum[i] != 0:
+        if (len_cum[i] >= 0.8 and len_cum[i-1] < 0.8):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+        if (len_cum[i] >= 0.85 and len_cum[i-1] < 0.85):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+        if (len_cum[i] >= 0.9 and len_cum[i-1] < 0.9):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+        if (len_cum[i] >= 0.92 and len_cum[i-1] < 0.92):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+        if (len_cum[i] >= 0.95 and len_cum[i-1] < 0.95):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+```
+
+```shell
+Cumulative %   # Words  # Comments
+ 80.26820         48        4
+ 85.72797         55        9
+ 90.32567         62        5
+ 92.14559         69        2
+ 95.21073         83        3
+```
+
+3. Split the data into training data (80%) and testing data (20%).
 * Training set: a subset to train a model
 * Testing set: a subset to test the trained model
 
 ```python
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.model_selection import train_test_split
+sentences = df['content'].apply(str).values
+y = df['label'].values
 
-sentences = df['Review Body'].apply(str).values
-y = df['is_bad_review'].values
-
-sentences_train, sentences_test, y_train, y_test = \
-    train_test_split(sentences, y, test_size=0.20, random_state=1000)
+x_train, x_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=17)
 ```
 
-3. Import the packages we need
+4. Import the packages for modelling.
 ```python
 import tensorflow as tf
 import numpy as np
@@ -374,90 +419,98 @@ from collections import Counter
 4. Set all the parameters
 ```python
 # Input parameters
-max_features = 5000
-max_len = 200
-embedding_size = 300
+config = {
+    # Text parameters
+    "MAX_FEATURE": 10000, 
+    "MAX_LEN": 64, 
+    "EMBED_SIZE": 300, 
 
-# Convolution parameters
-filter_length = 3
-nb_filter = 150
-pool_length = 2
-cnn_activation = 'relu'
-border_mode = 'same'
+    # Convolution parameters
+    "filter_length": 3, 
+    "nb_filter": 150, 
+    "pool_length": 2, 
+    "cnn_activation": 'relu', 
+    "border_mode": 'same', 
 
-# RNN parameters
-output_size = 50
-rnn_activation = 'tanh'
-recurrent_activation = 'hard_sigmoid'
+    # RNN parameters
+    "lstm_cell": 128, 
+    "output_size": 50, 
+    "rnn_activation": 'tanh', 
+    "recurrent_activation": 'hard_sigmoid', 
+    
+    # FC and Dropout
+    "fc_cell": 128, 
+    "dropout_rate": 0.25, 
 
-# Compile parameters
-loss = 'binary_crossentropy'
-optimizer = 'rmsprop'
+    # Compile parameters
+    "loss": 'binary_crossentropy', 
+    "optimizer": 'adam', 
 
-# Training parameters
-batch_size = 128
-nb_epoch = 250
-validation_split = 0.25
-shuffle = True
+    # Training parameters
+    "batch_size": 256, 
+    "nb_epoch": 100, 
+    "validation_split": 0.30, 
+    "shuffle": True
+}
 ```
 
-5. Build the word2vec model to do word embedding. (Reference: https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)
+5. Build the word2vec model to do word embedding. [Reference](https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)
 
 Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab: 
-https://github.com/Kyubyong/wordvectors
-https://qiita.com/omuram/items/6570973c090c6f0cb060
-https://textminingonline.com/training-a-japanese-wikipedia-word2vec-model-by-gensim-and-mecab
+ * Kyubyong Park's [GitHub](https://github.com/Kyubyong/wordvectors)
+ * Omuram's [Qiita](https://qiita.com/omuram/items/6570973c090c6f0cb060)
+ * TextMiner's [Website](https://textminingonline.com/training-a-japanese-wikipedia-word2vec-model-by-gensim-and-mecab)
 ```python
 # Build vocabulary & sequences
-tk = text.Tokenizer(nb_words=max_features, filters='!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n', lower=True, split=" ")
-tk.fit_on_texts(sentences)
-x = tk.texts_to_sequences(sentences)
-word_index = tk.word_index
-x = sequence.pad_sequences(x,maxlen=max_len)
+def get_preprocessed_seq(sentences):
+    """
+    input:
+        sentences: numpy.ndarray
+    output: 
+        x: 
+        x.shape: (# of sentences, sentence_max_length)
+    """
+    # Build vocabulary & sequences
+    tokenizer = text.Tokenizer(num_words=config["MAX_FEATURE"], lower=True, split=" ")
+    tokenizer.fit_on_texts(sentences)
+    word_index = tokenizer.word_index
 
-# Build pre-trained embedding layer
-import gensim
-w2v = Word2Vec.load('ja-gensim.50d.data.model')
+    x = tokenizer.texts_to_sequences(sentences)
+    x = sequence.pad_sequences(x, maxlen=config["MAX_LEN"], padding="pre")
+    
+    return x
 
-from collections import Counter
+# Build pre-trained embedding matrix
+def get_embedding_matrix(w2v):
+    # Get word vector and load vocabulary from pretrained w2v model
+    word_vectors = w2v.wv
+    MAX_VOCAB = len(word_vectors.vocab)
+    nb_words = min(config["MAX_FEATURE"], MAX_VOCAB)
+    
+    # Get word index
+    counter = Counter()
+    word_index = {t[0]: i+1 for i,t in enumerate(counter.most_common(MAX_VOCAB))}
 
-word_vectors = w2v.wv
-MAX_NB_WORDS = len(word_vectors.vocab)
-MAX_SEQUENCE_LENGTH = 200
-WV_DIM = 50
-nb_words = min(MAX_NB_WORDS, len(word_vectors.vocab))
-vocab = Counter()
-word_index = {t[0]: i+1 for i,t in enumerate(vocab.most_common(MAX_NB_WORDS))}
-
-# we initialize the matrix with random numbers
-import numpy as np
-wv_matrix = (np.random.rand(nb_words, WV_DIM) - 0.5) / 5.0
-for word, i in word_index.items():
-    if i >= MAX_NB_WORDS:
-        continue
-    try:
-        embedding_vector = word_vectors[word]
-        # words not found in embedding index will be all-zeros.
-        wv_matrix[i] = embedding_vector
-    except:
-        pass      
-
-import tensorflow as tf
-from keras.layers import Dense, Input, CuDNNLSTM, Embedding, Dropout,SpatialDropout1D, Bidirectional
-from keras.models import Model
-from keras.optimizers import Adam
-from keras.layers.normalization import BatchNormalization
-
-embedding_layer = Embedding(nb_words, 
-                     WV_DIM, 
-                     mask_zero = False, 
-                     weights = [wv_matrix], 
-                     input_length = MAX_SEQUENCE_LENGTH, 
-                     trainable = False)
+    # Initialize the matrix with random numbers
+    wv_matrix = (np.random.rand(nb_words, EMBED_SIZE) - 0.5) / 5.0
+    for word, i in word_index.items():
+        if i >= MAX_VOCAB:
+            continue
+        try:
+            embedding_vector = word_vectors[word]
+            wv_matrix[i] = embedding_vector
+        except:
+            pass
+    print("Vocabulary size: {}\nEmbedding size: {}".format(wv_matrix.shape[0], wv_matrix.shape[1]))
+    
+    return wv_matrix
 ```
 
-6. Construct the five models.
-Reference: [amazon-sentiment-keras-experiment](https://github.com/asanilta/amazon-sentiment-keras-experiment), [img2txt(CNN+LSTM)](https://github.com/teratsyk/bokete-ai)
+6. Construct neural network architectures.
+
+Reference: 
+* Asanilta Fahda's [GitHub](https://github.com/asanilta/amazon-sentiment-keras-experiment)
+* teratsyk's [GitHub](https://github.com/teratsyk/bokete-ai)
 * Simple RNN
 ```python
 # Simple RNN
