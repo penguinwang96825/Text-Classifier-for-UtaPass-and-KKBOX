@@ -446,7 +446,7 @@ config = {
 ```
 
 #### Word Embedding
-Build the word2vec model to do word embedding. [Reference](https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)
+Build the word2vec model to do word embedding. [[Reference](https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)]
 
 Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab: 
  * Kyubyong Park's [GitHub](https://github.com/Kyubyong/wordvectors)
@@ -520,6 +520,18 @@ Reference:
 * Asanilta Fahda's [GitHub](https://github.com/asanilta/amazon-sentiment-keras-experiment)
 * teratsyk's [GitHub](https://github.com/teratsyk/bokete-ai)
 
+Build a customised metrics function to record f1 value after each epoch.
+```python
+def get_f1(y_true, y_pred):
+    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + K.epsilon())
+    recall = true_positives / (possible_positives + K.epsilon())
+    f1_val = 2*(precision*recall)/(precision+recall+K.epsilon())
+    return f1_val
+```
+
 ##### Simple RNN
 ```python
 def train_simple_rnn(x, y, wv_matrix):
@@ -534,7 +546,7 @@ def train_simple_rnn(x, y, wv_matrix):
     model.add(Dense(1))
     model.add(Activation('sigmoid'))
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=['acc'])
+    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
 
     print("Simple RNN: \n")
     print("="*20, "Start Training", "="*20)
@@ -569,7 +581,7 @@ def train_gru(x, y, wv_matrix):
     model.add(Dense(1))
     model.add(Activation('sigmoid'))
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=['acc'])
+    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
 
     print("GRU: \n")
     print("="*20, "Start Training", "="*20)
@@ -604,7 +616,7 @@ def train_lstm(x, y, wv_matrix):
     model.add(Dense(1))
     model.add(Activation('sigmoid'))
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=['acc'])
+    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
 
     print("LSTM: \n")
     print("="*20, "Start Training", "="*20)
@@ -641,12 +653,12 @@ def train_bilstm(x, y, wv_matrix):
     model.add(Dense(1))
     model.add(Activation('sigmoid'))
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=['acc'])
+    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
 
     print("Bidirectional LSTM: \n")
     print("="*20, "Start Training", "="*20)
 
-    path = 'weights\{}_weights.hdf5'.format("bilstm")
+    path = 'weights\weights.hdf5'
     model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
     early_stopping = EarlyStopping(monitor = 'loss', patience=8, verbose=1, mode='auto')
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=8, min_lr=0.001)
@@ -682,7 +694,7 @@ def train_cnn_lstm(x, y, wv_matrix):
     model.add(Dense(1))
     model.add(Activation('sigmoid'))
 
-    model.compile(loss=config['loss'], optimizer=config['optimizer'], metrics=['acc'])
+    model.compile(loss=config['loss'], optimizer=config['optimizer'], metrics=[get_f1])
 
     print("CNN + LSTM: \n")
     print("="*20, "Start Training", "="*20)
@@ -735,10 +747,10 @@ def plot_history(history):
     loss = history.history['loss']
     val_loss = history.history['val_loss']
 
-    acc = history.history['acc']
-    val_acc = history.history['val_acc']
+    f1 = history.history['get_f1']
+    val_f1 = history.history['val_get_f1']
 
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(20,10))
     plt.subplot(2,1,1)
     plt.title('Loss')
     epochs = len(loss)
@@ -753,12 +765,12 @@ def plot_history(history):
     ax.set_facecolor('snow')
     plt.grid(color='lightgray', linestyle='-', linewidth=1)
     plt.xlabel('epoch')
-    plt.ylabel('acc')
+    plt.ylabel('loss')
 
     plt.subplot(2,1,2)
-    plt.title('Accuracy')
-    plt.plot(range(epochs), acc, marker='.', label='acc')
-    plt.plot(range(epochs), val_acc, marker='.', label='val_acc')
+    plt.title('F1 Score')
+    plt.plot(range(epochs), f1, marker='.', label='acc')
+    plt.plot(range(epochs), val_f1, marker='.', label='val_acc')
     plt.legend(loc='best')
     ax = plt.gca()
     ax.spines['bottom'].set_linewidth(5)
@@ -768,7 +780,7 @@ def plot_history(history):
     ax.set_facecolor('snow')
     plt.grid(color='lightgray', linestyle='-', linewidth=1)
     plt.xlabel('epoch')
-    plt.ylabel('acc')
+    plt.ylabel('f1')
     plt.show()
 ```
 
@@ -776,46 +788,51 @@ def plot_history(history):
 Compare the performance among five deep learning models.
 * Simple RNN
 ```shell
-Accuracy: 0.6124
-F1 Score: 0.198
-[[118  76]
- [  5  10]]
+Accuracy: 0.622
+F1 Score: 0.2178
+Confusion Matrix: 
+ [[119  75]
+ [  4  11]]
 ```
 ![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple_rnn.png)
 
 * GRU
 ```shell
-Accuracy: 0.5502
-F1 Score: 0.3472
-[[90 61]
- [33 25]]
+Accuracy: 0.5742
+F1 Score: 0.3308
+Confusion Matrix: 
+ [[98 64]
+ [25 22]]
 ```
 ![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru.png)
 
 * LSTM
 ```shell
-Accuracy: 0.622
-F1 Score: 0.2617
-[[116  72]
- [  7  14]]
+Accuracy: 0.6077
+F1 Score: 0.2807
+Confusion Matrix: 
+ [[111  70]
+ [ 12  16]]
 ```
 ![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm.png)
 
 * BiLSTM
 ```shell
-Accuracy: 0.6029
-F1 Score: 0.2243
-[[114  74]
- [  9  12]]
+Accuracy: 0.5981
+F1 Score: 0.1064
+Confusion Matrix: 
+ [[120  81]
+ [  3   5]]
 ```
 ![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm.png)
 
 * CNN + LSTM
 ```shell
-Accuracy: 0.5646
-F1 Score: 0.3724
-[[91 59]
- [32 27]]
+Accuracy: 0.4928
+F1 Score: 0.4362
+Confusion Matrix: 
+ [[62 45]
+ [61 41]]
 ```
 ![CNN + LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn_lstm.png)
 
@@ -848,6 +865,6 @@ print('F1 score: %f' % f1)
 ```
 
 ## Future Roadmap
-It is completely possible to use only raw text as input for making predictions. The most important thing is to be able to extract the relevant features from this raw source of data. Although the accuracy of the models are really low and need more improvement, I have done a practice with a full harvest.
+It is completely possible to use only raw text as input for making predictions. The most important thing is to extract the relevant features from this raw source of data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
 
-Text binary classifier is a meat-and-potatoes issue for most sentiment analysis, and there are still many things can be done on this topic. Future works might construct the multi-class text classifier to divide consumer reviews by different issue types. (Function, UI, Crash, Truncate, Subscription, Server, Enhancement, Other)
+Text binary classifier is a meat-and-potatoes issue for most sentiment analysis, and there are still many things can be done on this task. Future works might construct the multi-class text classifier to separate customers' reviews into different issue types. (e.g. Function, UI, Crash, Truncate, Subscription, Server, Enhancement, Other)
