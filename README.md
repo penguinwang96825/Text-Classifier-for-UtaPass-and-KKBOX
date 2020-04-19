@@ -864,6 +864,11 @@ f1 = f1_score(y_test, y_pred)
 print('F1 score: %f' % f1)
 ```
 
+||Simple RNN|GRU|LSTM|BiLSTM|CNN + LSTM|
+|---|---|---|---|---|---|
+|Accuracy|0.622|0.5742|0.6077|0.5981|0.4928|
+|F1 Score|0.2178|0.3308|0.2807|0.1064|0.4362|
+
 ## Future Roadmap
 It is completely possible to use only raw text as input for making predictions. The most important thing is to extract the relevant features from this raw source of data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
 
