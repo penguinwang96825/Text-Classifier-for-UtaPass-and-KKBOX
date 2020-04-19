@@ -373,25 +373,11 @@ Cumulative %   # Words  # Comments
  95.21073         83        3
 ```
 
-#### Split Data
-Split the data into training data (80%) and testing data (20%).
-* Training set: a subset to train a model
-* Testing set: a subset to test the trained model
-
-```python
-sentences = df['content'].apply(str).values
-y = df['label'].values
-
-x_train, x_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=17)
-```
-
 #### Import Packages
 ```python
 import tensorflow as tf
 import numpy as np
 import keras
-from keras_self_attention import SeqSelfAttention
-from keras_self_attention SeqWeightedAttention
 from keras.models import Sequential,Model
 from keras.layers import Dense
 from keras.layers import Dropout
@@ -468,7 +454,7 @@ Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab:
  * TextMiner's [Website](https://textminingonline.com/training-a-japanese-wikipedia-word2vec-model-by-gensim-and-mecab)
 ```python
 # Build vocabulary & sequences
-def get_preprocessed_seq(sentences):
+def get_preprocessed_seq(sentences, tokenizer):
     """
     input:
         sentences: numpy.ndarray
@@ -477,8 +463,6 @@ def get_preprocessed_seq(sentences):
         x.shape: (# of sentences, sentence_max_length)
     """
     # Build vocabulary & sequences
-    tokenizer = text.Tokenizer(num_words=config["MAX_FEATURE"], lower=True, split=" ")
-    tokenizer.fit_on_texts(sentences)
     word_index = tokenizer.word_index
 
     x = tokenizer.texts_to_sequences(sentences)
@@ -514,6 +498,21 @@ def get_embedding_matrix(w2v):
 wv_matrix = get_embedding_matrix(w2v)
 ```
 
+#### Split Data
+Split the data into training data (80%) and testing data (20%).
+* Training set: a subset to train a model
+* Testing set: a subset to test the trained model
+
+```python
+sentences = df['content'].apply(str).values
+y = df['label'].values
+
+tokenizer = text.Tokenizer(num_words=config["MAX_FEATURE"], lower=True, split=" ")
+tokenizer.fit_on_texts(sentences)
+
+x_train, x_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=17)
+```
+
 #### Build Model
 Construct neural network architectures.
 
@@ -524,7 +523,6 @@ Reference:
 ##### Simple RNN
 ```python
 def train_simple_rnn(x, y, wv_matrix):
-    # Bidirectional LSTM
     tf.keras.backend.clear_session()
     
     model = Sequential()
@@ -560,7 +558,6 @@ def train_simple_rnn(x, y, wv_matrix):
 ##### GRU
 ```python
 def train_gru(x, y, wv_matrix):
-    # Bidirectional LSTM
     tf.keras.backend.clear_session()
     
     model = Sequential()
@@ -596,7 +593,6 @@ def train_gru(x, y, wv_matrix):
 ##### LSTM
 ```python
 def train_lstm(x, y, wv_matrix):
-    # Bidirectional LSTM
     tf.keras.backend.clear_session()
     
     model = Sequential()
@@ -632,13 +628,13 @@ def train_lstm(x, y, wv_matrix):
 ##### BiLSTM
 ```python
 def train_bilstm(x, y, wv_matrix):
-    # Bidirectional LSTM
     tf.keras.backend.clear_session()
     
     model = Sequential()
     model.add(Embedding(wv_matrix.shape[0], wv_matrix.shape[1], mask_zero=False, 
                         weights=[wv_matrix], input_length=config["MAX_LEN"], trainable=False))
-    model.add(Bidirectional(CuDNNLSTM(units=config['lstm_cell'], return_sequences=False)))
+    model.add(Bidirectional(LSTM(units=config['output_size'], return_sequences=True)))
+    model.add(Bidirectional(LSTM(units=config['output_size'], return_sequences=False)))
     model.add(Dropout(config['dropout_rate']))
     model.add(Dense(config['fc_cell']))
     model.add(Dropout(config['dropout_rate']))
@@ -652,8 +648,8 @@ def train_bilstm(x, y, wv_matrix):
 
     path = 'weights\{}_weights.hdf5'.format("bilstm")
     model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
-    early_stopping = EarlyStopping(monitor = 'loss', patience=3, verbose=1, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr=0.001)
+    early_stopping = EarlyStopping(monitor = 'loss', patience=8, verbose=1, mode='auto')
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=8, min_lr=0.001)
 
     history = model.fit(
         x, y, 
@@ -781,35 +777,45 @@ Compare the performance among five deep learning models.
 * Simple RNN
 ```shell
 Accuracy: 0.6124
-F1 Score: 0.129
+F1 Score: 0.198
+[[118  76]
+ [  5  10]]
 ```
 ![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple_rnn.png)
 
 * GRU
 ```shell
-Accuracy: 0.5933
-F1 Score: 0.023
+Accuracy: 0.5502
+F1 Score: 0.3472
+[[90 61]
+ [33 25]]
 ```
 ![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru.png)
 
 * LSTM
 ```shell
-Accuracy: 0.6172
-F1 Score: 0.2157
+Accuracy: 0.622
+F1 Score: 0.2617
+[[116  72]
+ [  7  14]]
 ```
 ![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm.png)
 
 * BiLSTM
 ```shell
-Accuracy: 0.5981
-F1 Score: 0.1064
+Accuracy: 0.6029
+F1 Score: 0.2243
+[[114  74]
+ [  9  12]]
 ```
 ![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm.png)
 
 * CNN + LSTM
 ```shell
-Accuracy: 0.5455
-F1 Score: 0.2963
+Accuracy: 0.5646
+F1 Score: 0.3724
+[[91 59]
+ [32 27]]
 ```
 ![CNN + LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn_lstm.png)
 
