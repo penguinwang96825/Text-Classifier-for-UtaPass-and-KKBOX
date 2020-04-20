@@ -115,7 +115,12 @@ from selenium.webdriver.common.by import By
 1. If `pip install fasttext` doesn't work, look at this [solution](https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat).
 ![Build Tools for Visual Studio](https://i.stack.imgur.com/7rK61.jpg)
 ![Build Tools for Visual Studio](https://developercommunity.visualstudio.com/storage/temp/52606-buildtools.png)
+
 2. Install [MeCab](https://qiita.com/yukinoi/items/990b6933d9f21ba0fb43) on win10.
+* Download [MeCab 64bit version](https://github.com/ikegami-yukino/mecab/releases/download/v0.996.2/mecab-64-0.996.2.exe) first.
+* Run `pip install https://github.com/ikegami-yukino/mecab/archive/v0.996.2.tar.gz` in terminal.
+* Run `python -m pip install mecab` in terminal.
+
 3. Text pre-processing after installing [MeCab](https://pypi.org/project/mecab-python-windows/), [neologdn](https://pypi.org/project/neologdn/), [re](https://docs.python.org/3.6/library/re.html), and [emoji](https://pypi.org/project/emoji/)
 
 * *MeCab* is an open-source tokenizer written in the Japanese developed by Nara Institute of Science and Technology.
@@ -378,22 +383,31 @@ Cumulative %   # Words  # Comments
 import tensorflow as tf
 import numpy as np
 import keras
-from keras.models import Sequential,Model
-from keras.layers import Dense
-from keras.layers import Dropout
-from keras.layers import Activation
-from keras.layers import Flatten
+import keras.backend as K
+from keras.models import Sequential
+from keras.models import Model
+from keras.layers import Input
+from keras.layers import InputLayer
 from keras.layers import Embedding
-from keras.layers import LSTM
-from keras.layers import SimpleRNN
-from keras.layers import GRU
+from keras.layers import Dense
+from keras.layers import Add
+from keras.layers import Concatenate
+from keras.layers import ZeroPadding1D
+from keras.layers import Dropout
+from keras.layers import SpatialDropout1D
+from keras.layers import Activation
 from keras.layers import Conv1D
 from keras.layers import MaxPooling1D
-from keras.engine import Input
+from keras.layers import GlobalAveragePooling1D
+from keras.layers import GlobalMaxPool1D
+from keras.layers import AveragePooling1D
+from keras.layers import BatchNormalization
+from keras.layers import Flatten
+from keras.layers import SimpleRNN
 from keras.layers import CuDNNLSTM
-from keras.layers import Embedding
-from keras.layers import SpatialDropout1D
 from keras.layers import Bidirectional
+from keras.layers.recurrent import LSTM
+from keras.layers.recurrent import GRU
 from keras.optimizers import Adam
 from keras.optimizers import SGD
 from keras.layers.normalization import BatchNormalization
@@ -498,10 +512,8 @@ def get_embedding_matrix(w2v):
 wv_matrix = get_embedding_matrix(w2v)
 ```
 
-#### Split Data
-Split the data into training data (80%) and testing data (20%).
-* Training set: a subset to train a model
-* Testing set: a subset to test the trained model
+#### Build Tokeniser
+Reference from [Japanese NLP Library](https://jprocessing.readthedocs.io/en/latest/)
 
 ```python
 sentences = df['content'].apply(str).values
@@ -509,7 +521,14 @@ y = df['label'].values
 
 tokenizer = text.Tokenizer(num_words=config["MAX_FEATURE"], lower=True, split=" ")
 tokenizer.fit_on_texts(sentences)
+```
 
+#### Split Data
+Split the data into training data (80%) and testing data (20%).
+* Training set: a subset to train a model
+* Testing set: a subset to test the trained model
+
+```python
 x_train, x_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=17)
 ```
 
@@ -833,6 +852,9 @@ print('F1 score: %f' % f1)
 |---|---|---|---|---|---|
 |Accuracy|0.622|0.5742|0.6077|0.5981|0.4928|
 |F1 Score|0.2178|0.3308|0.2807|0.1064|0.4362|
+|Total Params||||||
+|Trainable Params||||||
+|Non-trainable Params||||||
 
 #### Confusion Matrix
 ```shell
