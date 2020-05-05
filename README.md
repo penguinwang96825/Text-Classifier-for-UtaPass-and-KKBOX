@@ -138,45 +138,6 @@ from selenium.webdriver.common.by import By
 
 ## Main Code for Crawling
 
-### Data Preprocessing
-```python
-import os
-import MeCab
-import neologdn
-import re
-import emoji
-
-pos_list = [10, 11, 31, 32, 34]
-pos_list.extend(list(range(36,50)))
-pos_list.extend([59, 60, 62, 67])
-
-def create_mecab_list(text):
-    mecab_list = []
-    mecab = MeCab.Tagger("-Ochasen")
-    mecab.parse("")
-    # encoding = text.encode('utf-8')
-    node = mecab.parseToNode(text)
-    while node:
-        if len(node.surface) > 1:
-            if node.posid in pos_list:
-                morpheme = node.surface
-                mecab_list.append(morpheme)
-        node = node.next
-    return mecab_list
-
-def give_emoji_free_text(text):
-    allchars = [str for str in text]
-    emoji_list = [c for c in allchars if c in emoji.UNICODE_EMOJI]
-    cleaned_text = ' '.join([str for str in text.split() if not any(i in str for i in emoji_list)])
-    return cleaned_text
-
-def clean_text(text):
-    text = give_emoji_free_text(text)
-    text = neologdn.normalize(text)
-    text = create_mecab_list(text)
-    return text
-```
-
 ### Scroll-down Feature and Click-button Feature
 ```python
 def check_exists_by_xpath(xpath):
@@ -196,8 +157,11 @@ def scrollDownPage():
         try: 
             # Scroll down to the bottom
             for _ in range(5):
-                driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
-                time.sleep(1 + random.random())
+                try: 
+                    driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+                    time.sleep(1 + random.random())
+                except:
+                    break
             # Click "もっと見る"
             if check_exists_by_xpath(button):
                 driver.find_element_by_xpath(button).click()
@@ -210,72 +174,49 @@ def scrollDownPage():
 ```
 
 ### Start Crawling
-Reference from [Ranjeet Singh](https://github.com/ranjeet867/google-play-crawler).
 ```python
-def open_google_play_store():
-    wait = WebDriverWait(driver, 10)
-    url = "https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja&showAllReviews=true"
+def open_google_play_reviews(url):
+    driver_path = r"C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\chromedriver.exe"
+    driver = webdriver.Chrome(driver_path)
+    time.sleep(2 + random.random())
     driver.get(url)
-    time.sleep(5)
-  
-def get_reviewer_name():
-    app_user = []
-    user_name = driver.find_elements_by_css_selector("span.X43Kjb")
-    for n in user_name:
-        app_user.append(n.text)
-    return app_user
-
-def get_reviewer_time():
-    app_time = []
-    reviewer_time = driver.find_elements_by_css_selector("span.p2TkOb")
-    for t in reviewer_time:
-        app_time.append(t.text)
-    return app_time
-
-def get_reviewer_rating():
-    app_rating = []
-    reviewer_rating = driver.find_elements_by_css_selector("span.nt2C1d div.pf5lIe div[aria-label]")
-    for a in reviewer_rating:
-        app_rating.append(a.get_attribute( "aria-label" ))
-    return app_rating
-
-def reviewer_rating_to_digits(app_rating):
-    # Transfer reviewer ratings into digits
-    rating = []
-    for element in app_rating:
-        temp = element.split('/')[0]
-        temp2 = temp.split('星 ')[1]
-        rating.append(int(temp2))
-    return rating
-
-def get_rating_result():
-    ratings = ReviewerRating2Digits(getReviewerRating())
-    return ratings
-
-def get_reviewer_comment():
-    app_comment = []
-    comment = driver.find_elements_by_xpath('.//span[@jsname = "bN97Pc"]')
-    for c in comment:
-        app_comment.append(c.text)
-    return app_comment
+    time.sleep(5 + random.random())
+    
+    scrollDownPage()
+    soup = BeautifulSoup(driver.page_source, "html.parser")
+    time.sleep(3 + random.random())
+    driver.quit()
+    return soup
+    
+def convert_soup_to_dataframe(soup):
+    reviews = soup.find(name="div", attrs={"jsname": "fk8dgd"})
+    reviews_list = reviews.find_all(name="div", attrs={"jscontroller": "H6eOGe"})
+    reviews_all = []
+    for i in range(len(reviews_list)):
+        name = reviews_list[i].find(name="span", attrs={"class": "X43Kjb"}).string
+        date = reviews_list[i].find(name="span", attrs={"class": "p2TkOb"}).string
+        rating = reviews_list[i].find(name="div", attrs={"class": "pf5lIe"}).find(name="div").get("aria-label")
+        rating = int(rating.split("/")[0][-1])
+        content = reviews_list[i].find(name="span", attrs={"jsname": "bN97Pc"}).string
+        like = reviews_list[i].find(name="div", attrs={"class": "jUL89d y92BAb"}).string
+        reviews_all.append([name, date, rating, content, like])
+    df = pd.DataFrame(reviews_all)
+    df.columns = ["name", "date", "rating", "content", "like"]
+    return df
+    
+def crawl(url):
+    print("Parsing soup from url...")
+    soup = open_google_play_reviews(url)
+    print("Done parsing soup from url.")
+    df = convert_soup_to_dataframe(soup)
+    return df
 ```
 
 ### Data Storage
-There are 2250 reviews over two datasets (UtaPass and KKBOX). 
+There are 12498 reviews in total. 
 
 ```python
-def produce_reviews_dictionary():
-    concat_dictionary = {
-        "Reviewer": get_reviewer_name(),
-        "Review Date": get_reviewer_time(),
-        "Reviewer Rating": get_rating_result(),
-        "Comment": get_reviewer_comment()
-    }
-    return concat_dictionary
-
-def pandas2csv(concat_dictionary):
-    reviews_detail = pd.DataFrame(concat_dictionary)
-    reviews_detail.to_csv("UtaPass_Reviews.csv")
+df_all.to_csv("all_20200423.csv")
 ```
 
 Take a look at the dataframe.
@@ -327,75 +268,27 @@ Sentiment can be various. The image below illustrates these different types of s
 
 ### Let the rob hit the road!
 
-#### Numerise Data
-First, split dataframe into two categories: positive and negative. Second, do some text preprocessing. For instance, if rating is lower than 3 stars, label it as negative.
-
-```python
-df = pd.read_csv("reviews_kkstream.csv")
-df["label"] = df["Reviewer Ratings"].apply(lambda x: 0 if int(x) <= 3 else 1)
-df = df[["Review Body", "label"]]
-df.columns = ["content", "label"]
-df.head()
-```
-
-||content|label|
-|---|---|---|
-|0|歌詞見れるいいずれ誤字あるあとお気に入りプレイリスト開くライブラリ更新リセットれるマジ入れラ...|0|
-|1|通知切る方法分かりすぎる見る新たアプリ入れ通知切れ判明アプリ開発若者毎日アクティブ新曲買っ聴...|0|
-|2|どうしてもLISMO比べダウンロード反映LISMO動画一覧表示パス分離とにかく使いLISMO...|0|
-|3|以前購入機種だぶっダウンロードれる消す出来機種するダウンロード出来有るガラケー購入スマ出来有り|0|
-|4|LISMOライブラリ開けなっ愛着あっLISMO使っ消し下らないうたパスLISMOいらついて最...|0|
-
-#### Cummulative percentage
-```python
-df["length"] = df["content"].map(len)
-df["length"].plot.hist(bins=300, density=True, cumulative=True, histtype='step', range=(0, 110))
-```
-
-![cum](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cum.png)
-
-```python
-text_len = df["length"].values
-max_len = text_len.max()
-
-len_sum = [0] * max_len
-for i in text_len:
-    len_sum[i-1] += 1
-    
-len_cum = [len_sum[0]] + [0] * (max_len-1)
-for i in range(1, max_len):
-    len_cum[i] += len_sum[i] + len_cum[i-1]
-
-print('Cumulative %   # Words  # Comments')
-for i in range(max_len):
-    len_cum[i] /= len(text_len)
-    if len_sum[i] != 0:
-        if (len_cum[i] >= 0.8 and len_cum[i-1] < 0.8):
-            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
-        if (len_cum[i] >= 0.85 and len_cum[i-1] < 0.85):
-            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
-        if (len_cum[i] >= 0.9 and len_cum[i-1] < 0.9):
-            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
-        if (len_cum[i] >= 0.92 and len_cum[i-1] < 0.92):
-            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
-        if (len_cum[i] >= 0.95 and len_cum[i-1] < 0.95):
-            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
-```
-
-```shell
-Cumulative %   # Words  # Comments
- 80.26820         48        4
- 85.72797         55        9
- 90.32567         62        5
- 92.14559         69        2
- 95.21073         83        3
-```
-
 #### Import Packages
 ```python
+import warnings
+import re
+import emoji
+import MeCab
 import tensorflow as tf
 import numpy as np
-import keras
+import pandas as pd
+import matplotlib.pyplot as plt
+from collections import Counter
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
+
+import tensorflow as tf
 import keras.backend as K
 from keras.models import Sequential
 from keras.models import Model
@@ -428,10 +321,67 @@ from keras.preprocessing import text
 from keras.preprocessing import sequence
 from keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
 from keras.callbacks import ReduceLROnPlateau
-import pandas
-import os
 from gensim.models.word2vec import Word2Vec
-from collections import Counter
+```
+
+#### Load Data In
+First, split dataframe into two categories: positive and negative. Second, do some text preprocessing. For instance, if rating is lower than 3 stars, label it as negative.
+
+```python
+df = pd.read_csv(r"C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\data\all_20200423.csv")
+# create the label
+df["label"] = df["rating"].apply(lambda x: 0 if int(x) <= 3 else 1)
+# select only relevant columns
+df = df[["content", "label"]]
+df["content"] = df["content"].map(str)
+df.head(5)
+```
+
+||content|label|
+|---|---|---|
+|0|歌詞見れるいいずれ誤字あるあとお気に入りプレイリスト開くライブラリ更新リセットれるマジ入れラ...|0|
+|1|通知切る方法分かりすぎる見る新たアプリ入れ通知切れ判明アプリ開発若者毎日アクティブ新曲買っ聴...|0|
+|2|どうしてもLISMO比べダウンロード反映LISMO動画一覧表示パス分離とにかく使いLISMO...|0|
+|3|以前購入機種だぶっダウンロードれる消す出来機種するダウンロード出来有るガラケー購入スマ出来有り|0|
+|4|LISMOライブラリ開けなっ愛着あっLISMO使っ消し下らないうたパスLISMOいらついて最...|0|
+
+#### Cummulative percentage
+```python
+df["length"] = df["content"].map(len)
+text_len = df["length"].values
+max_len = text_len.max()
+
+len_sum = [0] * max_len
+for i in text_len:
+    len_sum[i-1] += 1
+    
+len_cum = [len_sum[0]] + [0] * (max_len-1)
+for i in range(1, max_len):
+    len_cum[i] += len_sum[i] + len_cum[i-1]
+
+print('Cumulative %   # Words  # Comments')
+for i in range(max_len):
+    len_cum[i] /= len(text_len)
+    if len_sum[i] != 0:
+        if (len_cum[i] >= 0.8 and len_cum[i-1] < 0.8):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+        if (len_cum[i] >= 0.85 and len_cum[i-1] < 0.85):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+        if (len_cum[i] >= 0.9 and len_cum[i-1] < 0.9):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+        if (len_cum[i] >= 0.92 and len_cum[i-1] < 0.92):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+        if (len_cum[i] >= 0.95 and len_cum[i-1] < 0.95):
+            print(' %.5f   \t  %d \t    %d'%(len_cum[i]*100, i, len_sum[i]))
+```
+
+```shell
+Cumulative %   # Words  # Comments
+ 80.14077         55        84
+ 85.21870         68        46
+ 90.21044         86        36
+ 92.06349         96        21
+ 95.07290         118       14
 ```
 
 #### Set Parameters
@@ -466,10 +416,113 @@ config = {
 
     # Training parameters
     "batch_size": 256, 
-    "nb_epoch": 100, 
-    "validation_split": 0.30, 
+    "nb_epoch": 1000, 
+    "validation_split": 0.20, 
     "shuffle": True
 }
+```
+
+#### Data Pre-processing
+1. Remove emoji.
+2. Remove punctuation
+3. Remove digits.
+4. Tokenise sentence using MeCab.
+
+```python
+def create_mecab_list(text):
+    pos_list = [10, 11, 31, 32, 34]
+    pos_list.extend(list(range(36,50)))
+    pos_list.extend([59, 60, 62, 67])
+
+    mecab_list = []
+    mecab = MeCab.Tagger("-Owakati")
+    mecab.parse("")
+    # encoding = text.encode('utf-8')
+    node = mecab.parseToNode(text)
+    while node:
+        if len(node.surface) > 1:
+            if node.posid in pos_list:
+                morpheme = node.surface
+                mecab_list.append(morpheme)
+        node = node.next
+    return mecab_list
+
+def give_emoji_free_text(text):
+    allchars = [string for string in text]
+    emoji_list = [c for c in allchars if c in emoji.UNICODE_EMOJI]
+    cleaned_text = ' '.join([str for str in text.split() if not any(i in str for i in emoji_list)])
+    return cleaned_text
+
+def clean_text(text):
+    # Remove emoji
+    text = give_emoji_free_text(text)
+    # Remove punctuation
+    text = re.sub(r'[^\w\d\s]+', '', text)
+    # Remove digits
+    text = ''.join([i for i in text if not i.isdigit()]) 
+    # Tokenize the sentence
+    tokenised_text_list = create_mecab_list(text)
+    return tokenised_text_list
+```
+
+#### Create Word Index
+```python
+def create_word2index_and_index2word(df):
+    df["cleaned_text"] = df["content"].apply(clean_text)
+    sum_list = []
+    for index, row in df.iterrows():
+        sum_list += row["cleaned_text"]
+
+    word2index = dict()
+    index2word = dict()
+    num_words = 0
+    for word in sum_list:
+        if word not in word2index:
+            # First entry of word into vocabulary
+            word2index[word] = num_words
+            index2word[num_words] = word
+            num_words += 1
+    
+    return word2index, index2word
+
+def convert_tokens_to_ids(tokens_list, word2index):
+    ids_list = []
+    for token in tokens_list:
+        if word2index.get(token, None) != None:
+            ids_list.append(word2index[token])
+    return ids_list
+
+def remove_empty_ids_rows(df):
+    empty = (df['ids'].map(len) == 0)
+    return df[~empty]
+
+word2index, index2word = create_word2index_and_index2word(df)
+df["ids"] = df["content"].apply(lambda x: convert_tokens_to_ids(clean_text(x), word2index))
+df = remove_empty_ids_rows(df)
+df.head()
+```
+
+||content|label|length|cleaned_text|ids|
+|---|---|---|---|---|---|
+|0   |アプリをダウンロードしたばかりで、バックグラウンドで聴いています。星の理由は曲のダウンロード...   |0   |211 |[アプリ, ダウンロード, バックグラウンド, 聴い, 理由, ダウンロード, 出来, 聴い...   |[0, 1, 2, 3, 4, 1, 5, 3, 6, 7, 8, 9, 10, 11, 1...|
+|1   |nan |1   |3   |[nan]   |[26]|
+|2   |ダウンロードはネットが必要ですが、その後はオフラインで聞くことが出来てとても便利です。 オフ...   |1   |172 |[ダウンロード, ネット, 必要, その後, オフライン, 聞く, 出来, 便利, オフライ...   |[1, 27, 28, 29, 30, 31, 5, 32, 30, 33, 34, 35,...|
+|3   |広告をあまり見たくない方は、下のタブにある本人→右上のアイコンを押すと、30秒間の広告を見る...   |1   |124 |[広告, タブ, ある, 本人, アイコ, 押す, 広告, 見る, 代わり, 時間, 広告,...   |[14, 42, 43, 44, 45, 46, 14, 47, 48, 49, 14, 5...|
+|4   |音楽をダウンロードしようと思ったら、ダウンロードマークが無くて、追加しかない状態だった。その...   |0   |121 |[音楽, ダウンロード, しよ, 思っ, ダウンロード, マーク, 無く, 追加, ない, ...   |[15, 1, 62, 63, 1, 64, 65, 35, 66, 67, 68, 69,...|
+
+#### Split Data
+Split the data into training data (80%) and testing data (20%).
+* Training set: a subset to train a model
+* Testing set: a subset to test the trained model
+
+```python
+x = df["ids"].map(lambda x: np.array(x))
+x = sequence.pad_sequences(x, maxlen=config["MAX_LEN"], padding="post")
+print("Features: \n", x)
+y = df["label"].values
+print("Labels: \n", y)
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20, random_state=17)
 ```
 
 #### Word Embedding
@@ -480,69 +533,35 @@ Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab:
  * Omuram's [Qiita](https://qiita.com/omuram/items/6570973c090c6f0cb060)
  * TextMiner's [Website](https://textminingonline.com/training-a-japanese-wikipedia-word2vec-model-by-gensim-and-mecab)
 ```python
-# Build vocabulary & sequences
-def get_preprocessed_seq(sentences, tokenizer):
-    """
-    input:
-        sentences: numpy.ndarray
-    output: 
-        x: 
-        x.shape: (# of sentences, sentence_max_length)
-    """
-    # Build vocabulary & sequences
-    word_index = tokenizer.word_index
+def get_embedding_index(model_path):
+    w2v = Word2Vec.load(model_path)
+    embedding_index = {}
+    for word in w2v.wv.vocab:
+        embedding_index[word] = w2v.wv.word_vec(word)
+    print('Loaded {} word vectors.'.format(len(embedding_index)))
 
-    x = tokenizer.texts_to_sequences(sentences)
-    x = sequence.pad_sequences(x, maxlen=config["MAX_LEN"], padding="pre")
-    
-    return x
+    return embedding_index
 
-# Build pre-trained embedding matrix
-def get_embedding_matrix(w2v):
-    # Get word vector and load vocabulary from pretrained w2v model
-    word_vectors = w2v.wv
-    MAX_VOCAB = len(word_vectors.vocab)
-    nb_words = min(config["MAX_FEATURE"], MAX_VOCAB)
-    
-    # Get word index
-    counter = Counter()
-    word_index = {t[0]: i+1 for i,t in enumerate(counter.most_common(MAX_VOCAB))}
+def get_embedding_matrix(word2index, embeddings_index, embed_size):
+    embedding_matrix = np.zeros((len(word2index) + 1, embed_size))
+    for word, i in word2index.items():
+        embedding_vector = embeddings_index.get(word)
+        if embedding_vector is not None:
+            # words found in embedding index will be pretrained vectors.
+            embedding_matrix[i+1] = embedding_vector
+        else:
+            # words not found in embedding index will be random vectors with certain mean&std.
+            embedding_matrix[i+1] = np.random.normal(0.053, 0.3146, size=(1, embed_size))[0]
 
-    # Initialize the matrix with random numbers
-    wv_matrix = (np.random.rand(nb_words, EMBED_SIZE) - 0.5) / 5.0
-    for word, i in word_index.items():
-        if i >= MAX_VOCAB:
-            continue
-        try:
-            embedding_vector = word_vectors[word]
-            wv_matrix[i] = embedding_vector
-        except:
-            pass
-    print("Vocabulary size: {}\nEmbedding size: {}".format(wv_matrix.shape[0], wv_matrix.shape[1]))
-    
-    return wv_matrix
+    # save embedding matrix
+    # embed_df = pd.DataFrame(embedding_matrix)
+    # embed_df.to_csv(self.path_embedding_matrix, header=None, sep=' ')
 
-wv_matrix = get_embedding_matrix(w2v)
-```
+    return embedding_matrix
 
-#### Build Tokeniser
-Reference from [Japanese NLP Library](https://jprocessing.readthedocs.io/en/latest/)
-
-```python
-sentences = df['content'].apply(str).values
-y = df['label'].values
-
-tokenizer = text.Tokenizer(num_words=config["MAX_FEATURE"], lower=True, split=" ")
-tokenizer.fit_on_texts(sentences)
-```
-
-#### Split Data
-Split the data into training data (80%) and testing data (20%).
-* Training set: a subset to train a model
-* Testing set: a subset to test the trained model
-
-```python
-x_train, x_test, y_train, y_test = train_test_split(sentences, y, test_size=0.20, random_state=17)
+embedding_index = get_embedding_index(
+    r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\word2vec\ja.bin')
+embedding_matrix = get_embedding_matrix(word2index, embedding_index, embed_size=300)
 ```
 
 #### Build Model
@@ -599,6 +618,7 @@ def train_simple_rnn(x, y, wv_matrix):
     
     return history, model
 ```
+
 ##### GRU
 ```python
 def train_gru(x, y, wv_matrix):
@@ -634,6 +654,7 @@ def train_gru(x, y, wv_matrix):
     
     return history, model
 ```
+
 ##### LSTM
 ```python
 def train_lstm(x, y, wv_matrix):
@@ -669,6 +690,7 @@ def train_lstm(x, y, wv_matrix):
     
     return history, model
 ```
+
 ##### BiLSTM
 ```python
 def train_bilstm(x, y, wv_matrix):
@@ -706,8 +728,11 @@ def train_bilstm(x, y, wv_matrix):
     
     return history, model
 ```
-##### CNN + LSTM 
+
+##### CNN
 Based on "Convolutional Neural Networks for Sentence Classification" written by Yoon Kim [[paper link](http://arxiv.org/pdf/1408.5882v2.pdf)]
+
+##### CNN + LSTM
 ```python
 def train_cnn_lstm(x, y, wv_matrix):
     tf.keras.backend.clear_session()
@@ -744,6 +769,122 @@ def train_cnn_lstm(x, y, wv_matrix):
         shuffle=config['shuffle'], 
         verbose=1, 
         callbacks=[model_checkpoint, early_stopping, reduce_lr])
+    
+    return history, model
+```
+
+##### Text ResNet
+```python
+def identity_resnet_block(x, nb_filter):
+    x_shortcut = x
+
+    # First component of main path
+    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(x)
+    res_x = BatchNormalization()(res_x)
+    res_x = Activation("relu")(res_x)
+
+    # Second component of main path
+    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(res_x)
+    res_x = BatchNormalization()(res_x)
+    res_x = Activation("relu")(res_x)
+
+    # Third component of main path
+    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(res_x)
+    res_x = BatchNormalization()(res_x)
+
+    # Final Step: add shortcut value to the main path
+    x = Add()([x_shortcut, res_x])
+    output = Activation('relu')(x)
+    return output
+
+def convolutional_resnet_block(x, nb_filter):
+    x_shortcut = x
+
+    # First component of main path
+    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(x)
+    res_x = BatchNormalization()(res_x)
+    res_x = Activation("relu")(res_x)
+
+    # Second component of main path
+    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(res_x)
+    res_x = BatchNormalization()(res_x)
+    res_x = Activation("relu")(res_x)
+
+    # Third component of main path
+    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(res_x)
+    res_x = BatchNormalization()(res_x)
+
+    # Shortcut path
+    x_shortcut = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(x_shortcut)
+    x_shortcut = BatchNormalization()(x_shortcut)
+
+    # Final Step: add shortcut value to the main path
+    x = Add()([x_shortcut, res_x])
+    output = Activation('relu')(x)
+    return output
+
+def train_text_resnet(x_train, y_train, wv_matrix):
+    tf.keras.backend.clear_session()
+    # Resnet for reviews of UtaPass and KKBOX
+    x_input = Input(shape=(config["MAX_LEN"], ))
+    x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=False)(x_input)
+    x = SpatialDropout1D(0.25)(x)
+
+    # Stage 1
+    x = Conv1D(filters=64, kernel_size=3, strides=2)(x)
+    x = BatchNormalization()(x)
+    x = Activation("relu")(x)
+    x = MaxPooling1D(pool_size=2)(x)
+    # Stage 2
+    x = convolutional_resnet_block(x, 64)
+    x = identity_resnet_block(x, 64)
+    x = identity_resnet_block(x, 64)
+    # Stage 3
+    x = convolutional_resnet_block(x, 128)
+    x = identity_resnet_block(x, 128)
+    x = identity_resnet_block(x, 128)
+    x = identity_resnet_block(x, 128)
+    # Stage 4
+    x = convolutional_resnet_block(x, 256)
+    x = identity_resnet_block(x, 256)
+    x = identity_resnet_block(x, 256)
+    x = identity_resnet_block(x, 256)
+    x = identity_resnet_block(x, 256)
+    x = identity_resnet_block(x, 256)
+    # Stage 5
+    x = convolutional_resnet_block(x, 512)
+    x = identity_resnet_block(x, 512)
+    x = identity_resnet_block(x, 512)
+    # Average pool
+    x = AveragePooling1D(pool_size = 1)(x)
+    # Output layer
+    x = Flatten()(x)
+
+    x = Dense(units=1024, activation='relu')(x)
+    x = Dropout(0.5)(x)
+    x = Dense(units=1024, activation='relu')(x)
+    x = Dense(units=1)(x)
+    x = BatchNormalization()(x)
+    x = Activation('sigmoid')(x)
+
+    model = Model(inputs=x_input, outputs=x)
+    model.compile(loss=config["loss"],
+                  optimizer=config["optimizer"],
+                  metrics=[get_f1])
+    
+    path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\notebook\weights\text_resnet_weights.hdf5'
+    # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
+    early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=1, mode='auto')
+    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=50, min_lr=0.001)
+    
+    history = model.fit(
+        x_train, y_train, 
+        batch_size=config["batch_size"], 
+        epochs=config["nb_epoch"], 
+        validation_split=config["validation_split"], 
+        shuffle=config["shuffle"], 
+        verbose=1, 
+        callbacks=[early_stopping, reduce_lr])
     
     return history, model
 ```
@@ -841,7 +982,7 @@ def predict(sentences, model):
     x_test = tokenizer.texts_to_sequences(sentences)
     x_test = sequence.pad_sequences(x_test, maxlen=MAX_LEN)
     y_prob = model.predict_classes(x_test)
-    y_pred = y_prob.squeeze()   
+    y_pred = y_prob.squeeze()
     return y_pred
 ```
 
@@ -861,36 +1002,11 @@ f1 = f1_score(y_test, y_pred)
 print('F1 score: %f' % f1)
 ```
 
-||Simple RNN|GRU|LSTM|BiLSTM|CNN + LSTM|
-|---|---|---|---|---|---|
-|Accuracy|0.622|0.5742|0.6077|0.5981|0.4928|
-|F1 Score|0.2178|0.3308|0.2807|0.1064|0.4362|
-|Total Params||||||
-|Trainable Params||||||
-|Non-trainable Params||||||
+||Simple RNN|GRU|LSTM|BiLSTM|CNN-LSTM|Text-ResNet|
+|---|---|---|---|---|---|---|
+|Accuracy|0.7388|0.5805|0.5805|0.5981|0.4928||
+|F1 Score|0.7655|0.7346|0.7346|0.1064|0.4362||
 
-#### Confusion Matrix
-```shell
-Simple RNN: 
-     [[119  75]
-     [  4  11]]
-
-GRU: 
-     [[98 64]
-     [25 22]]
-
-LSTM:
-     [[111  70]
-     [ 12  16]]
-
-BiLSTM: 
-     [[120  81]
-     [  3   5]]
-
-Cnn + LSTM:
-     [[62 45]
-     [61 41]]
-```
 
 ## Future Roadmap
 It is completely possible to use only raw text as input for making predictions. The most important thing is to extract the relevant features from this raw source of data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
