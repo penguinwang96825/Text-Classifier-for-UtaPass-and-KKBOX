@@ -128,6 +128,14 @@ from selenium.webdriver.common.by import By
 * *re* specifies a set of strings that matches it.
 * *emoji* is listed on this [cheatsheet](https://www.webfx.com/tools/emoji-cheat-sheet/).
 
+4. [Janome](https://mocobeta.github.io/janome/en/) is written in pure Python including the built-in dictionary and the language model.
+* Run `pip install janome` in terminal.
+
+5. BERT for Japanese from Huggingface (update: 2020/04/21)
+* Reference: Nekoumei's Qiita [[link](https://qiita.com/nekoumei/items/7b911c61324f16c43e7e)]
+* Reference: Hottolink, Inc. pretrained BERT model [[link](https://github.com/hottolink/hottoSNS-bert)]
+* cl-tohoku's [GitHub](https://github.com/cl-tohoku/bert-japanese)
+
 ## Main Code for Crawling
 
 ### Data Preprocessing
@@ -165,7 +173,7 @@ def give_emoji_free_text(text):
 def clean_text(text):
     text = give_emoji_free_text(text)
     text = neologdn.normalize(text)
-    text = create_mecab_list(text)    
+    text = create_mecab_list(text)
     return text
 ```
 
@@ -178,21 +186,26 @@ def check_exists_by_xpath(xpath):
         return False
     return True
 
-def replace_value_with_definition(key_to_find, definition):
-    for key in temp.keys():
-        if key == key_to_find:
-            temp[key] = definition
-            
-def scrollDownPage(pages):
-    for i in range(1,pages):
-        try:
-            # Scroll to load other reviews
-            driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
-            time.sleep(1)
-            if check_exists_by_xpath('.//span[@class = "RveJvd snByac"]'):
-                driver.find_element_by_xpath('.//span[@class = "RveJvd snByac"]').click()
-                time.sleep(2)
-        except:
+def scrollDownPage():
+    # Xpath of "もっと見る" bottom
+    button = '//*[@id="fcxH9b"]/div[4]/c-wiz/div/div[2]/div/div[1]/div/div/div[1]/div[2]/div[2]/div/span/span'
+    
+    # Keep scrolling down until to the very bottom
+    keep_scrolling = True
+    while keep_scrolling:
+        try: 
+            # Scroll down to the bottom
+            for _ in range(5):
+                driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+                time.sleep(1 + random.random())
+            # Click "もっと見る"
+            if check_exists_by_xpath(button):
+                driver.find_element_by_xpath(button).click()
+                time.sleep(2 + random.random())
+            else:
+                # Stop scrolling down
+                keep_scrolling = False
+        except: 
             pass
 ```
 
@@ -266,13 +279,13 @@ def pandas2csv(concat_dictionary):
 ```
 
 Take a look at the dataframe.
-||Author Name|Review Date|Reviewer Ratings|Review Content|Developer Reply|
-|---|---|---|---|---|---|
-|195|眞也大平|2018年12月4日|1|聴い途中止まる強制終了する止まる辞め||
-|13|狼音牙|2019年4月22日|1|LISMO使えなっ早くもどせうたパスLISMO使い||
-|47|美能孝行|2019年3月12日|3|アルバム曲名読み方登録それ名前反映不具合かなり継続技術改善でき諦め使いあり||
-|142|梅川洋子|2019年2月14日|4|いつ聴けるいい||
-|45|わんたった|2019年4月27日|1|アンストアプリ残っ||
+||Author Name|Review Date|Reviewer Ratings|Review Content|
+|---|---|---|---|---|
+|195|眞也大平|2018年12月4日|1|聴い途中止まる強制終了する止まる辞め|
+|13|狼音牙|2019年4月22日|1|LISMO使えなっ早くもどせうたパスLISMO使い|
+|47|美能孝行|2019年3月12日|3|アルバム曲名読み方登録それ名前反映不具合かなり継続技術改善でき諦め使いあり|
+|142|梅川洋子|2019年2月14日|4|いつ聴けるいい|
+|45|わんたった|2019年4月27日|1|アンストアプリ残っ|
 
 ## Deep Learning Application
 
@@ -298,11 +311,8 @@ Take a look at the dataframe.
 
 #### Solution
 1. Dropout layer: Srivastava, et al. proposed in their 2014 paper "Dropout: A Simple Way to Prevent Neural Networks from Overfitting." [[paper link](http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf)]
-
 2. Early Stopping: It is a form of regularization used to avoid overfitting when training a learner with an iterative method, such as gradient descent.
-
 ![Early stopping](https://cdn-images-1.medium.com/max/1200/1*QckgibgJ74BhMaqinqwSDw.png)
-
 3. Eigendecomposition: Takahiro Ishihara applys eigendecomposition to each slice matrix of a tensor to reduce the number of parameters. [[paper link](https://www.aclweb.org/anthology/N18-1047)]
 
 
