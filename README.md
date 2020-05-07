@@ -1168,8 +1168,29 @@ def plot_history(history):
 
 ### Performance
 Compare the performance among five deep learning models.
-* Simple RNN
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple_rnn.png)
+
+#### Simple RNN
+
+* Simple RNN with Adam
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/simple-rnn/rnn-adam.png)
+
+* Simple RNN with Adagrad
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/simple-rnn/rnn-adagrad.png)
+
+* Simple RNN with Adadelta
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/simple-rnn/rnn-adadelta.png)
+
+* Simple RNN with Nadam
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/simple-rnn/rnn-nadam.png)
+
+* Simple RNN with RMSprop
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/simple-rnn/rnn-rmsprop.png)
+
+* Simple RNN with SGD
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/simple-rnn/rnn-sgd.png)
+
+* Simple RNN with COCOB
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/simple-rnn/rnn-cocob.png)
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
@@ -1220,8 +1241,28 @@ Confusion Matrix:
  [ 301 1114]]
 ```
 
-* GRU
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru.png)
+#### GRU
+
+* GRU with Adam
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/gru/gru-adam.png)
+
+* GRU with Adagrad
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/gru/gru-adagrad.png)
+
+* GRU with Adadelta
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/gru/gru-adadelta.png)
+
+* GRU with Nadam
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/gru/gru-nadam.png)
+
+* GRU with RMSprop
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/gru/gru-rmsprop.png)
+
+* GRU with SGD
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/gru/gru-sgd.png)
+
+* GRU with COCOB
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/gru/gru-cocob.png)
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
@@ -1272,8 +1313,28 @@ Confusion Matrix:
  [ 276 1198]]
 ```
 
-* LSTM
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm.png)
+#### LSTM
+
+* LSTM with Adam
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/lstm/lstm-adam.png)
+
+* LSTM with Adagrad
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/lstm/lstm-adagrad.png)
+
+* LSTM with Adadelta
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/lstm/lstm-adadelta.png)
+
+* LSTM with Nadam
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/lstm/lstm-nadam.png)
+
+* LSTM with RMSprop
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/lstm/lstm-rmsprop.png)
+
+* LSTM with SGD
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/lstm/lstm-sgd.png)
+
+* LSTM with COCOB
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/lstm/lstm-cocob.png)
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
@@ -1324,8 +1385,28 @@ Confusion Matrix:
  [ 285 1213]]
 ```
 
-* BiLSTM
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm.png)
+#### BiLSTM
+
+* BiLSTM with Adam
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/bilstm/bilstm-adam.png)
+
+* BiLSTM with Adagrad
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/bilstm/bilstm-adagrad.png)
+
+* BiLSTM with Adadelta
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/bilstm/bilstm-adadelta.png)
+
+* BiLSTM with Nadam
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/bilstm/bilstm-nadam.png)
+
+* BiLSTM with RMSprop
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/bilstm/bilstm-rmsprop.png)
+
+* BiLSTM with SGD
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/bilstm/bilstm-sgd.png)
+
+* BiLSTM with COCOB
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/bilstm/bilstm-cocob.png)
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
@@ -1376,8 +1457,28 @@ Confusion Matrix:
  [ 285 1214]]
 ```
 
-* CNN-static
-![CNN]()
+#### CNN-Static
+
+* CNN-Static with Adam
+![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-static/cnn-static-adam.png)
+
+* CNN-Static with Adagrad
+![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-static/cnn-static-adagrad.png)
+
+* CNN-Static with Adadelta
+![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-static/cnn-static-adadelta.png)
+
+* CNN-Static with Nadam
+![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-static/cnn-static-nadam.png)
+
+* CNN-Static with RMSprop
+![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-static/cnn-static-rmsprop.png)
+
+* CNN-Static with SGD
+![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-static/cnn-static-sgd.png)
+
+* CNN-Static with COCOB
+![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-static/cnn-static-cocob.png)
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
@@ -1428,8 +1529,28 @@ Confusion Matrix:
  [230 982]]
 ```
 
-* CNN-multichannel
-![CNN]()
+#### CNN-MultiChannel
+
+* CNN-MultiChannel with Adam
+![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-multichannel/cnn-multichannel-adam.png)
+
+* CNN-MultiChannel with Adagrad
+![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-multichannel/cnn-multichannel-adagrad.png)
+
+* CNN-MultiChannel with Adadelta
+![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-multichannel/cnn-multichannel-adadelta.png)
+
+* CNN-MultiChannel with Nadam
+![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-multichannel/cnn-multichannel-nadam.png)
+
+* CNN-MultiChannel with RMSprop
+![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-multichannel/cnn-multichannel-rmsprop.png)
+
+* CNN-MultiChannel with SGD
+![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-multichannel/cnn-multichannel-sgd.png)
+
+* CNN-MultiChannel with COCOB
+![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-multichannel/cnn-multichannel-cocob.png)
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
@@ -1480,8 +1601,28 @@ Confusion Matrix:
  [ 242 1063]]
 ```
 
-* CNN + LSTM
-![CNN + LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn_lstm.png)
+#### CNN-LSTM
+
+* CNN-LSTM with Adam
+![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-lstm/cnn-lstm-adam.png)
+
+* CNN-LSTM with Adagrad
+![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-lstm/cnn-lstm-adagrad.png)
+
+* CNN-LSTM with Adadelta
+![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-lstm/cnn-lstm-adadelta.png)
+
+* CNN-LSTM with Nadam
+![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-lstm/cnn-lstm-nadam.png)
+
+* CNN-LSTM with RMSprop
+![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-lstm/cnn-lstm-rmsprop.png)
+
+* CNN-LSTM with SGD
+![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-lstm/cnn-lstm-sgd.png)
+
+* CNN-LSTM with COCOB
+![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/cnn-lstm/cnn-lstm-cocob.png)
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
@@ -1532,8 +1673,28 @@ Confusion Matrix:
  [ 265 1172]]
 ```
 
-* Text ResNet
-![Text ResNet]()
+#### Text-ResNet
+
+* Text-ResNet with Adam
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/text-resnet/text-resnet-adam.png)
+
+* Text-ResNet with Adagrad
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/text-resnet/text-resnet-adagrad.png)
+
+* Text-ResNet with Adadelta
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/text-resnet/text-resnet-adadelta.png)
+
+* Text-ResNet with Nadam
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/text-resnet/text-resnet-nadam.png)
+
+* Text-ResNet with RMSprop
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/text-resnet/text-resnet-rmsprop.png)
+
+* Text-ResNet with SGD
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/text-resnet/text-resnet-sgd.png)
+
+* Text-ResNet with COCOB
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/text-resnet/text-resnet-cocob.png)
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
