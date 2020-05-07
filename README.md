@@ -274,7 +274,6 @@ import warnings
 import re
 import emoji
 import MeCab
-import tensorflow as tf
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -290,6 +289,7 @@ from sklearn.metrics import f1_score
 
 import tensorflow as tf
 import keras.backend as K
+from keras import regularizers
 from keras.models import Sequential
 from keras.models import Model
 from keras.layers import Input
@@ -770,17 +770,18 @@ def train_cnn_lstm(x_train, y_train, wv_matrix):
 ##### CNN-static
 Based on "Convolutional Neural Networks for Sentence Classification" written by Yoon Kim [[paper link](http://arxiv.org/pdf/1408.5882v2.pdf)]
 ```python
+# Yoon Kim's paper: Convolutional Neural Networks for Sentence Classification
+# Reference from https://www.aclweb.org/anthology/D14-1181.pdf
 def train_cnn_static(x_train, y_train, wv_matrix, trainable=False):
     tf.keras.backend.clear_session()
     
     x_input = Input(shape=(config["MAX_LEN"], ))
     x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=trainable)(x_input)
-    x = Reshape((config["MAX_LEN"], wv_matrix.shape[1], 1))(x)
     
     x_conv_1 = Conv1D(filters=config['nb_filter'], 
                       kernel_size=3, 
                       padding=config['border_mode'], 
-                      kernel_regularizer=regularizers.l2(3))
+                      kernel_regularizer=regularizers.l2(3))(x)
     x_conv_1 = BatchNormalization()(x_conv_1)
     x_conv_1 = Activation("relu")(x_conv_1)
     x_conv_1 = MaxPooling1D(pool_size=(config["MAX_LEN"]-3+1), strides=1, padding="valid")(x_conv_1)
@@ -788,7 +789,7 @@ def train_cnn_static(x_train, y_train, wv_matrix, trainable=False):
     x_conv_2 = Conv1D(filters=config['nb_filter'], 
                       kernel_size=4, 
                       padding=config['border_mode'], 
-                      kernel_regularizer=regularizers.l2(3))
+                      kernel_regularizer=regularizers.l2(3))(x)
     x_conv_2 = BatchNormalization()(x_conv_2)
     x_conv_2 = Activation("relu")(x_conv_2)
     x_conv_2 = MaxPooling1D(pool_size=(config["MAX_LEN"]-4+1), strides=1, padding="valid")(x_conv_2)
@@ -796,7 +797,7 @@ def train_cnn_static(x_train, y_train, wv_matrix, trainable=False):
     x_conv_3 = Conv1D(filters=config['nb_filter'], 
                       kernel_size=5, 
                       padding=config['border_mode'], 
-                      kernel_regularizer=regularizers.l2(3))
+                      kernel_regularizer=regularizers.l2(3))(x)
     x_conv_3 = BatchNormalization()(x_conv_3)
     x_conv_3 = Activation("relu")(x_conv_3)
     x_conv_3 = MaxPooling1D(pool_size=(config["MAX_LEN"]-5+1), strides=1, padding="valid")(x_conv_3)
@@ -1014,6 +1015,8 @@ def train_text_resnet(x_train, y_train, wv_matrix):
                   optimizer=config["optimizer"],
                   metrics=[get_f1])
     
+    print("="*20, "Start Training Text-ResNet", "="*20)
+    
     path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\notebook\weights\text_resnet_weights.hdf5'
     # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
     early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=1, mode='auto')
@@ -1025,7 +1028,7 @@ def train_text_resnet(x_train, y_train, wv_matrix):
         epochs=config["nb_epoch"], 
         validation_split=config["validation_split"], 
         shuffle=config["shuffle"], 
-        verbose=1, 
+        verbose=0, 
         callbacks=[early_stopping, reduce_lr])
     
     return history, model
@@ -1084,7 +1087,7 @@ class COCOB(Optimizer):
         return dict(list(base_config.items()) + list(config.items()))
 ```
 
- - Set of other optimisers.
+ - Setting of other optimisers.
 ```python
 adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 sgd = SGD(lr=0.01, momentum=0.0, decay=0.0, nesterov=False)
@@ -1170,51 +1173,51 @@ Compare the performance among five deep learning models.
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
-|Accuracy|0.7353|0.7388|0.7307|0.7171|0.7210|0.7419|0.7086|
-|F1|0.7659|0.7782|0.7645|0.7595|0.7623|0.7729|0.7427|
+|Accuracy|0.7125|0.7283|0.7252|0.7392|0.7260|0.7140|0.7341|
+|F1 Score|0.757|0.7651|0.7627|0.7777|0.7608|0.7501|0.7643|
 
 ```console
 Training model using adam.
-====================
+==================== Start Training Simple RNN ====================
 Confusion Matrix: 
- [[ 781  381]
- [ 303 1119]]
+ [[ 684  343]
+ [ 400 1157]]
 
 Training model using sgd.
-====================
+==================== Start Training Simple RNN ====================
 Confusion Matrix: 
- [[ 725  316]
- [ 359 1184]]
+ [[ 739  357]
+ [ 345 1143]]
 
 Training model using adagrad.
-====================
+==================== Start Training Simple RNN ====================
 Confusion Matrix: 
- [[ 758  370]
- [ 326 1130]]
+ [[ 733  359]
+ [ 351 1141]]
 
 Training model using adadelta.
-====================
+==================== Start Training Simple RNN ====================
 Confusion Matrix: 
- [[ 699  346]
- [ 385 1154]]
+ [[ 731  321]
+ [ 353 1179]]
 
 Training model using rmsprop.
-====================
+==================== Start Training Simple RNN ====================
 Confusion Matrix: 
- [[ 707  344]
- [ 377 1156]]
+ [[ 750  374]
+ [ 334 1126]]
 
 Training model using nadam.
-====================
+==================== Start Training Simple RNN ====================
 Confusion Matrix: 
- [[ 782  365]
- [ 302 1135]]
+ [[ 736  391]
+ [ 348 1109]]
 
 Training model using cocob.
-====================
+==================== Start Training Simple RNN ====================
 Confusion Matrix: 
- [[ 744  413]
- [ 340 1087]]
+ [[ 783  386]
+ [ 301 1114]]
 ```
 
 * GRU
@@ -1222,51 +1225,51 @@ Confusion Matrix:
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
-|Accuracy|0.7697|0.7914|0.7899|0.7860|0.7821|0.7875|0.7806|
-|F1|0.8016|0.8212|0.8191|0.8147|0.8077|0.8190|0.8099|
+|Accuracy|0.7755|0.7848|0.7829|0.7748|0.7779|0.7713|0.7763|
+|F1|0.8059|0.8114|0.8136|0.8066|0.8104|0.8000|0.8056|
 
 ```console
 Training model using adam.
-====================
+==================== Start Training GRU ====================
 Confusion Matrix: 
- [[ 787  298]
- [ 297 1202]]
+ [[ 800  296]
+ [ 284 1204]]
 
 Training model using sgd.
-====================
+==================== Start Training GRU ====================
 Confusion Matrix: 
- [[ 807  262]
- [ 277 1238]]
+ [[ 832  304]
+ [ 252 1196]]
 
 Training model using adagrad.
-====================
+==================== Start Training GRU ====================
 Confusion Matrix: 
- [[ 812  271]
- [ 272 1229]]
+ [[ 799  276]
+ [ 285 1224]]
 
 Training model using adadelta.
-====================
+==================== Start Training GRU ====================
 Confusion Matrix: 
- [[ 815  284]
- [ 269 1216]]
+ [[ 788  286]
+ [ 296 1214]]
 
 Training model using rmsprop.
-====================
+==================== Start Training GRU ====================
 Confusion Matrix: 
- [[ 839  318]
- [ 245 1182]]
+ [[ 783  273]
+ [ 301 1227]]
 
 Training model using nadam.
-====================
+==================== Start Training GRU ====================
 Confusion Matrix: 
- [[ 793  258]
- [ 291 1242]]
+ [[ 811  318]
+ [ 273 1182]]
 
 Training model using cocob.
-====================
+==================== Start Training GRU ====================
 Confusion Matrix: 
- [[ 809  292]
- [ 275 1208]]
+ [[ 808  302]
+ [ 276 1198]]
 ```
 
 * LSTM
@@ -1274,51 +1277,51 @@ Confusion Matrix:
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
-|Accuracy|0.7899|0.7601|0.7841|0.7860|0.7810|0.7957|0.7914|
-|F1|0.8165|0.7847|0.8115|0.8145|0.8107|0.8208|0.8177|
+|Accuracy|0.7628|0.7697|0.7806|0.7833|0.7724|0.7670|0.7786|
+|F1 Score|0.7984|0.8030|0.8068|0.8125|0.7968|0.7933|0.8092|
 
 ```console
 Training model using adam.
-====================
+==================== Start Training LSTM ====================
 Confusion Matrix: 
- [[ 833  292]
- [ 251 1208]]
+ [[ 757  286]
+ [ 327 1214]]
 
 Training model using sgd.
-====================
+==================== Start Training LSTM ====================
 Confusion Matrix: 
- [[ 834  370]
- [ 250 1130]]
+ [[ 776  287]
+ [ 308 1213]]
 
 Training model using adagrad.
-====================
+==================== Start Training LSTM ====================
 Confusion Matrix: 
- [[ 825  299]
- [ 259 1201]]
+ [[ 833  316]
+ [ 251 1184]]
 
 Training model using adadelta.
-====================
+==================== Start Training LSTM ====================
 Confusion Matrix: 
- [[ 817  286]
- [ 267 1214]]
+ [[ 811  287]
+ [ 273 1213]]
 
 Training model using rmsprop.
-====================
+==================== Start Training LSTM ====================
 Confusion Matrix: 
- [[ 806  288]
- [ 278 1212]]
+ [[ 843  347]
+ [ 241 1153]]
 
 Training model using nadam.
-====================
+==================== Start Training LSTM ====================
 Confusion Matrix: 
- [[ 847  291]
- [ 237 1209]]
+ [[ 827  345]
+ [ 257 1155]]
 
 Training model using cocob.
-====================
+==================== Start Training LSTM ====================
 Confusion Matrix: 
- [[ 836  291]
- [ 248 1209]]
+ [[ 799  287]
+ [ 285 1213]]
 ```
 
 * BiLSTM
@@ -1326,51 +1329,51 @@ Confusion Matrix:
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
-|Accuracy|0.7949|0.7841|0.7922|0.7852|0.7918|0.7872|0.7957|
-|F1|0.8242|0.8185|0.8239|0.8141|0.8213|0.8142|0.8240|
+|Accuracy|0.7872|0.7740|0.7825|0.7829|0.7864|0.7856|0.7790|
+|F1 Score|0.8153|0.8047|0.8122|0.8119|0.8167|0.8151|0.8096|
 
 ```console
 Training model using adam.
-====================
+==================== Start Training BiLSTM ====================
 Confusion Matrix: 
- [[ 812  258]
- [ 272 1242]]
+ [[ 820  286]
+ [ 264 1214]]
 
 Training model using sgd.
-====================
+==================== Start Training BiLSTM ====================
 Confusion Matrix: 
- [[ 768  242]
- [ 316 1258]]
+ [[ 797  297]
+ [ 287 1203]]
 
 Training model using adagrad.
-====================
+==================== Start Training BiLSTM ====================
 Confusion Matrix: 
- [[ 791  244]
- [ 293 1256]]
+ [[ 807  285]
+ [ 277 1215]]
 
 Training model using adadelta.
-====================
+==================== Start Training BiLSTM ====================
 Confusion Matrix: 
- [[ 814  285]
- [ 270 1215]]
+ [[ 812  289]
+ [ 272 1211]]
 
 Training model using rmsprop.
-====================
+==================== Start Training BiLSTM ====================
 Confusion Matrix: 
- [[ 810  264]
- [ 274 1236]]
+ [[ 802  270]
+ [ 282 1230]]
 
 Training model using nadam.
-====================
+==================== Start Training BiLSTM ====================
 Confusion Matrix: 
- [[ 829  295]
- [ 255 1205]]
+ [[ 809  279]
+ [ 275 1221]]
 
 Training model using cocob.
-====================
+==================== Start Training BiLSTM ====================
 Confusion Matrix: 
- [[ 820  264]
- [ 264 1236]]
+ [[ 799  286]
+ [ 285 1214]]
 ```
 
 * CNN-static
@@ -1378,11 +1381,103 @@ Confusion Matrix:
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
-|Accuracy||||||||
-|F1||||||||
+|Accuracy|0.7365|0.7032|0.7101|0.7566|0.7411|0.7051|0.7105|
+|F1 Score|07628|0.7850|0.7854|0.7938|0.7802|0.7855|0.7242|
 
 ```console
+Training model using adam.
+==================== Start Training CNN-static ====================
+Confusion Matrix: 
+ [[ 808  405]
+ [ 276 1095]]
 
+Training model using sgd.
+==================== Start Training CNN-static ====================
+Confusion Matrix: 
+ [[ 417  100]
+ [ 667 1400]]
+
+Training model using adagrad.
+==================== Start Training CNN-static ====================
+Confusion Matrix: 
+ [[ 464  129]
+ [ 620 1371]]
+
+Training model using adadelta.
+==================== Start Training CNN-static ====================
+Confusion Matrix: 
+ [[ 744  289]
+ [ 340 1211]]
+
+Training model using rmsprop.
+==================== Start Training CNN-static ====================
+Confusion Matrix: 
+ [[ 728  313]
+ [ 356 1187]]
+
+Training model using nadam.
+==================== Start Training CNN-static ====================
+Confusion Matrix: 
+ [[ 427  105]
+ [ 657 1395]]
+
+Training model using cocob.
+==================== Start Training CNN-static ====================
+Confusion Matrix: 
+ [[854 518]
+ [230 982]]
+```
+
+* CNN-multichannel
+![CNN]()
+
+||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
+|---|---|---|---|---|---|---|---|
+|Accuracy|0.7550|0.7477|0.7287|0.7659|0.7438|0.7388|0.7372|
+|F1 Score|0.7828|0.7772|0.7410|0.8022|0.7722|0.7700|0.7579|
+
+```console
+Training model using adam.
+==================== Start Training CNN-multichannel ====================
+Confusion Matrix: 
+ [[ 811  360]
+ [ 273 1140]]
+
+Training model using sgd.
+==================== Start Training CNN-multichannel ====================
+Confusion Matrix: 
+ [[ 795  363]
+ [ 289 1137]]
+
+Training model using adagrad.
+==================== Start Training CNN-multichannel ====================
+Confusion Matrix: 
+ [[ 880  497]
+ [ 204 1003]]
+
+Training model using adadelta.
+==================== Start Training CNN-multichannel ====================
+Confusion Matrix: 
+ [[ 752  273]
+ [ 332 1227]]
+
+Training model using rmsprop.
+==================== Start Training CNN-multichannel ====================
+Confusion Matrix: 
+ [[ 800  378]
+ [ 284 1122]]
+
+Training model using nadam.
+==================== Start Training CNN-multichannel ====================
+Confusion Matrix: 
+ [[ 779  370]
+ [ 305 1130]]
+
+Training model using cocob.
+==================== Start Training CNN-multichannel ====================
+Confusion Matrix: 
+ [[ 842  437]
+ [ 242 1063]]
 ```
 
 * CNN + LSTM
@@ -1390,11 +1485,51 @@ Confusion Matrix:
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
-|Accuracy||||||||
-|F1||||||||
+|Accuracy|0.7790|0.7872|0.7775|0.7752|0.7659|0.7771|0.7705|
+|F1 Score|0.8138|0.8115|0.8085|0.8068|0.7948|0.8076|0.7981|
 
 ```console
+Training model using adam.
+==================== Start Training CNN-LSTM ====================
+Confusion Matrix: 
+ [[ 765  252]
+ [ 319 1248]]
 
+Training model using sgd.
+==================== Start Training CNN-LSTM ====================
+Confusion Matrix: 
+ [[ 850  316]
+ [ 234 1184]]
+
+Training model using adagrad.
+==================== Start Training CNN-LSTM ====================
+Confusion Matrix: 
+ [[ 795  286]
+ [ 289 1214]]
+
+Training model using adadelta.
+==================== Start Training CNN-LSTM ====================
+Confusion Matrix: 
+ [[ 790  287]
+ [ 294 1213]]
+
+Training model using rmsprop.
+==================== Start Training CNN-LSTM ====================
+Confusion Matrix: 
+ [[ 807  328]
+ [ 277 1172]]
+
+Training model using nadam.
+==================== Start Training CNN-LSTM ====================
+Confusion Matrix: 
+ [[ 799  291]
+ [ 285 1209]]
+
+Training model using cocob.
+==================== Start Training CNN-LSTM ====================
+Confusion Matrix: 
+ [[ 819  328]
+ [ 265 1172]]
 ```
 
 * Text ResNet
@@ -1402,11 +1537,51 @@ Confusion Matrix:
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
-|Accuracy||||||||
-|F1||||||||
+|Accuracy|0.7330|0.7206|0.7450|0.7337|0.7318|0.7260|0.7396|
+|F1 Score|0.7667|0.7619|0.7797|0.7679|0.7758|0.7662|0.7839|
 
 ```console
+Training model using adam.
+==================== Start Training Text-ResNet ====================
+Confusion Matrix: 
+ [[ 760  366]
+ [ 324 1134]]
 
+Training model using sgd.
+==================== Start Training Text-ResNet ====================
+Confusion Matrix: 
+ [[ 707  345]
+ [ 377 1155]]
+
+Training model using adagrad.
+==================== Start Training Text-ResNet ====================
+Confusion Matrix: 
+ [[ 759  334]
+ [ 325 1166]]
+
+Training model using adadelta.
+==================== Start Training Text-ResNet ====================
+Confusion Matrix: 
+ [[ 758  362]
+ [ 326 1138]]
+
+Training model using rmsprop.
+==================== Start Training Text-ResNet ====================
+Confusion Matrix: 
+ [[ 692  301]
+ [ 392 1199]]
+
+Training model using nadam.
+==================== Start Training Text-ResNet ====================
+Confusion Matrix: 
+ [[ 716  340]
+ [ 368 1160]]
+
+Training model using cocob.
+==================== Start Training Text-ResNet ====================
+Confusion Matrix: 
+ [[ 690  279]
+ [ 394 1221]]
 ```
 
 ### Evaluation
