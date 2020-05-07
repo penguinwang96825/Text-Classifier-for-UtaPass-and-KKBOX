@@ -1166,7 +1166,7 @@ def plot_history(history):
     plt.show()
 ```
 
-### Performance
+### Accuracy, F1 Score, and Confusion Matrix
 Compare the performance among five deep learning models.
 
 #### Simple RNN
@@ -1746,7 +1746,7 @@ Confusion Matrix:
 ```
 
 ### Evaluation
-In training a neural network, f1 score is an important metric to evaluate the performance of classification models, especially for unbalanced classes where the binary accuracy is useless.
+When training a neural network, f1 score is an important metric to evaluate the performance of classification models, especially for unbalanced classes where the binary accuracy is useless.
 
 ```python
 def predict(sentences, model):
@@ -1755,6 +1755,141 @@ def predict(sentences, model):
     y_pred = (y_prob > 0.5) 
     return y_pred
 ```
+
+## Performance
+
+### Baseline
+
+Traing with all the dataset:
+    # of training data: 12530
+    # of test data: 1393
+
+<table>
+    <tr>
+        <th> </th>
+        <th> </th>
+        <th>KNN</th>
+        <th>Decision Tree</th>
+        <th>Random Forest</th>
+        <th>Extra Tree</th>
+        <th>XGBoost</th>
+    </tr>
+    <tr>
+        <td rowspan="3">With TF-IDF</td>
+        <td>Accuracy</td>
+        <td>0.7509</td>
+        <td>0.6820</td>
+        <td>0.7638</td>
+        <td>0.7782</td>
+        <td>0.8657</td>
+    </tr>
+    <tr>
+        <td>F1 Score</td>
+        <td>0.7838</td>
+        <td>0.7408</td>
+        <td>0.8117</td>
+        <td>0.8229</td>
+        <td>0.8329</td>
+    </tr>
+    <tr>
+        <td>ROC-AUC</td>
+        <td>0.7532</td>
+        <td>0.6640</td>
+        <td>0.7436</td>
+        <td>0.7590</td>
+        <td>0.7817</td>
+    </tr>
+    <tr>
+        <td rowspan="3">Without TF-IDF</td>
+        <td>Accuracy</td>
+        <td>0.7272</td>
+        <td>0.7093</td>
+        <td>0.7416</td>
+        <td>0.7322</td>
+        <td>0.7751</td>
+    </tr>
+    <tr>
+        <td>F1 Score</td>
+        <td>0.7838</td>
+        <td>0.7671</td>
+        <td>0.7943</td>
+        <td>0.7850</td>
+        <td>0.7941</td>
+    </tr>
+    <tr>
+        <td>ROC-AUC</td>
+        <td>0.7034</td>
+        <td>0.6877</td>
+        <td>0.7198</td>
+        <td>0.7124</td>
+        <td>0.7186</td>
+    </tr>
+
+Select sentence length is longer than 5:
+    # of training data: 11601
+    # of test data: 1289
+
+<table>
+    <tr>
+        <th> </th>
+        <th> </th>
+        <th>KNN</th>
+        <th>Decision Tree</th>
+        <th>Random Forest</th>
+        <th>Extra Tree</th>
+        <th>XGBoost</th>
+    </tr>
+    <tr>
+        <td rowspan="3">With TF-IDF</td>
+        <td>Accuracy</td>
+        <td>0.7696</td>
+        <td>0.6889</td>
+        <td>0.7843</td>
+        <td>0.7735</td>
+        <td>0.8979</td>
+    </tr>
+    <tr>
+        <td>F1 Score</td>
+        <td>0.7895</td>
+        <td>0.7460</td>
+        <td>0.8190</td>
+        <td>0.8094</td>
+        <td>0.8343</td>
+    </tr>
+    <tr>
+        <td>ROC-AUC</td>
+        <td>0.7715</td>
+        <td>0.6705</td>
+        <td>0.7727</td>
+        <td>0.7620</td>
+        <td>0.7993</td>
+    </tr>
+    <tr>
+        <td rowspan="3">Without TF-IDF</td>
+        <td>Accuracy</td>
+        <td>0.7254</td>
+        <td>0.6936</td>
+        <td>0.7378</td>
+        <td>0.7374</td>
+        <td>0.7818</td>
+    </tr>
+    <tr>
+        <td>F1 Score</td>
+        <td>0.7674</td>
+        <td>0.7354</td>
+        <td>0.7782</td>
+        <td>0.7708</td>
+        <td>0.7846</td>
+    </tr>
+    <tr>
+        <td>ROC-AUC</td>
+        <td>0.7141</td>
+        <td>0.6848</td>
+        <td>0.7265</td>
+        <td>0.7231</td>
+        <td>0.7306</td>
+
+### Proposed Model
 
 #### Accuracy
 ||Simple-RNN|GRU|LSTM|BiLSTM|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
