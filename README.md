@@ -1760,72 +1760,6 @@ def predict(sentences, model):
 
 ### Baseline
 
-Traing with all the dataset:
-
-    # of training data: 12530
-    # of test data: 1393
-
-<table>
-    <tr>
-        <th colspan="2"></th>
-        <th>KNN</th>
-        <th>Decision Tree</th>
-        <th>Random Forest</th>
-        <th>Extra Tree</th>
-        <th>XGBoost</th>
-    </tr>
-    <tr>
-        <td rowspan="3">With TF-IDF</td>
-        <td>Accuracy</td>
-        <td>0.7509</td>
-        <td>0.6820</td>
-        <td>0.7638</td>
-        <td>0.7782</td>
-        <td>0.8657</td>
-    </tr>
-    <tr>
-        <td>F1 Score</td>
-        <td>0.7838</td>
-        <td>0.7408</td>
-        <td>0.8117</td>
-        <td>0.8229</td>
-        <td>0.8329</td>
-    </tr>
-    <tr>
-        <td>ROC-AUC</td>
-        <td>0.7532</td>
-        <td>0.6640</td>
-        <td>0.7436</td>
-        <td>0.7590</td>
-        <td>0.7817</td>
-    </tr>
-    <tr>
-        <td rowspan="3">Without TF-IDF</td>
-        <td>Accuracy</td>
-        <td>0.7272</td>
-        <td>0.7093</td>
-        <td>0.7416</td>
-        <td>0.7322</td>
-        <td>0.7751</td>
-    </tr>
-    <tr>
-        <td>F1 Score</td>
-        <td>0.7838</td>
-        <td>0.7671</td>
-        <td>0.7943</td>
-        <td>0.7850</td>
-        <td>0.7941</td>
-    </tr>
-    <tr>
-        <td>ROC-AUC</td>
-        <td>0.7034</td>
-        <td>0.6877</td>
-        <td>0.7198</td>
-        <td>0.7124</td>
-        <td>0.7186</td>
-    </tr>
-</table>
-
 Select sentence length is longer than 5:
 
     # of training data: 11601
@@ -1843,52 +1777,52 @@ Select sentence length is longer than 5:
     <tr>
         <td rowspan="3">With TF-IDF</td>
         <td>Accuracy</td>
-        <td>0.7696</td>
-        <td>0.6889</td>
-        <td>0.7843</td>
-        <td>0.7735</td>
-        <td>0.8979</td>
+        <td>0.7355</td>
+        <td>0.6823</td>
+        <td>0.7587</td>
+        <td>0.7583</td>
+        <td>0.8556</td>
     </tr>
     <tr>
         <td>F1 Score</td>
-        <td>0.7895</td>
-        <td>0.7460</td>
-        <td>0.8190</td>
-        <td>0.8094</td>
-        <td>0.8343</td>
+        <td>0.7648</td>
+        <td>0.749</td>
+        <td>0.8023</td>
+        <td>0.8023</td>
+        <td>0.8191</td>
     </tr>
     <tr>
         <td>ROC-AUC</td>
-        <td>0.7715</td>
-        <td>0.6705</td>
-        <td>0.7727</td>
-        <td>0.7620</td>
-        <td>0.7993</td>
+        <td>0.7354</td>
+        <td>0.6561</td>
+        <td>0.7427</td>
+        <td>0.742</td>
+        <td>0.7694</td>
     </tr>
     <tr>
         <td rowspan="3">Without TF-IDF</td>
         <td>Accuracy</td>
-        <td>0.7254</td>
+        <td>0.7044</td>
         <td>0.6936</td>
-        <td>0.7378</td>
-        <td>0.7374</td>
-        <td>0.7818</td>
+        <td>0.7223</td>
+        <td>0.7196</td>
+        <td>0.7726</td>
     </tr>
     <tr>
         <td>F1 Score</td>
-        <td>0.7674</td>
-        <td>0.7354</td>
-        <td>0.7782</td>
-        <td>0.7708</td>
-        <td>0.7846</td>
+        <td>0.7559</td>
+        <td>0.7408</td>
+        <td>0.7717</td>
+        <td>0.7670</td>
+        <td>0.7793</td>
     </tr>
     <tr>
         <td>ROC-AUC</td>
-        <td>0.7141</td>
-        <td>0.6848</td>
-        <td>0.7265</td>
-        <td>0.7231</td>
-        <td>0.7306</td>
+        <td>0.6884</td>
+        <td>0.6822</td>
+        <td>0.7058</td>
+        <td>0.7053</td>
+        <td>0.7098</td>
     </tr>
 </table>
 
