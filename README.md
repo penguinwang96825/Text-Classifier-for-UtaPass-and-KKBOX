@@ -1824,6 +1824,7 @@ Traing with all the dataset:
         <td>0.7124</td>
         <td>0.7186</td>
     </tr>
+</table>
 
 Select sentence length is longer than 5:
     # of training data: 11601
@@ -1889,6 +1890,7 @@ Select sentence length is longer than 5:
         <td>0.7231</td>
         <td>0.7306</td>
     </tr>
+</table>
 
 ### Proposed Model
 
