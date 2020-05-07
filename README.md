@@ -1756,6 +1756,7 @@ def predict(sentences, model):
     return y_pred
 ```
 
+|<td colspan="9">Accuracy</td>
 ||Simple-RNN|GRU|LSTM|BiLSTM|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
 |---|---|---|---|---|---|---|---|---|
 |Adam|0.7125|0.7755|0.7628|0.7872|0.7365|0.7550|0.7790|0.7330|
@@ -1766,6 +1767,7 @@ def predict(sentences, model):
 |Nadam|0.7140|0.7713|0.7670|0.7856|0.7051|0.7388|0.7771|0.7260|
 |COCOB|0.7341|0.7763|0.7786|0.7790|0.7105|0.7372|0.7705|0.7396|
 
+|<td colspan="9">F1 Score</td>
 ||Simple-RNN|GRU|LSTM|BiLSTM|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
 |---|---|---|---|---|---|---|---|---|
 |Adam|0.757|0.8059|0.7984|0.8153|07628|0.7828|0.8138|0.7667|
