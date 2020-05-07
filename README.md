@@ -1761,13 +1761,13 @@ def predict(sentences, model):
 ### Baseline
 
 Traing with all the dataset:
+
     # of training data: 12530
     # of test data: 1393
 
 <table>
     <tr>
-        <th> </th>
-        <th> </th>
+        <th colspan="2"></th>
         <th>KNN</th>
         <th>Decision Tree</th>
         <th>Random Forest</th>
@@ -1827,13 +1827,13 @@ Traing with all the dataset:
 </table>
 
 Select sentence length is longer than 5:
+
     # of training data: 11601
     # of test data: 1289
 
 <table>
     <tr>
-        <th> </th>
-        <th> </th>
+        <th colspan="2"></th>
         <th>KNN</th>
         <th>Decision Tree</th>
         <th>Random Forest</th>
