@@ -1694,7 +1694,7 @@ Confusion Matrix:
 ![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/text-resnet/text-resnet-sgd.png)
 
 * Text-ResNet with COCOB
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/Image/text-resnet/text-resnet-cocob.png)
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/tree/master/image/text-resnet/text-resnet-cocob.png)
 
 ||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
 |---|---|---|---|---|---|---|---|
