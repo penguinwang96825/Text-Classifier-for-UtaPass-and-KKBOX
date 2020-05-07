@@ -1888,6 +1888,7 @@ Select sentence length is longer than 5:
         <td>0.7265</td>
         <td>0.7231</td>
         <td>0.7306</td>
+    </tr>
 
 ### Proposed Model
 
