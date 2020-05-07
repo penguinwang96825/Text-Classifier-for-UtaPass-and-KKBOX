@@ -1756,27 +1756,6 @@ def predict(sentences, model):
     return y_pred
 ```
 
-||Simple-RNN|GRU|LSTM|BiLSTM|CNN-LSTM|Text-ResNet|
-|---|---|---|---|---|---|---|
-|Accuracy|0.7388|0.5805|0.5805|0.7620|0.7856|0.7217|
-|F1 Score|0.7655|0.7346|0.7346|0.7955|0.8173|0.7532|
-
-<table>
-    <tr>
-        <th> </th>
-        <th>Simple-RNN</th>
-        <th>GRU</th>
-        <th>LSTM</th>
-        <th>BiLSTM</th>
-        <th>CNN-Static</th>
-        <th>CNN-MultiChannel</th>
-        <th>CNN-LSTM</th>
-        <th>Text-ResNet</th>
-    </tr>
-    <tr>
-        <td>Adam</td>
-        <td>0.7125
-
 ||Simple-RNN|GRU|LSTM|BiLSTM|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
 |---|---|---|---|---|---|---|---|---|
 |Adam|0.7125|0.7755|0.7628|0.7872|0.7365|0.7550|0.7790|0.7330|
