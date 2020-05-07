@@ -1756,11 +1756,46 @@ def predict(sentences, model):
     return y_pred
 ```
 
-||Simple RNN|GRU|LSTM|BiLSTM|CNN-LSTM|Text-ResNet|
+||Simple-RNN|GRU|LSTM|BiLSTM|CNN-LSTM|Text-ResNet|
 |---|---|---|---|---|---|---|
 |Accuracy|0.7388|0.5805|0.5805|0.7620|0.7856|0.7217|
 |F1 Score|0.7655|0.7346|0.7346|0.7955|0.8173|0.7532|
 
+<table>
+    <tr>
+        <th> </th>
+        <th>Simple-RNN</th>
+        <th>GRU</th>
+        <th>LSTM</th>
+        <th>BiLSTM</th>
+        <th>CNN-Static</th>
+        <th>CNN-MultiChannel</th>
+        <th>CNN-LSTM</th>
+        <th>Text-ResNet</th>
+    </tr>
+    <tr>
+        <td>Adam</td>
+        <td>0.7125
+
+||Simple-RNN|GRU|LSTM|BiLSTM|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
+|---|---|---|---|---|---|---|---|---|
+|Adam|0.7125|0.7755|0.7628|0.7872|0.7365|0.7550|0.7790|0.7330|
+|SGD|0.7283|0.7848|0.7697|0.7740|0.7032|0.7477|0.7872|0.7206|
+|Adagrad|0.7252|0.7829|0.7806|0.7825|0.7101|0.7287|0.7775|0.7450|
+|Adadelta|0.7392|0.7748|0.7833|0.7829|0.7566|0.7659|0.7752|0.7337|
+|RMSprop|0.7260|0.7779|0.7724|0.7864|0.7411|0.7438|0.7659|0.7318|
+|Nadam|0.7140|0.7713|0.7670|0.7856|0.7051|0.7388|0.7771|0.7260|
+|COCOB|0.7341|0.7763|0.7786|0.7790|0.7105|0.7372|0.7705|0.7396|
+
+||Simple-RNN|GRU|LSTM|BiLSTM|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
+|---|---|---|---|---|---|---|---|---|
+|Adam|0.757|0.8059|0.7984|0.8153|07628|0.7828|0.8138|0.7667|
+|SGD|0.7651|0.8114|0.8030|0.8047|0.7850|0.7772|0.8115|0.7619|
+|Adagrad|0.7627|0.8136|0.8068|0.8122|0.7854|0.7410|0.8085|0.7797|
+|Adadelta|0.7777|0.8066|0.8125|0.8119|0.7938|0.8022|0.8068|0.7679|
+|RMSprop|0.7608|0.8104|0.7968|0.8167|0.7802|0.7722|0.7948|0.7758|
+|Nadam|0.7501|0.8000|0.7933|0.8151|0.7855|0.7700|0.8076|0.7662|
+|COCOB|0.7643|0.8056|0.8092|0.8096|0.7242|0.7579|0.7981|0.7839|
 
 ## Future Roadmap
 It is completely possible to use only raw text as input for making predictions. The most important thing is to extract the relevant features from this raw source of data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
