@@ -1393,7 +1393,7 @@ Select sentence length is longer than 5:
     <tr>
         <td>F1 Score</td>
         <td>0.7648</td>
-        <td>0.749</td>
+        <td>0.7490</td>
         <td>0.8023</td>
         <td>0.8023</td>
         <td>0.8191</td>
@@ -1403,7 +1403,7 @@ Select sentence length is longer than 5:
         <td>0.7354</td>
         <td>0.6561</td>
         <td>0.7427</td>
-        <td>0.742</td>
+        <td>0.7420</td>
         <td>0.7694</td>
     </tr>
     <tr>
