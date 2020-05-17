@@ -1294,441 +1294,74 @@ F1 Score:  0.7790
 #### GRU
 
 * GRU with Adagrad
+Accuracy:  0.7639 
+F1 Score:  0.8040
 ![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru.png)
 
 ![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/CM.png)
 
 #### LSTM
 
-* LSTM with Adam
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm-adam.png)
-
 * LSTM with Adagrad
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm-adagrad.png)
+Accuracy:  0.7539 
+F1 Score:  0.7870
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm.png)
 
-* LSTM with Adadelta
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm-adadelta.png)
-
-* LSTM with Nadam
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm-nadam.png)
-
-* LSTM with RMSprop
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm-rmsprop.png)
-
-* LSTM with SGD
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm-sgd.png)
-
-* LSTM with COCOB
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm-cocob.png)
-
-||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
-|---|---|---|---|---|---|---|---|
-|Accuracy|0.7628|0.7697|0.7806|0.7833|0.7724|0.7670|0.7786|
-|F1 Score|0.7984|0.8030|0.8068|0.8125|0.7968|0.7933|0.8092|
-
-```console
-Training model using adam.
-==================== Start Training LSTM ====================
-Confusion Matrix: 
- [[ 757  286]
- [ 327 1214]]
-
-Training model using sgd.
-==================== Start Training LSTM ====================
-Confusion Matrix: 
- [[ 776  287]
- [ 308 1213]]
-
-Training model using adagrad.
-==================== Start Training LSTM ====================
-Confusion Matrix: 
- [[ 833  316]
- [ 251 1184]]
-
-Training model using adadelta.
-==================== Start Training LSTM ====================
-Confusion Matrix: 
- [[ 811  287]
- [ 273 1213]]
-
-Training model using rmsprop.
-==================== Start Training LSTM ====================
-Confusion Matrix: 
- [[ 843  347]
- [ 241 1153]]
-
-Training model using nadam.
-==================== Start Training LSTM ====================
-Confusion Matrix: 
- [[ 827  345]
- [ 257 1155]]
-
-Training model using cocob.
-==================== Start Training LSTM ====================
-Confusion Matrix: 
- [[ 799  287]
- [ 285 1213]]
-```
+![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/CM.png)
 
 #### BiLSTM
 
-* BiLSTM with Adam
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm-adam.png)
-
 * BiLSTM with Adagrad
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm-adagrad.png)
+Accuracy:  0.7481 
+F1 Score:  0.8006
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm.png)
 
-* BiLSTM with Adadelta
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm-adadelta.png)
+![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/CM.png)
 
-* BiLSTM with Nadam
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm-nadam.png)
+#### Attention
 
-* BiLSTM with RMSprop
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm-rmsprop.png)
+* Attention with Adagrad
+Accuracy:  0.7411 
+F1 Score:  0.7809
+![Attention](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/attention/attention.png)
 
-* BiLSTM with SGD
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm-sgd.png)
-
-* BiLSTM with COCOB
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm-cocob.png)
-
-||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
-|---|---|---|---|---|---|---|---|
-|Accuracy|0.7872|0.7740|0.7825|0.7829|0.7864|0.7856|0.7790|
-|F1 Score|0.8153|0.8047|0.8122|0.8119|0.8167|0.8151|0.8096|
-
-```console
-Training model using adam.
-==================== Start Training BiLSTM ====================
-Confusion Matrix: 
- [[ 820  286]
- [ 264 1214]]
-
-Training model using sgd.
-==================== Start Training BiLSTM ====================
-Confusion Matrix: 
- [[ 797  297]
- [ 287 1203]]
-
-Training model using adagrad.
-==================== Start Training BiLSTM ====================
-Confusion Matrix: 
- [[ 807  285]
- [ 277 1215]]
-
-Training model using adadelta.
-==================== Start Training BiLSTM ====================
-Confusion Matrix: 
- [[ 812  289]
- [ 272 1211]]
-
-Training model using rmsprop.
-==================== Start Training BiLSTM ====================
-Confusion Matrix: 
- [[ 802  270]
- [ 282 1230]]
-
-Training model using nadam.
-==================== Start Training BiLSTM ====================
-Confusion Matrix: 
- [[ 809  279]
- [ 275 1221]]
-
-Training model using cocob.
-==================== Start Training BiLSTM ====================
-Confusion Matrix: 
- [[ 799  286]
- [ 285 1214]]
-```
+![Attention](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/attention/CM.png)
 
 #### CNN-Static
 
-* CNN-Static with Adam
-![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn-static-adam.png)
-
 * CNN-Static with Adagrad
-![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn-static-adagrad.png)
+Accuracy:  0.7663 
+F1 Score:  0.7972
+![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn_static.png)
 
-* CNN-Static with Adadelta
-![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn-static-adadelta.png)
-
-* CNN-Static with Nadam
-![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn-static-nadam.png)
-
-* CNN-Static with RMSprop
-![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn-static-rmsprop.png)
-
-* CNN-Static with SGD
-![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn-static-sgd.png)
-
-* CNN-Static with COCOB
-![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn-static-cocob.png)
-
-||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
-|---|---|---|---|---|---|---|---|
-|Accuracy|0.7365|0.7032|0.7101|0.7566|0.7411|0.7051|0.7105|
-|F1 Score|07628|0.7850|0.7854|0.7938|0.7802|0.7855|0.7242|
-
-```console
-Training model using adam.
-==================== Start Training CNN-static ====================
-Confusion Matrix: 
- [[ 808  405]
- [ 276 1095]]
-
-Training model using sgd.
-==================== Start Training CNN-static ====================
-Confusion Matrix: 
- [[ 417  100]
- [ 667 1400]]
-
-Training model using adagrad.
-==================== Start Training CNN-static ====================
-Confusion Matrix: 
- [[ 464  129]
- [ 620 1371]]
-
-Training model using adadelta.
-==================== Start Training CNN-static ====================
-Confusion Matrix: 
- [[ 744  289]
- [ 340 1211]]
-
-Training model using rmsprop.
-==================== Start Training CNN-static ====================
-Confusion Matrix: 
- [[ 728  313]
- [ 356 1187]]
-
-Training model using nadam.
-==================== Start Training CNN-static ====================
-Confusion Matrix: 
- [[ 427  105]
- [ 657 1395]]
-
-Training model using cocob.
-==================== Start Training CNN-static ====================
-Confusion Matrix: 
- [[854 518]
- [230 982]]
-```
+![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/CM.png)
 
 #### CNN-MultiChannel
 
-* CNN-MultiChannel with Adam
-![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn-multichannel-adam.png)
-
 * CNN-MultiChannel with Adagrad
-![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn-multichannel-adagrad.png)
+Accuracy:  0.7581 
+F1 Score:  0.7922
+![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn_multichannel.png)
 
-* CNN-MultiChannel with Adadelta
-![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn-multichannel-adadelta.png)
-
-* CNN-MultiChannel with Nadam
-![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn-multichannel-nadam.png)
-
-* CNN-MultiChannel with RMSprop
-![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn-multichannel-rmsprop.png)
-
-* CNN-MultiChannel with SGD
-![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn-multichannel-sgd.png)
-
-* CNN-MultiChannel with COCOB
-![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn-multichannel-cocob.png)
-
-||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
-|---|---|---|---|---|---|---|---|
-|Accuracy|0.7550|0.7477|0.7287|0.7659|0.7438|0.7388|0.7372|
-|F1 Score|0.7828|0.7772|0.7410|0.8022|0.7722|0.7700|0.7579|
-
-```console
-Training model using adam.
-==================== Start Training CNN-multichannel ====================
-Confusion Matrix: 
- [[ 811  360]
- [ 273 1140]]
-
-Training model using sgd.
-==================== Start Training CNN-multichannel ====================
-Confusion Matrix: 
- [[ 795  363]
- [ 289 1137]]
-
-Training model using adagrad.
-==================== Start Training CNN-multichannel ====================
-Confusion Matrix: 
- [[ 880  497]
- [ 204 1003]]
-
-Training model using adadelta.
-==================== Start Training CNN-multichannel ====================
-Confusion Matrix: 
- [[ 752  273]
- [ 332 1227]]
-
-Training model using rmsprop.
-==================== Start Training CNN-multichannel ====================
-Confusion Matrix: 
- [[ 800  378]
- [ 284 1122]]
-
-Training model using nadam.
-==================== Start Training CNN-multichannel ====================
-Confusion Matrix: 
- [[ 779  370]
- [ 305 1130]]
-
-Training model using cocob.
-==================== Start Training CNN-multichannel ====================
-Confusion Matrix: 
- [[ 842  437]
- [ 242 1063]]
-```
+![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/CM.png)
 
 #### CNN-LSTM
 
-* CNN-LSTM with Adam
-![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn-lstm-adam.png)
-
 * CNN-LSTM with Adagrad
-![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn-lstm-adagrad.png)
+Accuracy:  0.7779 
+F1 Score:  0.8007
+![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn_lstm.png)
 
-* CNN-LSTM with Adadelta
-![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn-lstm-adadelta.png)
-
-* CNN-LSTM with Nadam
-![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn-lstm-nadam.png)
-
-* CNN-LSTM with RMSprop
-![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn-lstm-rmsprop.png)
-
-* CNN-LSTM with SGD
-![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn-lstm-sgd.png)
-
-* CNN-LSTM with COCOB
-![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn-lstm-cocob.png)
-
-||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
-|---|---|---|---|---|---|---|---|
-|Accuracy|0.7790|0.7872|0.7775|0.7752|0.7659|0.7771|0.7705|
-|F1 Score|0.8138|0.8115|0.8085|0.8068|0.7948|0.8076|0.7981|
-
-```console
-Training model using adam.
-==================== Start Training CNN-LSTM ====================
-Confusion Matrix: 
- [[ 765  252]
- [ 319 1248]]
-
-Training model using sgd.
-==================== Start Training CNN-LSTM ====================
-Confusion Matrix: 
- [[ 850  316]
- [ 234 1184]]
-
-Training model using adagrad.
-==================== Start Training CNN-LSTM ====================
-Confusion Matrix: 
- [[ 795  286]
- [ 289 1214]]
-
-Training model using adadelta.
-==================== Start Training CNN-LSTM ====================
-Confusion Matrix: 
- [[ 790  287]
- [ 294 1213]]
-
-Training model using rmsprop.
-==================== Start Training CNN-LSTM ====================
-Confusion Matrix: 
- [[ 807  328]
- [ 277 1172]]
-
-Training model using nadam.
-==================== Start Training CNN-LSTM ====================
-Confusion Matrix: 
- [[ 799  291]
- [ 285 1209]]
-
-Training model using cocob.
-==================== Start Training CNN-LSTM ====================
-Confusion Matrix: 
- [[ 819  328]
- [ 265 1172]]
-```
+![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/CM.png)
 
 #### Text-ResNet
 
-* Text-ResNet with Adam
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text-resnet-adam.png)
-
 * Text-ResNet with Adagrad
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text-resnet-adagrad.png)
+Accuracy:  0.7245 
+F1 Score:  0.7560
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text_resnet.png)
 
-* Text-ResNet with Adadelta
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text-resnet-adadelta.png)
-
-* Text-ResNet with Nadam
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text-resnet-nadam.png)
-
-* Text-ResNet with RMSprop
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text-resnet-rmsprop.png)
-
-* Text-ResNet with SGD
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text-resnet-sgd.png)
-
-* Text-ResNet with COCOB
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text-resnet-cocob.png)
-
-||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
-|---|---|---|---|---|---|---|---|
-|Accuracy|0.7330|0.7206|0.7450|0.7337|0.7318|0.7260|0.7396|
-|F1 Score|0.7667|0.7619|0.7797|0.7679|0.7758|0.7662|0.7839|
-
-```console
-Training model using adam.
-==================== Start Training Text-ResNet ====================
-Confusion Matrix: 
- [[ 760  366]
- [ 324 1134]]
-
-Training model using sgd.
-==================== Start Training Text-ResNet ====================
-Confusion Matrix: 
- [[ 707  345]
- [ 377 1155]]
-
-Training model using adagrad.
-==================== Start Training Text-ResNet ====================
-Confusion Matrix: 
- [[ 759  334]
- [ 325 1166]]
-
-Training model using adadelta.
-==================== Start Training Text-ResNet ====================
-Confusion Matrix: 
- [[ 758  362]
- [ 326 1138]]
-
-Training model using rmsprop.
-==================== Start Training Text-ResNet ====================
-Confusion Matrix: 
- [[ 692  301]
- [ 392 1199]]
-
-Training model using nadam.
-==================== Start Training Text-ResNet ====================
-Confusion Matrix: 
- [[ 716  340]
- [ 368 1160]]
-
-Training model using cocob.
-==================== Start Training Text-ResNet ====================
-Confusion Matrix: 
- [[ 690  279]
- [ 394 1221]]
-```
+![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/CM.png)
 
 ## Performance
 
@@ -1803,26 +1436,11 @@ Select sentence length is longer than 5:
 ### Proposed Model
 
 #### Accuracy
-||Simple-RNN|GRU|LSTM|BiLSTM|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
-|---|---|---|---|---|---|---|---|---|
-|Adam|0.7125|0.7755|0.7628|**0.7872**|0.7365|0.7550|0.7790|0.7330|
-|SGD|0.7283|**0.7848**|0.7697|0.7740|0.7032|0.7477|**0.7872**|0.7206|
-|Adagrad|0.7252|0.7829|0.7806|0.7825|0.7101|0.7287|0.7775|**0.7450**|
-|Adadelta|**0.7392**|0.7748|**0.7833**|0.7829|**0.7566**|**0.7659**|0.7752|0.7337|
-|RMSprop|0.7260|0.7779|0.7724|0.7864|0.7411|0.7438|0.7659|0.7318|
-|Nadam|0.7140|0.7713|0.7670|0.7856|0.7051|0.7388|0.7771|0.7260|
-|COCOB|0.7341|0.7763|0.7786|0.7790|0.7105|0.7372|0.7705|0.7396|
+||Simple-RNN|GRU|LSTM|BiLSTM|Attention|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
+|---|---|---|---|---|---|---|---|---|---|
+|Accuracy|0.7295|0.7639|0.7539|0.7481|0.7411|0.7663|0.7581|0.7779|0.7245|
+|F1 Score|0.7790|0.8040|0.7870|0.8006|0.7809|0.7972|0.7922|0.8007|0.7560|
 
-#### F1 Score
-||Simple-RNN|GRU|LSTM|BiLSTM|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
-|---|---|---|---|---|---|---|---|---|
-|Adam|0.7570|0.8059|0.7984|0.8153|07628|0.7828|**0.8138**|0.7667|
-|SGD|0.7651|0.8114|0.8030|0.8047|0.7850|0.7772|0.8115|0.7619|
-|Adagrad|0.7627|**0.8136**|0.8068|0.8122|0.7854|0.7410|0.8085|0.7797|
-|Adadelta|**0.7777**|0.8066|**0.8125**|0.8119|**0.7938**|**0.8022**|0.8068|0.7679|
-|RMSprop|0.7608|0.8104|0.7968|**0.8167**|0.7802|0.7722|0.7948|0.7758|
-|Nadam|0.7501|0.8000|0.7933|0.8151|0.7855|0.7700|0.8076|0.7662|
-|COCOB|0.7643|0.8056|0.8092|0.8096|0.7242|0.7579|0.7981|**0.7839**|
 
 ## Future Roadmap
 It is completely possible to use only raw text as input for making predictions. The most important thing is to extract the relevant features from this raw source of data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
