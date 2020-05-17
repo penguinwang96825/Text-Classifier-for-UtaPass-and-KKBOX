@@ -1435,12 +1435,17 @@ Select sentence length is longer than 5:
 
 ### Proposed Model
 
-#### Accuracy
+#### Deep Learning Model
 ||Simple-RNN|GRU|LSTM|BiLSTM|Attention|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
 |---|---|---|---|---|---|---|---|---|---|
 |Accuracy|0.7295|0.7639|0.7539|0.7481|0.7411|0.7663|0.7581|0.7779|0.7245|
 |F1 Score|0.7790|0.8040|0.7870|0.8006|0.7809|0.7972|0.7922|0.8007|0.7560|
 
+#### Pre-trained Language Model
+||BERT|ALBERT|DISTILBERT|
+|---|---|---|---|
+|Accuracy|0.8543|0.7093|0.8528|
+|F1 Score|0.8806|0.7766|0.8815|
 
 ## Future Roadmap
 It is completely possible to use only raw text as input for making predictions. The most important thing is to extract the relevant features from this raw source of data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
