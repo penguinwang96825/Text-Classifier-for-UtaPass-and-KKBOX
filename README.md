@@ -1444,8 +1444,8 @@ Select sentence length is longer than 5:
 #### Pre-trained Language Model
 ||BERT|ALBERT|DISTILBERT|
 |---|---|---|---|
-|Accuracy|0.8543|0.7652|0.8528|
-|F1 Score|0.8806|0.8144|0.8815|
+|Accuracy|0.8543|0.8005|0.8528|
+|F1 Score|0.8806|0.8410|0.8815|
 
 ## Future Roadmap
 It is completely possible to use only raw text as input for making predictions. The most important thing is to extract the relevant features from this raw source of data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
