@@ -583,122 +583,175 @@ def get_f1(y_true, y_pred):
     return f1_val
 ```
 
+When training a neural network, f1 score is an important metric to evaluate the performance of classification models, especially for unbalanced classes where the binary accuracy is useless. So I biuld two helper functions `get_f1` and`predict`.
+
+```python
+def predict(sentences, model):
+    y_prob = model.predict(x_test)
+    y_prob = y_prob.squeeze()
+    y_pred = (y_prob > 0.5) 
+    return y_pred
+```
+
+Set optimisers to update gradient.
+
+Setting of other optimisers.
+```python
+adagrad = Adagrad(learning_rate=0.01)
+adadelta = Adadelta(learning_rate=0.01, rho=0.95)
+rmsprop = RMSprop(learning_rate=0.001, rho=0.9)
+nadam = Nadam(learning_rate=0.001, beta_1=0.9, beta_2=0.999)
+```
+
 ##### Simple RNN
 ```python
-def train_simple_rnn(x_train, y_train, wv_matrix):
+def train_simple_rnn(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
     tf.keras.backend.clear_session()
-    
     
     x_input = Input(shape=(config["MAX_LEN"], ))
     x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=False)(x_input)
     x = SpatialDropout1D(config['dropout_rate'])(x)
-    x = SimpleRNN(units=config["output_size"], activation=config["rnn_activation"])(x)
+    x = Bidirectional(SimpleRNN(
+        units=config["output_size"], 
+        activation=config["rnn_activation"], 
+        kernel_regularizer=regularizers.l2(0.3)))(x)
     x = Dropout(config['dropout_rate'])(x)
     x = Dense(units=1)(x)
     x = Activation('sigmoid')(x)
     model = Model(inputs=x_input, outputs=x)
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
+    if not load_weights: 
+        model.compile(loss=config["loss"], 
+                      optimizer=adagrad, 
+                      metrics=[get_f1])
 
-    print("="*20, "Start Training Simple RNN", "="*20)
+        print("="*20, "Start Training Simple RNN", "="*20)
 
-    path = 'weights\{}_weights.hdf5'.format("rnn")
-    # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
-    early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=0, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\rnn_weights.hdf5'
+        model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
 
-    history = model.fit(
-        x_train, y_train, 
-        batch_size=config['batch_size'], 
-        epochs=config['nb_epoch'], 
-        validation_split=config['validation_split'], 
-        shuffle=config['shuffle'], 
-        verbose=0, 
-        callbacks=[early_stopping, reduce_lr])
+        history = model.fit(
+            x_train, y_train, 
+            batch_size=config['batch_size'], 
+            epochs=config['nb_epoch'], 
+            validation_split=config['validation_split'], 
+            shuffle=config['shuffle'], 
+            verbose=0, 
+            callbacks=[early_stopping, reduce_lr, model_checkpoint])
+    if load_weights:
+        history = None
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\rnn_weights.hdf5'
+        model.load_weights(path)
     
     return history, model
 ```
 
 ##### GRU
 ```python
-def train_gru(x_train, y_train, wv_matrix):
+def train_gru(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
     tf.keras.backend.clear_session()
     
     x_input = Input(shape=(config["MAX_LEN"], ))
     x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=False)(x_input)
     x = SpatialDropout1D(config['dropout_rate'])(x)
-    x = GRU(units=config["output_size"], return_sequences=False)(x)
+    # x = Bidirectional(GRU(units=config["output_size"], return_sequences=True, dropout=config['dropout_rate']))(x)
+    # x = Bidirectional(GRU(units=config["output_size"], return_sequences=True, dropout=config['dropout_rate']))(x)
+    x = Bidirectional(GRU(units=config["output_size"], return_sequences=False, dropout=config['dropout_rate']))(x)
     x = Dropout(config['dropout_rate'])(x)
     x = Dense(units=1)(x)
     x = Activation('sigmoid')(x)
     model = Model(inputs=x_input, outputs=x)
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
+    if not load_weights:
+        model.compile(loss=config["loss"], 
+                      optimizer=adagrad, 
+                      metrics=[get_f1])
 
-    print("="*20, "Start Training GRU", "="*20)
+        print("="*20, "Start Training GRU", "="*20)
 
-    path = 'weights\{}_weights.hdf5'.format("gru")
-    # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
-    early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=0, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\gru_weights.hdf5'
+        model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
 
-    history = model.fit(
-        x_train, y_train, 
-        batch_size=config['batch_size'], 
-        epochs=config['nb_epoch'], 
-        validation_split=config['validation_split'], 
-        shuffle=config['shuffle'], 
-        verbose=0, 
-        callbacks=[early_stopping, reduce_lr])
+        history = model.fit(
+            x_train, y_train, 
+            batch_size=config['batch_size'], 
+            epochs=config['nb_epoch'], 
+            validation_split=config['validation_split'], 
+            shuffle=config['shuffle'], 
+            verbose=verbose, 
+            callbacks=[early_stopping, reduce_lr, model_checkpoint])
+    if load_weights:
+        history = None
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\gru_weights.hdf5'
+        model.load_weights(path)
     
     return history, model
 ```
 
 ##### LSTM
 ```python
-def train_lstm(x_train, y_train, wv_matrix):
+def train_lstm(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
     tf.keras.backend.clear_session()
     
     x_input = Input(shape=(config["MAX_LEN"], ))
     x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=False)(x_input)
     x = SpatialDropout1D(config['dropout_rate'])(x)
-    x = LSTM(units=config['lstm_cell'], return_sequences=False)(x)
+    x = LSTM(units=config['lstm_cell'], return_sequences=True, kernel_regularizer=regularizers.l2(0.3))(x)
+    x = LSTM(units=config['lstm_cell'], return_sequences=False, kernel_regularizer=regularizers.l2(0.3))(x)
     x = Dropout(config['dropout_rate'])(x)
     x = Dense(units=1)(x)
     x = Activation('sigmoid')(x)
     model = Model(inputs=x_input, outputs=x)
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
+    if not load_weights: 
+        model.compile(loss=config["loss"], 
+                      optimizer=adagrad, 
+                      metrics=[get_f1])
 
-    print("="*20, "Start Training LSTM", "="*20)
+        print("="*20, "Start Training LSTM", "="*20)
 
-    path = 'weights\{}_weights.hdf5'.format("lstm")
-    # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
-    early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=0, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\lstm_weights.hdf5'
+        model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
 
-    history = model.fit(
-        x_train, y_train, 
-        batch_size=config['batch_size'], 
-        epochs=config['nb_epoch'], 
-        validation_split=config['validation_split'], 
-        shuffle=config['shuffle'], 
-        verbose=0, 
-        callbacks=[early_stopping, reduce_lr])
+        history = model.fit(
+            x_train, y_train, 
+            batch_size=config['batch_size'], 
+            epochs=config['nb_epoch'], 
+            validation_split=config['validation_split'], 
+            shuffle=config['shuffle'], 
+            verbose=verbose, 
+            callbacks=[early_stopping, reduce_lr, model_checkpoint])
+    if load_weights:
+        history = None
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\lstm_weights.hdf5'
+        model.load_weights(path)
     
     return history, model
 ```
 
 ##### BiLSTM
 ```python
-def train_bilstm(x_train, y_train, wv_matrix):
+def train_bilstm(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
     tf.keras.backend.clear_session()
     
     x_input = Input(shape=(config["MAX_LEN"], ))
     x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=False)(x_input)
     x = SpatialDropout1D(config['dropout_rate'])(x)
-    x = Bidirectional(LSTM(units=config['output_size'], return_sequences=True))(x)
-    x = Bidirectional(LSTM(units=config['output_size'], return_sequences=False))(x)
+    x = Bidirectional(LSTM(
+        units=config['lstm_cell'], 
+        return_sequences=True, 
+        dropout=config['dropout_rate'], 
+        kernel_regularizer=regularizers.l2(0.3)))(x)
+    x = Bidirectional(LSTM(
+        units=config['lstm_cell'], 
+        return_sequences=False, 
+        kernel_regularizer=regularizers.l2(0.3)))(x)
     x = Dropout(config['dropout_rate'])(x)
     x = Dense(config['fc_cell'])(x)
     x = Dropout(config['dropout_rate'])(x)
@@ -706,30 +759,87 @@ def train_bilstm(x_train, y_train, wv_matrix):
     x = Activation('sigmoid')(x)
     model = Model(inputs=x_input, outputs=x)
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
+    if not load_weights:
+        model.compile(loss=config["loss"], 
+                      optimizer=adagrad, 
+                      metrics=[get_f1])
 
-    print("="*20, "Start Training BiLSTM", "="*20)
+        print("="*20, "Start Training BiLSTM", "="*20)
 
-    path = 'weights\weights.hdf5'
-    # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
-    early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=0, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\bilstm_weights.hdf5'
+        model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
 
-    history = model.fit(
-        x_train, y_train, 
-        batch_size=config['batch_size'], 
-        epochs=config['nb_epoch'], 
-        validation_split=config['validation_split'], 
-        shuffle=config['shuffle'], 
-        verbose=0, 
-        callbacks=[early_stopping, reduce_lr])
+        history = model.fit(
+            x_train, y_train, 
+            batch_size=config['batch_size'], 
+            epochs=config['nb_epoch'], 
+            validation_split=config['validation_split'], 
+            shuffle=config['shuffle'], 
+            verbose=verbose, 
+            callbacks=[early_stopping, reduce_lr, model_checkpoint])
+    if load_weights:
+        history = None
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\bilstm_weights.hdf5'
+        model.load_weights(path)
+    
+    return history, model
+```
+
+##### Attention
+```python
+def train_attention(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
+    tf.keras.backend.clear_session()
+    
+    x_input = Input(shape=(config["MAX_LEN"], ))
+    x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=False)(x_input)
+    x = SpatialDropout1D(config['dropout_rate'])(x)
+    x = SeqSelfAttention(units=128, kernel_regularizer=regularizers.l2(0.1))(x)
+    x = SeqSelfAttention(units=128, kernel_regularizer=regularizers.l2(0.1))(x)
+    x = SeqSelfAttention(units=128, kernel_regularizer=regularizers.l2(0.1))(x)
+    x = SeqSelfAttention(units=128, kernel_regularizer=regularizers.l2(0.1))(x)
+    x = SeqSelfAttention(units=128, kernel_regularizer=regularizers.l2(0.1))(x)
+    x = SeqSelfAttention(units=128, kernel_regularizer=regularizers.l2(0.1))(x)
+    x = SeqSelfAttention(units=128, kernel_regularizer=regularizers.l2(0.1))(x)
+    x = SeqSelfAttention(units=128, kernel_regularizer=regularizers.l2(0.1))(x)
+    x = Flatten()(x)
+    x = Dropout(config['dropout_rate'])(x)
+    x = Dense(units=1)(x)
+    x = Activation('sigmoid')(x)
+    model = Model(inputs=x_input, outputs=x)
+
+    if not load_weights:
+        model.compile(loss=config["loss"], 
+                      optimizer=adagrad, 
+                      metrics=[get_f1])
+
+        print("="*20, "Start Training Attention", "="*20)
+
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\attention_weights.hdf5'
+        model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001, verbose=1)
+
+        history = model.fit(
+            x_train, y_train, 
+            batch_size=config['batch_size'], 
+            epochs=config['nb_epoch'], 
+            validation_split=config['validation_split'], 
+            shuffle=config['shuffle'], 
+            verbose=verbose, 
+            callbacks=[early_stopping, reduce_lr, model_checkpoint])
+    if load_weights:
+        history = None
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\attention_weights.hdf5'
+        model.load_weights(path)
     
     return history, model
 ```
 
 ##### CNN-LSTM
 ```python
-def train_cnn_lstm(x_train, y_train, wv_matrix):
+def train_cnn_lstm(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
     tf.keras.backend.clear_session()
     
     x_input = Input(shape=(config["MAX_LEN"], ))
@@ -738,31 +848,42 @@ def train_cnn_lstm(x_train, y_train, wv_matrix):
     x = Conv1D(filters=config['nb_filter'], kernel_size=config['filter_length'], padding=config['border_mode'])(x)
     x = BatchNormalization()(x)
     x = Activation("relu")(x)
+    x = Conv1D(filters=config['nb_filter'], kernel_size=config['filter_length'], padding=config['border_mode'])(x)
+    x = BatchNormalization()(x)
+    x = Activation("relu")(x)
     x = MaxPooling1D(pool_size=config['pool_length'])(x)
-    x = LSTM(units=config['lstm_cell'], return_sequences=False)(x)
+    x = Bidirectional(LSTM(units=config['lstm_cell'], return_sequences=True, kernel_regularizer=regularizers.l2(0.3)))(x)
+    x = Bidirectional(LSTM(units=config['lstm_cell'], return_sequences=False, kernel_regularizer=regularizers.l2(0.3)))(x)
     x = Dense(config['fc_cell']*2)(x)
     x = Dropout(config['dropout_rate'])(x)
     x = Dense(units=1)(x)
     x = Activation('sigmoid')(x)
     model = Model(inputs=x_input, outputs=x)
 
-    model.compile(loss=config['loss'], optimizer=config['optimizer'], metrics=[get_f1])
+    if not load_weights:
+        model.compile(loss=config['loss'], 
+                      optimizer=Nadam(learning_rate=0.001, beta_1=0.9, beta_2=0.999), 
+                      metrics=[get_f1])
 
-    print("="*20, "Start Training CNN-LSTM", "="*20)
+        print("="*20, "Start Training CNN-LSTM", "="*20)
 
-    path = 'weights\{}_weights.hdf5'.format("cnn_lstm")
-    # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
-    early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=0, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\{}_weights.hdf5'.format("cnn_lstm")
+        model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
 
-    history = model.fit(
-        x_train, y_train, 
-        batch_size=config['batch_size'], 
-        epochs=config['nb_epoch'], 
-        validation_split=config['validation_split'], 
-        shuffle=config['shuffle'], 
-        verbose=0, 
-        callbacks=[early_stopping, reduce_lr])
+        history = model.fit(
+            x_train, y_train, 
+            batch_size=config['batch_size'], 
+            epochs=config['nb_epoch'], 
+            validation_split=config['validation_split'], 
+            shuffle=config['shuffle'], 
+            verbose=verbose, 
+            callbacks=[early_stopping, reduce_lr, model_checkpoint])
+    if load_weights: 
+        history = None
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\{}_weights.hdf5'.format("cnn_lstm")
+        model.load_weights(path)
     
     return history, model
 ```
@@ -772,7 +893,7 @@ Based on "Convolutional Neural Networks for Sentence Classification" written by 
 ```python
 # Yoon Kim's paper: Convolutional Neural Networks for Sentence Classification
 # Reference from https://www.aclweb.org/anthology/D14-1181.pdf
-def train_cnn_static(x_train, y_train, wv_matrix, trainable=False):
+def train_cnn_static(x_train, y_train, wv_matrix, trainable=False, verbose=0, load_weights=False):
     tf.keras.backend.clear_session()
     
     x_input = Input(shape=(config["MAX_LEN"], ))
@@ -781,7 +902,7 @@ def train_cnn_static(x_train, y_train, wv_matrix, trainable=False):
     x_conv_1 = Conv1D(filters=config['nb_filter'], 
                       kernel_size=3, 
                       padding=config['border_mode'], 
-                      kernel_regularizer=regularizers.l2(3))(x)
+                      kernel_regularizer=regularizers.l2(0.3))(x)
     x_conv_1 = BatchNormalization()(x_conv_1)
     x_conv_1 = Activation("relu")(x_conv_1)
     x_conv_1 = MaxPooling1D(pool_size=(config["MAX_LEN"]-3+1), strides=1, padding="valid")(x_conv_1)
@@ -789,7 +910,7 @@ def train_cnn_static(x_train, y_train, wv_matrix, trainable=False):
     x_conv_2 = Conv1D(filters=config['nb_filter'], 
                       kernel_size=4, 
                       padding=config['border_mode'], 
-                      kernel_regularizer=regularizers.l2(3))(x)
+                      kernel_regularizer=regularizers.l2(0.3))(x)
     x_conv_2 = BatchNormalization()(x_conv_2)
     x_conv_2 = Activation("relu")(x_conv_2)
     x_conv_2 = MaxPooling1D(pool_size=(config["MAX_LEN"]-4+1), strides=1, padding="valid")(x_conv_2)
@@ -797,7 +918,7 @@ def train_cnn_static(x_train, y_train, wv_matrix, trainable=False):
     x_conv_3 = Conv1D(filters=config['nb_filter'], 
                       kernel_size=5, 
                       padding=config['border_mode'], 
-                      kernel_regularizer=regularizers.l2(3))(x)
+                      kernel_regularizer=regularizers.l2(0.3))(x)
     x_conv_3 = BatchNormalization()(x_conv_3)
     x_conv_3 = Activation("relu")(x_conv_3)
     x_conv_3 = MaxPooling1D(pool_size=(config["MAX_LEN"]-5+1), strides=1, padding="valid")(x_conv_3)
@@ -809,23 +930,30 @@ def train_cnn_static(x_train, y_train, wv_matrix, trainable=False):
     main = Activation('sigmoid')(main)
     model = Model(inputs=x_input, outputs=main)
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
+    if not load_weights:
+        model.compile(loss=config["loss"], 
+                      optimizer=adagrad, 
+                      metrics=[get_f1])
 
-    print("="*20, "Start Training CNN-static", "="*20)
+        print("="*20, "Start Training CNN-static", "="*20)
 
-    path = 'weights\{}_weights.hdf5'.format("lstm")
-    # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
-    early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=0, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\cnn_static_weights.hdf5'
+        model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
 
-    history = model.fit(
-        x_train, y_train, 
-        batch_size=config['batch_size'], 
-        epochs=config['nb_epoch'], 
-        validation_split=config['validation_split'], 
-        shuffle=config['shuffle'], 
-        verbose=0, 
-        callbacks=[early_stopping, reduce_lr])
+        history = model.fit(
+            x_train, y_train, 
+            batch_size=config['batch_size'], 
+            epochs=config['nb_epoch'], 
+            validation_split=config['validation_split'], 
+            shuffle=config['shuffle'], 
+            verbose=verbose, 
+            callbacks=[early_stopping, reduce_lr, model_checkpoint])
+    if load_weights:
+        history = None
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\cnn_static_weights.hdf5'
+        model.load_weights(path)
     
     return history, model
 ```
@@ -833,7 +961,7 @@ def train_cnn_static(x_train, y_train, wv_matrix, trainable=False):
 ##### CNN-multichannel
 Based on "Convolutional Neural Networks for Sentence Classification" written by Yoon Kim [[paper link](http://arxiv.org/pdf/1408.5882v2.pdf)]
 ```python
-def train_cnn_multichannel(x_train, y_train, wv_matrix, trainable=False):
+def train_cnn_multichannel(x_train, y_train, wv_matrix, trainable=False, verbose=0, load_weights=False):
     tf.keras.backend.clear_session()
     
     # Channel 1
@@ -847,7 +975,7 @@ def train_cnn_multichannel(x_train, y_train, wv_matrix, trainable=False):
         filters=config['nb_filter'], 
         kernel_size=3, 
         padding=config['border_mode'], 
-        kernel_regularizer=regularizers.l2(3))(embedding_1)
+        kernel_regularizer=regularizers.l2(0.3))(embedding_1)
     x_conv_1 = BatchNormalization()(x_conv_1)
     x_conv_1 = Activation("relu")(x_conv_1)
     x_conv_1 = MaxPooling1D(pool_size=(config["MAX_LEN"]-3+1), strides=1, padding="valid")(x_conv_1)
@@ -864,7 +992,7 @@ def train_cnn_multichannel(x_train, y_train, wv_matrix, trainable=False):
         filters=config['nb_filter'], 
         kernel_size=3, 
         padding=config['border_mode'], 
-        kernel_regularizer=regularizers.l2(3))(embedding_2)
+        kernel_regularizer=regularizers.l2(0.3))(embedding_2)
     x_conv_2 = BatchNormalization()(x_conv_2)
     x_conv_2 = Activation("relu")(x_conv_2)
     x_conv_2 = MaxPooling1D(pool_size=(config["MAX_LEN"]-3+1), strides=1, padding="valid")(x_conv_2)
@@ -881,7 +1009,7 @@ def train_cnn_multichannel(x_train, y_train, wv_matrix, trainable=False):
         filters=config['nb_filter'], 
         kernel_size=3, 
         padding=config['border_mode'], 
-        kernel_regularizer=regularizers.l2(3))(embedding_3)
+        kernel_regularizer=regularizers.l2(0.3))(embedding_3)
     x_conv_3 = BatchNormalization()(x_conv_3)
     x_conv_3 = Activation("relu")(x_conv_3)
     x_conv_3 = MaxPooling1D(pool_size=(config["MAX_LEN"]-3+1), strides=1, padding="valid")(x_conv_3)
@@ -895,23 +1023,30 @@ def train_cnn_multichannel(x_train, y_train, wv_matrix, trainable=False):
     main = Activation('sigmoid')(main)
     model = Model(inputs=[x_input_1, x_input_2, x_input_3], outputs=main)
 
-    model.compile(loss=config["loss"], optimizer=config["optimizer"], metrics=[get_f1])
+    if not load_weights:
+        model.compile(loss=config["loss"], 
+                      optimizer=adagrad, 
+                      metrics=[get_f1])
 
-    print("="*20, "Start Training CNN-multichannel", "="*20)
+        print("="*20, "Start Training CNN-multichannel", "="*20)
 
-    path = 'weights\{}_weights.hdf5'.format("lstm")
-    # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
-    early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=0, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\{}_weights.hdf5'.format("cnn_multi")
+        model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
 
-    history = model.fit(
-        [x_train, x_train, x_train], y_train, 
-        batch_size=config['batch_size'], 
-        epochs=config['nb_epoch'], 
-        validation_split=config['validation_split'], 
-        shuffle=config['shuffle'], 
-        verbose=0, 
-        callbacks=[early_stopping, reduce_lr])
+        history = model.fit(
+            [x_train, x_train, x_train], y_train, 
+            batch_size=config['batch_size'], 
+            epochs=config['nb_epoch'], 
+            validation_split=config['validation_split'], 
+            shuffle=config['shuffle'], 
+            verbose=verbose, 
+            callbacks=[early_stopping, reduce_lr, model_checkpoint])
+    if load_weights:
+        history = None
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\{}_weights.hdf5'.format("cnn_multi")
+        model.load_weights(path)
     
     return history, model
 ```
@@ -922,17 +1057,29 @@ def identity_resnet_block(x, nb_filter):
     x_shortcut = x
 
     # First component of main path
-    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(x)
+    res_x = Conv1D(
+        filters=nb_filter, 
+        kernel_size=5, 
+        strides=1, 
+        padding='same')(x)
     res_x = BatchNormalization()(res_x)
     res_x = Activation("relu")(res_x)
 
     # Second component of main path
-    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(res_x)
+    res_x = Conv1D(
+        filters=nb_filter, 
+        kernel_size=5, 
+        strides=1, 
+        padding='same')(res_x)
     res_x = BatchNormalization()(res_x)
     res_x = Activation("relu")(res_x)
 
     # Third component of main path
-    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(res_x)
+    res_x = Conv1D(
+        filters=nb_filter, 
+        kernel_size=5, 
+        strides=1, 
+        padding='same')(res_x)
     res_x = BatchNormalization()(res_x)
 
     # Final Step: add shortcut value to the main path
@@ -944,21 +1091,37 @@ def convolutional_resnet_block(x, nb_filter):
     x_shortcut = x
 
     # First component of main path
-    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(x)
+    res_x = Conv1D(
+        filters=nb_filter, 
+        kernel_size=5, 
+        strides=1, 
+        padding='same')(x)
     res_x = BatchNormalization()(res_x)
     res_x = Activation("relu")(res_x)
 
     # Second component of main path
-    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(res_x)
+    res_x = Conv1D(
+        filters=nb_filter, 
+        kernel_size=5, 
+        strides=1, 
+        padding='same')(res_x)
     res_x = BatchNormalization()(res_x)
     res_x = Activation("relu")(res_x)
 
     # Third component of main path
-    res_x = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(res_x)
+    res_x = Conv1D(
+        filters=nb_filter, 
+        kernel_size=5, 
+        strides=1, 
+        padding='same')(res_x)
     res_x = BatchNormalization()(res_x)
 
     # Shortcut path
-    x_shortcut = Conv1D(filters=nb_filter, kernel_size=2, strides=1, padding='same')(x_shortcut)
+    x_shortcut = Conv1D(
+        filters=nb_filter, 
+        kernel_size=5, 
+        strides=1, 
+        padding='same')(x_shortcut)
     x_shortcut = BatchNormalization()(x_shortcut)
 
     # Final Step: add shortcut value to the main path
@@ -966,7 +1129,7 @@ def convolutional_resnet_block(x, nb_filter):
     output = Activation('relu')(x)
     return output
 
-def train_text_resnet(x_train, y_train, wv_matrix):
+def train_text_resnet(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
     tf.keras.backend.clear_session()
     # Resnet for reviews of UtaPass and KKBOX
     x_input = Input(shape=(config["MAX_LEN"], ))
@@ -1011,92 +1174,42 @@ def train_text_resnet(x_train, y_train, wv_matrix):
     x = Activation('sigmoid')(x)
 
     model = Model(inputs=x_input, outputs=x)
-    model.compile(loss=config["loss"],
-                  optimizer=config["optimizer"],
-                  metrics=[get_f1])
     
-    print("="*20, "Start Training Text-ResNet", "="*20)
-    
-    path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\notebook\weights\text_resnet_weights.hdf5'
-    # model_checkpoint = ModelCheckpoint(path, monitor='loss', verbose=1, save_best_only=True, mode='auto')
-    early_stopping = EarlyStopping(monitor = 'loss', patience=100, verbose=1, mode='auto')
-    reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=50, min_lr=0.001)
-    
-    history = model.fit(
-        x_train, y_train, 
-        batch_size=config["batch_size"], 
-        epochs=config["nb_epoch"], 
-        validation_split=config["validation_split"], 
-        shuffle=config["shuffle"], 
-        verbose=0, 
-        callbacks=[early_stopping, reduce_lr])
+    if not load_weights: 
+        model.compile(loss=config["loss"],
+                      optimizer=Nadam(learning_rate=0.001, beta_1=0.9, beta_2=0.999),
+                      metrics=[get_f1])
+
+        print("="*20, "Start Training Text-ResNet", "="*20)
+
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\text_resnet_weights.hdf5'
+        model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
+        early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
+        reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
+
+        history = model.fit(
+            x_train, y_train, 
+            batch_size=config["batch_size"], 
+            epochs=config["nb_epoch"], 
+            validation_split=config["validation_split"], 
+            shuffle=config["shuffle"], 
+            verbose=verbose, 
+            callbacks=[early_stopping, reduce_lr, model_checkpoint])
+    if load_weights:
+        history = None
+        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\text_resnet_weights.hdf5'
+        model.load_weights(path)
     
     return history, model
 ```
 
 #### Start Training
 
-##### Set Optimisers
-
- - Customised Optimiser: Cocob (Continuous Coin Betting algorithm)
-Reference from https://medium.com/@mlguy/adding-custom-loss-and-optimizer-in-keras-e255764e1b7d
-```python
-class COCOB(Optimizer):
-    """Coin Betting Optimizer from the paper:
-        https://arxiv.org/pdf/1705.07795.pdf
-    """
-    def __init__(self, alpha=100, **kwargs):
-        """
-        Initialize COCOB Optimizer
-        Args:
-            alpha: Refer to paper.
-        """
-        super(COCOB, self).__init__(**kwargs)
-        self._alpha = alpha
-        with K.name_scope(self.__class__.__name__):
-            self.iterations = K.variable(0, dtype='int64', name='iterations')
-    def get_updates(self, params, loss, contraints=None):
-        self.updates = [K.update_add(self.iterations, 1)]
-        grads = self.get_gradients(loss, params)
-        shapes = [K.int_shape(p) for p in params]
-        L = [K.variable(np.full(fill_value=1e-8, shape=shape)) for shape in shapes]
-        reward = [K.zeros(shape) for shape in shapes]
-        tilde_w = [K.zeros(shape) for shape in shapes]
-        gradients_sum = [K.zeros(shape) for shape in shapes]
-        gradients_norm_sum = [K.zeros(shape) for shape in shapes]
-        for p, g, li, ri, twi, gsi, gns in zip(params, grads, L, reward,
-                                                     tilde_w,gradients_sum,
-                                                       gradients_norm_sum):
-            grad_sum_update = gsi + g
-            grad_norm_sum_update = gns + K.abs(g)
-            l_update = K.maximum(li, K.abs(g))
-            reward_update = K.maximum(ri - g * twi, 0)
-            new_w = - grad_sum_update / (l_update * (K.maximum(grad_norm_sum_update + l_update, self._alpha * l_update))) * (reward_update + l_update)
-            param_update = p - twi + new_w
-            tilde_w_update = new_w
-            self.updates.append(K.update(gsi, grad_sum_update))
-            self.updates.append(K.update(gns, grad_norm_sum_update))
-            self.updates.append(K.update(li, l_update))
-            self.updates.append(K.update(ri, reward_update))
-            self.updates.append(K.update(p, param_update))
-            self.updates.append(K.update(twi, tilde_w_update))
-        return self.updates
-    def get_config(self):
-        config = {'alpha': float(K.get_value(self._alpha)) }
-        base_config = super(COCOB, self).get_config()
-        return dict(list(base_config.items()) + list(config.items()))
-```
-
- - Setting of other optimisers.
-```python
-adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-sgd = SGD(lr=0.01, momentum=0.0, decay=0.0, nesterov=False)
-adagrad = Adagrad(learning_rate=0.01)
-adadelta = Adadelta(learning_rate=1.0, rho=0.95)
-rmsprop = RMSprop(learning_rate=0.001, rho=0.9)
-nadam = Nadam(learning_rate=0.002, beta_1=0.9, beta_2=0.999)
-cocob = COCOB()
-```
+1. Train each model and get history and model architecure.
+2. Load the checkpoint from weights folder we saved during training.
+3. Predict sentiment probability from testing set.
+4. Compute accuracy score, f1 score, and confusion matrix.
+5. Plot train and val history (loss and f1) and visualise confusion matrix.
 
 #### Visualisation
 Define two ploting functions to visualise the history of accuracy and loss.
@@ -1171,147 +1284,19 @@ Compare the performance among five deep learning models.
 
 #### Simple RNN
 
-* Simple RNN with Adam
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/rnn-adam.png)
-
 * Simple RNN with Adagrad
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/rnn-adagrad.png)
+Accuracy:  0.7295 
+F1 Score:  0.7790
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/simple_rnn.png)
 
-* Simple RNN with Adadelta
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/rnn-adadelta.png)
-
-* Simple RNN with Nadam
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/rnn-nadam.png)
-
-* Simple RNN with RMSprop
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/rnn-rmsprop.png)
-
-* Simple RNN with SGD
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/rnn-sgd.png)
-
-* Simple RNN with COCOB
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/rnn-cocob.png)
-
-||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
-|---|---|---|---|---|---|---|---|
-|Accuracy|0.7125|0.7283|0.7252|0.7392|0.7260|0.7140|0.7341|
-|F1 Score|0.7570|0.7651|0.7627|0.7777|0.7608|0.7501|0.7643|
-
-```console
-Training model using adam.
-==================== Start Training Simple RNN ====================
-Confusion Matrix: 
- [[ 684  343]
- [ 400 1157]]
-
-Training model using sgd.
-==================== Start Training Simple RNN ====================
-Confusion Matrix: 
- [[ 739  357]
- [ 345 1143]]
-
-Training model using adagrad.
-==================== Start Training Simple RNN ====================
-Confusion Matrix: 
- [[ 733  359]
- [ 351 1141]]
-
-Training model using adadelta.
-==================== Start Training Simple RNN ====================
-Confusion Matrix: 
- [[ 731  321]
- [ 353 1179]]
-
-Training model using rmsprop.
-==================== Start Training Simple RNN ====================
-Confusion Matrix: 
- [[ 750  374]
- [ 334 1126]]
-
-Training model using nadam.
-==================== Start Training Simple RNN ====================
-Confusion Matrix: 
- [[ 736  391]
- [ 348 1109]]
-
-Training model using cocob.
-==================== Start Training Simple RNN ====================
-Confusion Matrix: 
- [[ 783  386]
- [ 301 1114]]
-```
+![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/CM.png)
 
 #### GRU
 
-* GRU with Adam
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru-adam.png)
-
 * GRU with Adagrad
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru-adagrad.png)
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru.png)
 
-* GRU with Adadelta
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru-adadelta.png)
-
-* GRU with Nadam
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru-nadam.png)
-
-* GRU with RMSprop
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru-rmsprop.png)
-
-* GRU with SGD
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru-sgd.png)
-
-* GRU with COCOB
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru-cocob.png)
-
-||Adam|SGD|Adagrad|Adadelta|RMSprop|Nadam|COCOB|
-|---|---|---|---|---|---|---|---|
-|Accuracy|0.7755|0.7848|0.7829|0.7748|0.7779|0.7713|0.7763|
-|F1|0.8059|0.8114|0.8136|0.8066|0.8104|0.8000|0.8056|
-
-```console
-Training model using adam.
-==================== Start Training GRU ====================
-Confusion Matrix: 
- [[ 800  296]
- [ 284 1204]]
-
-Training model using sgd.
-==================== Start Training GRU ====================
-Confusion Matrix: 
- [[ 832  304]
- [ 252 1196]]
-
-Training model using adagrad.
-==================== Start Training GRU ====================
-Confusion Matrix: 
- [[ 799  276]
- [ 285 1224]]
-
-Training model using adadelta.
-==================== Start Training GRU ====================
-Confusion Matrix: 
- [[ 788  286]
- [ 296 1214]]
-
-Training model using rmsprop.
-==================== Start Training GRU ====================
-Confusion Matrix: 
- [[ 783  273]
- [ 301 1227]]
-
-Training model using nadam.
-==================== Start Training GRU ====================
-Confusion Matrix: 
- [[ 811  318]
- [ 273 1182]]
-
-Training model using cocob.
-==================== Start Training GRU ====================
-Confusion Matrix: 
- [[ 808  302]
- [ 276 1198]]
-```
+![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/CM.png)
 
 #### LSTM
 
@@ -1743,17 +1728,6 @@ Training model using cocob.
 Confusion Matrix: 
  [[ 690  279]
  [ 394 1221]]
-```
-
-### Evaluation
-When training a neural network, f1 score is an important metric to evaluate the performance of classification models, especially for unbalanced classes where the binary accuracy is useless.
-
-```python
-def predict(sentences, model):
-    y_prob = model.predict(x_test)
-    y_prob = y_prob.squeeze()
-    y_pred = (y_prob > 0.5) 
-    return y_pred
 ```
 
 ## Performance
