@@ -1,8 +1,8 @@
-# Text Classification and Polarity Detection
-Text classification for UtaPass and KKBOX total reviews using different machine learning models.
+# Sentiment Classification for UtaPass & KKBOX Reviews
+Text classification for reviews of UtaPass & KKBOX using different deep learning models.
 
 ## Introduction
-This sentiment analysis is based on reviews data of UtaPass and KKBOX from Google Play platform. As a KKStreamer at KKBOX, I become more interested in Natural Language Processing, especially text classification. First, I start crawling the text data using web crawler technique, namely BeautifulSoup and Selenium. Second, I develop several different neural network architectures, including simple RNN, LSTM, GRU, and CNN, to detect the polarity of reviews from customers.
+This sentiment classification task is based on reviews data of UtaPass and KKBOX from Google Play platform. As a KKStreamer at KKBOX, I become more interested in Natural Language Processing, especially text classification. First, I start crawling the text data using web crawler technique, namely BeautifulSoup and Selenium. Second, I develop several different neural network architectures, including simple RNN, LSTM, GRU, and CNN, to name but a few, to detect the polarity of reviews from customers.
 
 ## Data Source
 1. [UtaPass](https://play.google.com/store/apps/details?id=com.kddi.android.UtaPass&hl=ja&showAllReviews=true) reviews on Google Play
@@ -10,9 +10,9 @@ This sentiment analysis is based on reviews data of UtaPass and KKBOX from Googl
 
 ## Bottleneck
 * Is text pre-processing (e.g. remove stop words, remove punctuation, remove bad characters) neccessary? 
-* Is there any useless , redundant or invalid information about the reviews? 
+* Tokenise in character-level or word-level? 
 * Do every reviews have sentiment words or charateristic of polarity?
-* Does this dataset exist a imbalance problem?
+* Does this dataset exist an imbalance problem?
 
 ## Flow Chart of Text Classification
 ![FlowChart](https://github.com/penguinwang96825/Text-Classifier-for-UtaPass-and-KKBOX/blob/master/image/flowChart.jpg)
@@ -108,8 +108,6 @@ import pandas as pd
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.proxy import *
-from selenium.webdriver.common.by import By
 ```
   Note: 
 1. If `pip install fasttext` doesn't work, look at this [solution](https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat).
@@ -147,7 +145,7 @@ def check_exists_by_xpath(xpath):
         return False
     return True
 
-def scrollDownPage():
+def scroll_ownPage():
     # Xpath of "もっと見る" bottom
     button = '//*[@id="fcxH9b"]/div[4]/c-wiz/div/div[2]/div/div[1]/div/div/div[1]/div[2]/div[2]/div/span/span'
     
@@ -1379,7 +1377,26 @@ F1 Score:  0.7560
 |Accuracy|0.8543|0.8005|0.8528|
 |F1 Score|0.8806|0.8410|0.8815|
 
-## Future Roadmap
-It is completely possible to use only raw text as input for making predictions. The most important thing is to extract the relevant features from this raw source of data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
+## Reference
+1. Alexis Conneau, Very Deep Convolutional Networks for Text Classification [[link](https://arxiv.org/pdf/1606.01781.pdf)]
+2. Lasguido Nio, Japanese Sentiment Classification Using Bidirectional Long Short-Term Memory Recurrent Neural Network [[link](https://anlp.jp/proceedings/annual_meeting/2018/pdf_dir/P12-2.pdf)]
+3. Minato Sato, Japanese Text Classification by Character-level Deep ConvNets and Transfer Learning [[link](https://www.scitepress.org/Papers/2017/61934/61934.pdf)]
+4. Yoon Kim, Convolutional Neural Networks for Sentence Classification [[link](https://www.aclweb.org/anthology/D14-1181.pdf)]
+5. Jacob Devlin, BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding [[link](https://arxiv.org/pdf/1810.04805.pdf)]
+6. Zhenzhong Lan, ALBERT: A Lite BERT for Self-supervised Learning of Language Representations [[link](https://arxiv.org/pdf/1909.11942.pdf)]
+7. Victor Sanh, DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter [[link](https://arxiv.org/pdf/1910.01108.pdf)]
+8. Sepp Hochreiter, Long Short-Term Memory [[link](https://www.bioinf.jku.at/publications/older/2604.pdf)]
+9. Tomas Mikolov, Distributed representations of words and phrases and their compositionality [[link](https://papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf)]
+10. Amr El-Desoky Mousa, Contextual bidirectional long short-term memory recurrent neural network language models: A generative approach to sentiment analysis [[link](https://www.aclweb.org/anthology/E17-1096.pdf)]
+11. Aliaksei Severyn, Twitter sentiment analysis with deep convolutional neural networks [[link](https://dl.acm.org/doi/pdf/10.1145/2766462.2767830)]
+12. Nitish Srivastava, Dropout: A Simple Way to Prevent Neural Networks from Overfitting [[link](http://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf)]
+13. Sergey Ioffe, Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift [[link](https://arxiv.org/pdf/1502.03167.pdf)]
+14. Tim Salimans, Weight Normalization: A Simple Reparameterization to Accelerate Training of Deep Neural Networks [[link](https://arxiv.org/pdf/1602.07868.pdf)]
+15. Ashish Vaswani, Attention Is All You Need [[link](https://arxiv.org/pdf/1706.03762.pdf)]
+16. Zhilin Yang, XLNet: Generalized Autoregressive Pretraining for Language Understanding [[link](https://arxiv.org/pdf/1906.08237.pdf)]
+17. Ashutosh Adhikari, DocBERT: BERT for Document Classification [[link](https://arxiv.org/pdf/1904.08398.pdf)]
 
-Text binary classifier is a meat-and-potatoes issue for most sentiment analysis, and there are still many things can be done on this task. In future works, I might construct a multi-class text classifier to separate customers' reviews into different issue types. (e.g. Function, UI, Crash, Truncate, Subscription, Server, Enhancement, Other)
+## Future Roadmap
+It is completely possible to use only raw text as input for making predictions. The most important thing is to automatically extract the relevant features from this raw source of reviews data. Although the models don't perform well and need more improvement, I have done a practise with a full harvest.
+
+Text classifier is a meat-and-potatoes issue for most sentiment analysis task, and there are still many things can be done on this task. In future works, I might construct a multi-class text classifier to separate customers' reviews into different issue types. (e.g. Function, UI, Crash, Truncate, Subscription, Server, Enhancement, etc), in order to tackle each consumer's problem more efficiently and effectively.
