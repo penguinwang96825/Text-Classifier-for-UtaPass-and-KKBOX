@@ -1365,6 +1365,12 @@ F1 Score:  0.7560
 
 ### Proposed Model
 
+#### Baseline Model
+||Naive Bayes|Gaussian Bayes|Bernoulli Bayes|
+|---|---|---|---|
+|Accuracy|0.7904|0.6606|0.7540|
+|F1 Score|0.8357|0.7689|0.8172|
+
 #### Deep Learning Model
 ||Simple-RNN|GRU|LSTM|BiLSTM|Attention|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
 |---|---|---|---|---|---|---|---|---|---|
