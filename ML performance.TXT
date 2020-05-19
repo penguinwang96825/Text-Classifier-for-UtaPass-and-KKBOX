@@ -1,0 +1,67 @@
+### Baseline
+
+Select sentence length is longer than 5:
+
+    # of training data: 11601
+    # of test data: 1289
+
+<table>
+    <tr>
+        <th colspan="2"></th>
+        <th>KNN</th>
+        <th>Decision Tree</th>
+        <th>Random Forest</th>
+        <th>Extra Tree</th>
+        <th>XGBoost</th>
+    </tr>
+    <tr>
+        <td rowspan="3">With TF-IDF</td>
+        <td>Accuracy</td>
+        <td>0.7355</td>
+        <td>0.6823</td>
+        <td>0.7587</td>
+        <td>0.7583</td>
+        <td>0.8556</td>
+    </tr>
+    <tr>
+        <td>F1 Score</td>
+        <td>0.7648</td>
+        <td>0.7490</td>
+        <td>0.8023</td>
+        <td>0.8023</td>
+        <td>0.8191</td>
+    </tr>
+    <tr>
+        <td>ROC-AUC</td>
+        <td>0.7354</td>
+        <td>0.6561</td>
+        <td>0.7427</td>
+        <td>0.7420</td>
+        <td>0.7694</td>
+    </tr>
+    <tr>
+        <td rowspan="3">Without TF-IDF</td>
+        <td>Accuracy</td>
+        <td>0.7044</td>
+        <td>0.6936</td>
+        <td>0.7223</td>
+        <td>0.7196</td>
+        <td>0.7726</td>
+    </tr>
+    <tr>
+        <td>F1 Score</td>
+        <td>0.7559</td>
+        <td>0.7408</td>
+        <td>0.7717</td>
+        <td>0.7670</td>
+        <td>0.7793</td>
+    </tr>
+    <tr>
+        <td>ROC-AUC</td>
+        <td>0.6884</td>
+        <td>0.6822</td>
+        <td>0.7058</td>
+        <td>0.7053</td>
+        <td>0.7098</td>
+    </tr>
+</table>
