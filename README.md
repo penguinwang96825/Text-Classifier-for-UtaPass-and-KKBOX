@@ -2198,26 +2198,26 @@ ________________________________________________________________________________
 
 ### Proposed Model
 
-#### Baseline Model
+#### Statistical Model
 1. Feature extracted by `CountVectorizer`
 
 ||Naive Bayes|Gaussian Bayes|Bernoulli Bayes|
 |---|---|---|---|
-|Accuracy|0.7904|0.6606|0.7540|
-|F1 Score|0.8357|0.7689|0.8172|
+|Accuracy|**0.7904**|0.6606|0.7540|
+|F1 Score|**0.8357**|0.7689|0.8172|
 
 2. Feature extracted by `TfidfVectorizer`
 
 ||Naive Bayes|Gaussian Bayes|Bernoulli Bayes|
 |---|---|---|---|
-|Accuracy|0.7879|0.6703|0.7540|
-|F1 Score|0.8362|0.7708|0.8172|
+|Accuracy|**0.7879**|0.6703|0.7540|
+|F1 Score|**0.8362**|0.7708|0.8172|
 
 #### Deep Learning Model
 ||Simple-RNN|GRU|LSTM|BiLSTM|Attention|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
 |---|---|---|---|---|---|---|---|---|---|
-|Accuracy|0.7419|0.7821|0.7697|0.7430|0.7496|0.7736|0.7744|0.7380|0.7283|
-|F1 Score|0.7773|0.8216|0.7945|0.7696|0.7857|0.8031|0.8073|0.7785|0.7535|
+|Accuracy|0.7419|**0.7821**|0.7697|0.7430|0.7496|0.7736|0.7744|0.7380|0.7283|
+|F1 Score|0.7773|**0.8216**|0.7945|0.7696|0.7857|0.8031|0.8073|0.7785|0.7535|
 |Total params (M)|2.27|2.31|2.37|2.55|2.50|2.79|7.29|3.31|30.16|
 |Trainable params (M)|0.02|0.06|0.12|0.30|0.25|0.54|0.54|1.05|27.89|
 |Non-trainable params (M)|2.25|2.25|2.25|2.25|2.25|2.25|6.75|2.25|2.27|
@@ -2225,8 +2225,8 @@ ________________________________________________________________________________
 #### Pre-trained Language Model
 ||BERT|ALBERT|DISTILBERT|
 |---|---|---|---|
-|Accuracy|0.8543|0.8005|0.8528|
-|F1 Score|0.8806|0.8410|0.8815|
+|Accuracy|**0.8543**|0.8005|0.8528|
+|F1 Score|0.8806|0.8410|**0.8815**|
 
 ## Reference
 1. Alexis Conneau, Very Deep Convolutional Networks for Text Classification [[link](https://arxiv.org/pdf/1606.01781.pdf)]
