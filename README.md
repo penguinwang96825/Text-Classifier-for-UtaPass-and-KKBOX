@@ -2214,6 +2214,8 @@ ________________________________________________________________________________
 |F1 Score|**0.8362**|0.7708|0.8172|
 
 #### Deep Learning Model
+Feature extracted by word2vec.
+
 ||Simple-RNN|GRU|LSTM|BiLSTM|Attention|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
 |---|---|---|---|---|---|---|---|---|---|
 |Accuracy|0.7419|**0.7821**|0.7697|0.7430|0.7496|0.7736|0.7744|0.7380|0.7283|
