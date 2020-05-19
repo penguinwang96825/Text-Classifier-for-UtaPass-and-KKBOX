@@ -870,16 +870,27 @@ def train_cnn_lstm(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
     x_input = Input(shape=(config["MAX_LEN"], ))
     x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=False)(x_input)
     x = SpatialDropout1D(config['dropout_rate'])(x)
-    x = Conv1D(filters=config['nb_filter'], kernel_size=config['filter_length'], padding=config['border_mode'])(x)
-    x = BatchNormalization()(x)
-    x = Activation("relu")(x)
+    
     x = Conv1D(filters=config['nb_filter'], kernel_size=config['filter_length'], padding=config['border_mode'])(x)
     x = BatchNormalization()(x)
     x = Activation("relu")(x)
     x = MaxPooling1D(pool_size=config['pool_length'])(x)
-    x = Bidirectional(LSTM(units=config['lstm_cell'], return_sequences=True, kernel_regularizer=regularizers.l2(0.3)))(x)
-    x = Bidirectional(LSTM(units=config['lstm_cell'], return_sequences=False, kernel_regularizer=regularizers.l2(0.3)))(x)
-    x = Dense(config['fc_cell']*2)(x)
+    
+    x = Conv1D(filters=config['nb_filter']*2, kernel_size=config['filter_length'], padding=config['border_mode'])(x)
+    x = BatchNormalization()(x)
+    x = Activation("relu")(x)
+    x = MaxPooling1D(pool_size=config['pool_length'])(x)
+    
+    x = Conv1D(filters=config['nb_filter']*4, kernel_size=config['filter_length'], padding=config['border_mode'])(x)
+    x = BatchNormalization()(x)
+    x = Activation("relu")(x)
+    x = MaxPooling1D(pool_size=config['pool_length'])(x)
+    
+    x = LSTM(units=config['lstm_cell'], return_sequences=True, kernel_regularizer=regularizers.l2(0.3))(x)
+    x = SeqSelfAttention(units=config['lstm_cell'], kernel_regularizer=regularizers.l2(0.1))(x)
+    
+    x = Flatten()(x)
+    x = Dense(config['fc_cell'])(x)
     x = Dropout(config['dropout_rate'])(x)
     x = Dense(units=1)(x)
     x = Activation('sigmoid')(x)
@@ -887,12 +898,12 @@ def train_cnn_lstm(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
 
     if not load_weights:
         model.compile(loss=config['loss'], 
-                      optimizer=Nadam(learning_rate=0.001, beta_1=0.9, beta_2=0.999), 
+                      optimizer=adadelta, 
                       metrics=[get_f1])
 
         print("="*20, "Start Training CNN-LSTM", "="*20)
 
-        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\{}_weights.hdf5'.format("cnn_lstm")
+        path = r'C:\Users\YangWang\Desktop\UtaPass_KKBOX_Classifier\weights\{}_weights.hdf5'.format("cnn_lstm")
         model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
         early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
         reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
@@ -907,7 +918,7 @@ def train_cnn_lstm(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
             callbacks=[early_stopping, reduce_lr, model_checkpoint])
     if load_weights: 
         history = None
-        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\{}_weights.hdf5'.format("cnn_lstm")
+        path = r'C:\Users\YangWang\Desktop\UtaPass_KKBOX_Classifier\weights\{}_weights.hdf5'.format("cnn_lstm")
         model.load_weights(path)
     
     return history, model
@@ -1323,9 +1334,9 @@ Compare the performance among several deep learning models.
 
 #### Simple RNN
 
-Accuracy:  0.7295 
+Accuracy:  0.7419 
 
-F1 Score:  0.7790
+F1 Score:  0.7773
 
 <p align="center"> 
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/simple_rnn.png">
@@ -1367,9 +1378,9 @@ _________________________________________________________________
 
 #### GRU
 
-Accuracy:  0.7639 
+Accuracy:  0.7821
 
-F1 Score:  0.8040
+F1 Score:  0.8216
 
 <p align="center"> 
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru.png">
@@ -1411,9 +1422,9 @@ _________________________________________________________________
 
 #### LSTM
 
-Accuracy:  0.7539 
+Accuracy:  0.7697
 
-F1 Score:  0.7870
+F1 Score:  0.7945
 
 <p align="center"> 
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm.png">
@@ -1455,9 +1466,9 @@ _________________________________________________________________
 
 #### BiLSTM
 
-Accuracy:  0.7481 
+Accuracy:  0.7430
 
-F1 Score:  0.8006
+F1 Score:  0.7696
 
 <p align="center"> 
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm.png">
@@ -1503,9 +1514,9 @@ _________________________________________________________________
 
 #### Attention
 
-Accuracy:  0.7411 
+Accuracy:  0.7496
 
-F1 Score:  0.7809
+F1 Score:  0.7857
 
 <p align="center"> 
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/attention/attention.png">
@@ -1551,9 +1562,9 @@ _________________________________________________________________
 
 #### CNN-Static
 
-Accuracy:  0.7663 
+Accuracy:  0.7736
 
-F1 Score:  0.7972
+F1 Score:  0.8031
 
 <p align="center"> 
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn_static.png">
@@ -1619,9 +1630,9 @@ ________________________________________________________________________________
 
 #### CNN-MultiChannel
 
-Accuracy:  0.7581 
+Accuracy:  0.7744
 
-F1 Score:  0.7922
+F1 Score:  0.8073
 
 <p align="center"> 
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn_multichannel.png">
@@ -1703,9 +1714,9 @@ ________________________________________________________________________________
 
 #### CNN-LSTM
 
-Accuracy:  0.7779 
+Accuracy:  0.7380
 
-F1 Score:  0.8007
+F1 Score:  0.7785
 
 <p align="center"> 
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn_lstm.png">
@@ -1734,38 +1745,50 @@ batch_normalization_1 (Batch (None, 64, 150)           600
 _________________________________________________________________
 activation_1 (Activation)    (None, 64, 150)           0         
 _________________________________________________________________
-conv1d_2 (Conv1D)            (None, 64, 150)           67650     
-_________________________________________________________________
-batch_normalization_2 (Batch (None, 64, 150)           600       
-_________________________________________________________________
-activation_2 (Activation)    (None, 64, 150)           0         
-_________________________________________________________________
 max_pooling1d_1 (MaxPooling1 (None, 32, 150)           0         
 _________________________________________________________________
-bidirectional_1 (Bidirection (None, 32, 128)           110080    
+conv1d_2 (Conv1D)            (None, 32, 300)           135300    
 _________________________________________________________________
-bidirectional_2 (Bidirection (None, 128)               98816     
+batch_normalization_2 (Batch (None, 32, 300)           1200      
 _________________________________________________________________
-dense_1 (Dense)              (None, 256)               33024     
+activation_2 (Activation)    (None, 32, 300)           0         
 _________________________________________________________________
-dropout_1 (Dropout)          (None, 256)               0         
+max_pooling1d_2 (MaxPooling1 (None, 16, 300)           0         
 _________________________________________________________________
-dense_2 (Dense)              (None, 1)                 257       
+conv1d_3 (Conv1D)            (None, 16, 600)           540600    
 _________________________________________________________________
-activation_3 (Activation)    (None, 1)                 0         
+batch_normalization_3 (Batch (None, 16, 600)           2400      
+_________________________________________________________________
+activation_3 (Activation)    (None, 16, 600)           0         
+_________________________________________________________________
+max_pooling1d_3 (MaxPooling1 (None, 8, 600)            0         
+_________________________________________________________________
+lstm_1 (LSTM)                (None, 8, 64)             170240    
+_________________________________________________________________
+seq_self_attention_1 (SeqSel (None, 8, 64)             8321      
+_________________________________________________________________
+flatten_1 (Flatten)          (None, 512)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 128)               65664     
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 128)               0         
+_________________________________________________________________
+dense_2 (Dense)              (None, 1)                 129       
+_________________________________________________________________
+activation_4 (Activation)    (None, 1)                 0         
 =================================================================
-Total params: 2,697,677
-Trainable params: 445,577
-Non-trainable params: 2,252,100
+Total params: 3,311,104
+Trainable params: 1,057,504
+Non-trainable params: 2,253,600
 _________________________________________________________________
 </code></pre>
 </details>
 
 #### Text-ResNet
 
-Accuracy:  0.7245 
+Accuracy:  0.7283
 
-F1 Score:  0.7560
+F1 Score:  0.7535
 
 <p align="center"> 
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text_resnet.png">
@@ -2193,10 +2216,10 @@ ________________________________________________________________________________
 #### Deep Learning Model
 ||Simple-RNN|GRU|LSTM|BiLSTM|Attention|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
 |---|---|---|---|---|---|---|---|---|---|
-|Accuracy|0.7419|0.7639|0.7539|0.7481|0.7411|0.7663|0.7581|0.7779|0.7245|
-|F1 Score|0.7773|0.8040|0.7870|0.8006|0.7809|0.7972|0.7922|0.8007|0.7560|
-|Total params (M)|2.27|2.31|2.37|2.55|2.50|2.79|7.29|2.69|30.16|
-|Trainable params (M)|0.02|0.06|0.12|0.30|0.25|0.54|0.54|0.44|27.89|
+|Accuracy|0.7419|0.7821|0.7697|0.7430|0.7496|0.7736|0.7744|0.7380|0.7283|
+|F1 Score|0.7773|0.8216|0.7945|0.7696|0.7857|0.8031|0.8073|0.7785|0.7535|
+|Total params (M)|2.27|2.31|2.37|2.55|2.50|2.79|7.29|3.31|30.16|
+|Trainable params (M)|0.02|0.06|0.12|0.30|0.25|0.54|0.54|1.05|27.89|
 |Non-trainable params (M)|2.25|2.25|2.25|2.25|2.25|2.25|6.75|2.25|2.27|
 
 #### Pre-trained Language Model
