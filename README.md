@@ -616,8 +616,6 @@ def predict(sentences, model):
 ```
 
 Set optimisers to update gradient.
-
-Setting of other optimisers.
 ```python
 adagrad = Adagrad(learning_rate=0.01)
 adadelta = Adadelta(learning_rate=0.01, rho=0.95)
@@ -1298,6 +1296,20 @@ def plot_history(history):
     plt.grid(color='lightgray', linestyle='-', linewidth=1)
     plt.xlabel('epoch')
     plt.ylabel('f1')
+    plt.show()
+```
+
+Plot confusion matrix heatmap.
+
+```python
+def plot_confusion_matrix(cm):
+    df_cm = pd.DataFrame(cm)
+    plt.figure(figsize=(10, 8))
+    hmap = sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
+    hmap.yaxis.set_ticklabels(hmap.yaxis.get_ticklabels(), rotation=0, ha="right")
+    hmap.xaxis.set_ticklabels(hmap.xaxis.get_ticklabels(), rotation=0, ha="right")
+    plt.xlabel("Predicted Sentiment")
+    plt.ylabel("Target Sentiment")
     plt.show()
 ```
 
