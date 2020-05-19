@@ -631,10 +631,16 @@ def train_simple_rnn(x_train, y_train, wv_matrix, verbose=0, load_weights=False)
     x_input = Input(shape=(config["MAX_LEN"], ))
     x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=False)(x_input)
     x = SpatialDropout1D(config['dropout_rate'])(x)
-    x = Bidirectional(SimpleRNN(
+    x = SimpleRNN(
         units=config["output_size"], 
         activation=config["rnn_activation"], 
-        kernel_regularizer=regularizers.l2(0.3)))(x)
+        kernel_regularizer=regularizers.l2(0.3), 
+        return_sequences=True)(x)
+    x = SimpleRNN(
+        units=config["output_size"], 
+        activation=config["rnn_activation"], 
+        kernel_regularizer=regularizers.l2(0.3), 
+        return_sequences=False)(x)
     x = Dropout(config['dropout_rate'])(x)
     x = Dense(units=1)(x)
     x = Activation('sigmoid')(x)
@@ -647,7 +653,7 @@ def train_simple_rnn(x_train, y_train, wv_matrix, verbose=0, load_weights=False)
 
         print("="*20, "Start Training Simple RNN", "="*20)
 
-        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\rnn_weights.hdf5'
+        path = r'C:\Users\YangWang\Desktop\UtaPass_KKBOX_Classifier\weights\rnn_weights.hdf5'
         model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
         early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
         reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
@@ -662,7 +668,7 @@ def train_simple_rnn(x_train, y_train, wv_matrix, verbose=0, load_weights=False)
             callbacks=[early_stopping, reduce_lr, model_checkpoint])
     if load_weights:
         history = None
-        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\rnn_weights.hdf5'
+        path = r'C:\Users\YangWang\Desktop\UtaPass_KKBOX_Classifier\weights\rnn_weights.hdf5'
         model.load_weights(path)
     
     return history, model
@@ -676,9 +682,8 @@ def train_gru(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
     x_input = Input(shape=(config["MAX_LEN"], ))
     x = Embedding(wv_matrix.shape[0], wv_matrix.shape[1], weights=[wv_matrix], trainable=False)(x_input)
     x = SpatialDropout1D(config['dropout_rate'])(x)
-    # x = Bidirectional(GRU(units=config["output_size"], return_sequences=True, dropout=config['dropout_rate']))(x)
-    # x = Bidirectional(GRU(units=config["output_size"], return_sequences=True, dropout=config['dropout_rate']))(x)
-    x = Bidirectional(GRU(units=config["output_size"], return_sequences=False, dropout=config['dropout_rate']))(x)
+    x = GRU(units=config["output_size"], return_sequences=True, dropout=config['dropout_rate'])(x)
+    x = GRU(units=config["output_size"], return_sequences=False, dropout=config['dropout_rate'])(x)
     x = Dropout(config['dropout_rate'])(x)
     x = Dense(units=1)(x)
     x = Activation('sigmoid')(x)
@@ -686,12 +691,12 @@ def train_gru(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
 
     if not load_weights:
         model.compile(loss=config["loss"], 
-                      optimizer=adagrad, 
+                      optimizer=rmsprop, 
                       metrics=[get_f1])
 
         print("="*20, "Start Training GRU", "="*20)
 
-        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\gru_weights.hdf5'
+        path = r'C:\Users\YangWang\Desktop\UtaPass_KKBOX_Classifier\weights\gru_weights.hdf5'
         model_checkpoint = ModelCheckpoint(path, monitor='val_loss', verbose=0, save_best_only=True, mode='auto')
         early_stopping = EarlyStopping(monitor='val_loss', patience=20, verbose=0, mode='auto')
         reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=10, min_lr=0.001)
@@ -706,7 +711,7 @@ def train_gru(x_train, y_train, wv_matrix, verbose=0, load_weights=False):
             callbacks=[early_stopping, reduce_lr, model_checkpoint])
     if load_weights:
         history = None
-        path = r'C:\Users\YangWang\Desktop\Text_Classifier_for_UtaPass_and_KKBOX\weights\gru_weights.hdf5'
+        path = r'C:\Users\YangWang\Desktop\UtaPass_KKBOX_Classifier\weights\gru_weights.hdf5'
         model.load_weights(path)
     
     return history, model
