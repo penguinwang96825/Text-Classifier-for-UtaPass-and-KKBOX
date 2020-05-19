@@ -1278,11 +1278,12 @@ def plot_history(history):
 ```
 
 ### Accuracy, F1 Score, and Confusion Matrix
-Compare the performance among five deep learning models.
+Compare the performance among several deep learning models.
 
 #### Simple RNN
 
 * Simple RNN with Adagrad
+
 Accuracy:  0.7295 
 F1 Score:  0.7790
 ![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/simple_rnn.png)
@@ -1292,6 +1293,7 @@ F1 Score:  0.7790
 #### GRU
 
 * GRU with Adagrad
+
 Accuracy:  0.7639 
 F1 Score:  0.8040
 ![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru.png)
@@ -1301,6 +1303,7 @@ F1 Score:  0.8040
 #### LSTM
 
 * LSTM with Adagrad
+
 Accuracy:  0.7539 
 F1 Score:  0.7870
 ![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm.png)
@@ -1310,6 +1313,7 @@ F1 Score:  0.7870
 #### BiLSTM
 
 * BiLSTM with Adagrad
+
 Accuracy:  0.7481 
 F1 Score:  0.8006
 ![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm.png)
@@ -1319,6 +1323,7 @@ F1 Score:  0.8006
 #### Attention
 
 * Attention with Adagrad
+
 Accuracy:  0.7411 
 F1 Score:  0.7809
 ![Attention](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/attention/attention.png)
@@ -1328,6 +1333,7 @@ F1 Score:  0.7809
 #### CNN-Static
 
 * CNN-Static with Adagrad
+
 Accuracy:  0.7663 
 F1 Score:  0.7972
 ![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn_static.png)
@@ -1337,6 +1343,7 @@ F1 Score:  0.7972
 #### CNN-MultiChannel
 
 * CNN-MultiChannel with Adagrad
+
 Accuracy:  0.7581 
 F1 Score:  0.7922
 ![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn_multichannel.png)
@@ -1346,6 +1353,7 @@ F1 Score:  0.7922
 #### CNN-LSTM
 
 * CNN-LSTM with Adagrad
+
 Accuracy:  0.7779 
 F1 Score:  0.8007
 ![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn_lstm.png)
@@ -1355,6 +1363,7 @@ F1 Score:  0.8007
 #### Text-ResNet
 
 * Text-ResNet with Adagrad
+
 Accuracy:  0.7245 
 F1 Score:  0.7560
 ![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text_resnet.png)
@@ -1366,10 +1375,17 @@ F1 Score:  0.7560
 ### Proposed Model
 
 #### Baseline Model
+1. Feature extracted by `CountVectorizer`
 ||Naive Bayes|Gaussian Bayes|Bernoulli Bayes|
 |---|---|---|---|
 |Accuracy|0.7904|0.6606|0.7540|
 |F1 Score|0.8357|0.7689|0.8172|
+
+2. Feature extracted by `TfidfVectorizer`
+||Naive Bayes|Gaussian Bayes|Bernoulli Bayes|
+|---|---|---|---|
+|Accuracy|0.7879|0.6703|0.7540|
+|F1 Score|0.8362|0.7708|0.8172|
 
 #### Deep Learning Model
 ||Simple-RNN|GRU|LSTM|BiLSTM|Attention|CNN-Static|CNN-MultiChannel|CNN-LSTM|Text-ResNet|
