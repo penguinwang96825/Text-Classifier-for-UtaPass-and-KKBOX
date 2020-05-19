@@ -1331,6 +1331,33 @@ F1 Score:  0.7790
 <img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/CM.png">
 </p>
 
+<details>
+<summary>Simple RNN Model Architecture</summary>
+<pre><code>
+Model: "model_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_1 (InputLayer)         (None, 64)                0         
+_________________________________________________________________
+embedding_1 (Embedding)      (None, 64, 300)           2251500   
+_________________________________________________________________
+spatial_dropout1d_1 (Spatial (None, 64, 300)           0         
+_________________________________________________________________
+bidirectional_1 (Bidirection (None, 100)               35100     
+_________________________________________________________________
+dropout_1 (Dropout)          (None, 100)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 1)                 101       
+_________________________________________________________________
+activation_1 (Activation)    (None, 1)                 0         
+=================================================================
+Total params: 2,286,701
+Trainable params: 35,201
+Non-trainable params: 2,251,500
+</code></pre>
+</details>
+
 #### GRU
 
 * GRU with Adagrad
