@@ -1318,9 +1318,8 @@ Compare the performance among several deep learning models.
 
 #### Simple RNN
 
-* Simple RNN with Adagrad
-
 Accuracy:  0.7295 
+
 F1 Score:  0.7790
 
 <p align="center"> 
@@ -1361,9 +1360,8 @@ _________________________________________________________________
 
 #### GRU
 
-* GRU with Adagrad
-
 Accuracy:  0.7639 
+
 F1 Score:  0.8040
 
 <p align="center"> 
@@ -1404,9 +1402,8 @@ _________________________________________________________________
 
 #### LSTM
 
-* LSTM with Adagrad
-
 Accuracy:  0.7539 
+
 F1 Score:  0.7870
 
 <p align="center"> 
@@ -1449,9 +1446,8 @@ _________________________________________________________________
 
 #### BiLSTM
 
-* BiLSTM with Adagrad
-
 Accuracy:  0.7481 
+
 F1 Score:  0.8006
 
 <p align="center"> 
@@ -1498,9 +1494,8 @@ _________________________________________________________________
 
 #### Attention
 
-* Attention with Adagrad
-
 Accuracy:  0.7411 
+
 F1 Score:  0.7809
 
 <p align="center"> 
@@ -1547,9 +1542,8 @@ _________________________________________________________________
 
 #### CNN-Static
 
-* CNN-Static with Adagrad
-
 Accuracy:  0.7663 
+
 F1 Score:  0.7972
 
 <p align="center"> 
@@ -1616,9 +1610,8 @@ ________________________________________________________________________________
 
 #### CNN-MultiChannel
 
-* CNN-MultiChannel with Adagrad
-
 Accuracy:  0.7581 
+
 F1 Score:  0.7922
 
 <p align="center"> 
@@ -1701,9 +1694,8 @@ ________________________________________________________________________________
 
 #### CNN-LSTM
 
-* CNN-LSTM with Adagrad
-
 Accuracy:  0.7779 
+
 F1 Score:  0.8007
 
 <p align="center"> 
@@ -1762,9 +1754,8 @@ _________________________________________________________________
 
 #### Text-ResNet
 
-* Text-ResNet with Adagrad
-
 Accuracy:  0.7245 
+
 F1 Score:  0.7560
 
 <p align="center"> 
