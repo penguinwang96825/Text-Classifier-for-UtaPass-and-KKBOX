@@ -15,7 +15,9 @@ This sentiment classification task is based on reviews data of UtaPass and KKBOX
 * Does this dataset exist an imbalance problem?
 
 ## Flow Chart of Text Classification
-![FlowChart](https://github.com/penguinwang96825/Text-Classifier-for-UtaPass-and-KKBOX/blob/master/image/flowChart.jpg)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text-Classifier-for-UtaPass-and-KKBOX/blob/master/image/flowChart.jpg">
+</p>
 
 ## Workstation
 * Processor: Intel Core i9-9900K
@@ -111,8 +113,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 ```
   Note: 
 1. If `pip install fasttext` doesn't work, look at this [solution](https://stackoverflow.com/questions/29846087/microsoft-visual-c-14-0-is-required-unable-to-find-vcvarsall-bat).
-![Build Tools for Visual Studio](https://i.stack.imgur.com/7rK61.jpg)
-![Build Tools for Visual Studio](https://developercommunity.visualstudio.com/storage/temp/52606-buildtools.png)
+
+<p align="center"> 
+<img src="https://i.stack.imgur.com/7rK61.jpg">
+</p>
+
+<p align="center"> 
+<img src="https://developercommunity.visualstudio.com/storage/temp/52606-buildtools.png">
+</p>
 
 2. Install [MeCab](https://qiita.com/yukinoi/items/990b6933d9f21ba0fb43) on win10.
 * Download [MeCab 64bit version](https://github.com/ikegami-yukino/mecab/releases/download/v0.996.2/mecab-64-0.996.2.exe) first.
@@ -231,15 +239,21 @@ Take a look at the dataframe.
 ### Neural Network
 * Feedforward neural network is an artificial neural network wherein connections between the nodes do not form a cycle.
 
-![ANN](https://storage.googleapis.com/static.leapmind.io/blog/2017/06/bdc93d33df3826ed40e029cd8893466f.png)
+<p align="center"> 
+<img src="https://storage.googleapis.com/static.leapmind.io/blog/2017/06/bdc93d33df3826ed40e029cd8893466f.png">
+</p>
 
 * Convolutional neura network have multiple layers; including convolutional layer, non-linearity layer, pooling layer and fully-connected layer. The convolutional and fully-connected layers have parameters but pooling and non-linearity layers don't have. CNN has an excellent performance in machine learning problems. Specially the applications that deal with image data.
 
-![CNN](https://www.mathworks.com/solutions/deep-learning/convolutional-neural-network/_jcr_content/mainParsys/band_copy_copy_14735_1026954091/mainParsys/columns_1606542234_c/2/image.adapt.full.high.jpg/1586420862596.jpg)
+<p align="center"> 
+<img src="https://www.mathworks.com/solutions/deep-learning/convolutional-neural-network/_jcr_content/mainParsys/band_copy_copy_14735_1026954091/mainParsys/columns_1606542234_c/2/image.adapt.full.high.jpg/1586420862596.jpg">
+</p>
 
 * Recurrent neura network is a class of artificial neural networks where connections between nodes form a directed graph along a temporal sequence.
 
-![RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/RNN.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/RNN.png">
+</p>
 
 ### Overfitting? Underfitting?
 
@@ -255,7 +269,9 @@ Take a look at the dataframe.
 1. Dropout layer: Srivastava, et al. proposed in their 2014 paper "Dropout: A Simple Way to Prevent Neural Networks from Overfitting." [[paper link](http://jmlr.org/papers/volume15/srivastava14a.old/srivastava14a.pdf)]
 2. Early Stopping: It is a form of regularization used to avoid overfitting when training a learner with an iterative method, such as gradient descent.
 
-<span style="display:block;text-align:center">![Early stopping](https://cdn-images-1.medium.com/max/1200/1*QckgibgJ74BhMaqinqwSDw.png)</span>
+<p align="center"> 
+<img src="https://cdn-images-1.medium.com/max/1200/1*QckgibgJ74BhMaqinqwSDw.png">
+</p>
 
 3. Eigendecomposition: Takahiro Ishihara applys eigendecomposition to each slice matrix of a tensor to reduce the number of parameters. [[paper link](https://www.aclweb.org/anthology/N18-1047)]
 
@@ -265,7 +281,9 @@ Sentiment analysis is contextual mining of text which identifies and extracts su
 
 Sentiment can be various. The image below illustrates these different types of sentiment and provides examples.
 
-![Sentiment Analysis](https://cdn-images-1.medium.com/max/1400/1*P5mOEUJ_h4rahnvPQcgirA.jpeg)
+<p align="center"> 
+<img src="https://cdn-images-1.medium.com/max/1400/1*P5mOEUJ_h4rahnvPQcgirA.jpeg">
+</p>
 
 ## Main Code for Modelling
 
@@ -535,6 +553,7 @@ Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab:
  * Kyubyong Park's [GitHub](https://github.com/Kyubyong/wordvectors)
  * Omuram's [Qiita](https://qiita.com/omuram/items/6570973c090c6f0cb060)
  * TextMiner's [Website](https://textminingonline.com/training-a-japanese-wikipedia-word2vec-model-by-gensim-and-mecab)
+
 ```python
 def get_embedding_index(model_path):
     w2v = Word2Vec.load(model_path)
@@ -1301,9 +1320,14 @@ F1 Score:  0.7790
 
 Accuracy:  0.7639 
 F1 Score:  0.8040
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru.png)
 
-![GRU](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/CM.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/gru.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/gru/CM.png">
+</p>
 
 #### LSTM
 
@@ -1311,9 +1335,14 @@ F1 Score:  0.8040
 
 Accuracy:  0.7539 
 F1 Score:  0.7870
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm.png)
 
-![LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/CM.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/lstm.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/lstm/CM.png">
+</p>
 
 #### BiLSTM
 
@@ -1321,9 +1350,14 @@ F1 Score:  0.7870
 
 Accuracy:  0.7481 
 F1 Score:  0.8006
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm.png)
 
-![BiLSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/CM.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/bilstm.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/bilstm/CM.png">
+</p>
 
 #### Attention
 
@@ -1331,9 +1365,14 @@ F1 Score:  0.8006
 
 Accuracy:  0.7411 
 F1 Score:  0.7809
-![Attention](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/attention/attention.png)
 
-![Attention](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/attention/CM.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/attention/attention.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/attention/CM.png">
+</p>
 
 #### CNN-Static
 
@@ -1341,9 +1380,14 @@ F1 Score:  0.7809
 
 Accuracy:  0.7663 
 F1 Score:  0.7972
-![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn_static.png)
 
-![CNN-Static](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/CM.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/cnn_static.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-static/CM.png">
+</p>
 
 #### CNN-MultiChannel
 
@@ -1351,9 +1395,14 @@ F1 Score:  0.7972
 
 Accuracy:  0.7581 
 F1 Score:  0.7922
-![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn_multichannel.png)
 
-![CNN-MultiChannel](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/CM.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/cnn_multichannel.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-multichannel/CM.png">
+</p>
 
 #### CNN-LSTM
 
@@ -1361,9 +1410,14 @@ F1 Score:  0.7922
 
 Accuracy:  0.7779 
 F1 Score:  0.8007
-![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn_lstm.png)
 
-![CNN-LSTM](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/CM.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/cnn_lstm.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/cnn-lstm/CM.png">
+</p>
 
 #### Text-ResNet
 
@@ -1371,9 +1425,14 @@ F1 Score:  0.8007
 
 Accuracy:  0.7245 
 F1 Score:  0.7560
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text_resnet.png)
 
-![Text-ResNet](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/CM.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/text_resnet.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/text-resnet/CM.png">
+</p>
 
 ## Performance
 
