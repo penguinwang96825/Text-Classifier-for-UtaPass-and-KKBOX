@@ -1376,12 +1376,14 @@ F1 Score:  0.7560
 
 #### Baseline Model
 1. Feature extracted by `CountVectorizer`
+
 ||Naive Bayes|Gaussian Bayes|Bernoulli Bayes|
 |---|---|---|---|
 |Accuracy|0.7904|0.6606|0.7540|
 |F1 Score|0.8357|0.7689|0.8172|
 
 2. Feature extracted by `TfidfVectorizer`
+
 ||Naive Bayes|Gaussian Bayes|Bernoulli Bayes|
 |---|---|---|---|
 |Accuracy|0.7879|0.6703|0.7540|
