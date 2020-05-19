@@ -1310,9 +1310,14 @@ Compare the performance among several deep learning models.
 
 Accuracy:  0.7295 
 F1 Score:  0.7790
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/simple_rnn.png)
 
-![Simple RNN](https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/CM.png)
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/simple_rnn.png">
+</p>
+
+<p align="center"> 
+<img src="https://github.com/penguinwang96825/Text_Classifier_for_UtaPass_and_KKBOX/blob/master/image/simple-rnn/CM.png">
+</p>
 
 #### GRU
 
