@@ -547,7 +547,11 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.20, random
 ```
 
 #### Word Embedding
-Build the word2vec model to do word embedding. [[Reference](https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)]
+Build the word2vec model to do word embedding. 
+
+Reference:
+1. https://github.com/philipperemy/japanese-words-to-vectors/blob/master/README.md)
+2. http://jalammar.github.io/illustrated-word2vec/
 
 Training a Japanese Wikipedia Word2Vec Model by Gensim and Mecab: 
  * Kyubyong Park's [GitHub](https://github.com/Kyubyong/wordvectors)
@@ -1278,11 +1282,11 @@ def plot_history(history):
     loss = history.history['loss']
     val_loss = history.history['val_loss']
 
-    f1 = history.history['get_f1']
-    val_f1 = history.history['val_get_f1']
+    f1 = history.history['acc']
+    val_f1 = history.history['val_acc']
 
-    plt.figure(figsize=(20,10))
-    plt.subplot(2,1,1)
+    plt.figure(figsize=(20, 10))
+    plt.subplot(2, 1, 1)
     plt.title('Loss')
     epochs = len(loss)
     plt.plot(range(epochs), loss, marker='.', label='loss')
@@ -1298,8 +1302,8 @@ def plot_history(history):
     plt.xlabel('epoch')
     plt.ylabel('loss')
 
-    plt.subplot(2,1,2)
-    plt.title('F1 Score')
+    plt.subplot(2, 1, 2)
+    plt.title('Accuracy')
     plt.plot(range(epochs), f1, marker='.', label='acc')
     plt.plot(range(epochs), val_f1, marker='.', label='val_acc')
     plt.legend(loc='best')
@@ -1311,7 +1315,9 @@ def plot_history(history):
     ax.set_facecolor('snow')
     plt.grid(color='lightgray', linestyle='-', linewidth=1)
     plt.xlabel('epoch')
-    plt.ylabel('f1')
+    plt.ylabel('acc')
+    
+    plt.tight_layout()
     plt.show()
 ```
 
